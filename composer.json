@@ -1,0 +1,27 @@
+{
+    "name": "fatihkoz/disposablespecial",
+    "type": "phpvms-module",
+    "description": "phpVMS v7 module for Extended VA features like tours, assignments, maintenance etc.",
+    "authors": [
+        {
+            "name": "B.Fatih KOZ",
+            "email": "fatih.koz@gmail.com"
+        }
+    ],
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\DisposableSpecial\\Providers\\DS_ServiceProvider",
+                "Modules\\DisposableSpecial\\Providers\\DS_EventProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\DisposableSpecial\\": "."
+        }
+    }
+}

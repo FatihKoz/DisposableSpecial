@@ -1,0 +1,15 @@
+{
+    "name": "DisposableSpecial",
+    "alias": "disposableSpecial",
+    "description": "phpVMS v7 module for Extended VA features like tours, assignments, maintenance etc.",
+    "keywords": [],
+    "active": 0,
+    "order": 9002,
+    "providers": [
+        "Modules\\DisposableSpecial\\Providers\\DS_ServiceProvider",
+        "Modules\\DisposableSpecial\\Providers\\DS_EventProvider"
+    ],
+    "aliases": {},
+    "files": ["ds_helpers.php"],
+    "requires": []
+}
