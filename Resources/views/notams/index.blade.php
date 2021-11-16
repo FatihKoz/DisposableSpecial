@@ -3,7 +3,7 @@
 
 @section('content')
   @if(!$notams->count())
-    <div class="alert alert-info p-1 fw-bold">@lang('DSpecial::no_notams')</div>
+    <div class="alert alert-info p-1 fw-bold">@lang('DSpecial::common.no_notams')</div>
   @else
     <div class="row row-cols-3">
       @foreach($notams as $notam)
