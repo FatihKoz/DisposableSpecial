@@ -2,7 +2,7 @@
 
 phpVMS v7 module for Extended VA features
 
-:important: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :important:
+:warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 Compatible with any latest development (dev) build of phpVMS v7 released after **09.NOV.21**.  
 Using this module along with *Disposable Basic* and *Disposable Theme* is highly advised but not mandatory.  
@@ -23,7 +23,7 @@ This module pack aims to cover extended needs of any Virtual Airline with some n
 ## Important info about License Conditions
 
 * Please do read the License, it is really short but holds important information.
-* This is a **PRIVATE** module, do **NOT** redistribute it with someone else without my written approval.
+* This is a **PRIVATE** module, do **NOT** share it with someone else without my written approval.
 * Some other developers do charge nice amounts for single capabilities like only Tours, I do not.
 * Module is technically **"DonationWare"**, where you donate (for good) and how much you donate is up to you.
 
@@ -88,7 +88,7 @@ DSpecial.notams         /dnotams           // Notams index page
 DSpecial.ops_manual     /dopsmanual        // Operations Manual page (partly db driven, mostly static)
 DSpecial.landing_rates  /dlandingrates     // Landing Rates page (Static content)
 DSpecial.about_us       /daboutus          // About US page (Static content, public)
-DSpecia.rules_reg       /drulesandregs     // Rules and Regulations page (Static content, public)
+DSpecial.rules_reg      /drulesandregs     // Rules and Regulations page (Static content, public)
 ```
 
 Usage examples;
@@ -115,7 +115,7 @@ Usage examples;
 </a>
 ```
 
-## Usage
+## Operational Usage and Provided Features
 
 Below you can find some details about how this module is designed and how it behaves according to your configuration options.
 
@@ -151,25 +151,27 @@ Simple, just use standard Laravel call for widgets, currently 3 widgets are avai
 @widget('DSpecial::TourProgress')
 ```  
 
-Assignments widget has one config option called `'user'` which can be used to display a specific user's progres instead of current user.
+**Assignments** widget has one config option called `'user'` which can be used to display a specific user's progres instead of current user.
 
-* `['user' => $user->id]`
+* `'user'` can be a user's id (like `$user->id` or `4`)
 
-Tour Progress widget has two config options called `'user'` and `'warn'`  
+**Tour Progress** widget has two config options called `'user'` and `'warn'`  
 
-* `['user' => $user->id]` will force the widget to display a specific user's progress
-* `['warn' => 30]` will change the progress bar color and display the remaning days to complete the tour according to Tour's end date (default is 14 days)
+* `'user'` can be a user's id (lie `$user->id` or `3`) and will force the widget to display that user's progress
+* `'warn'` can be any number of days like `30` and it will change the progress bar color according to Tour's end date (default is 14 days)
 
-Notams can be configured to display users current location notams or specific notams for an airport or airline.
+**Notams** widget can be configured to display users current location notams or specific notams for an airport or airline.
 
-* `['count' => 50]` will pick latest 50 Notams
-* `['user' => true]` will check and user's current location
-* `['airport' => $airport->id]` will check only specified airport for Notams
-* `['airline' => $airline->id]` will only check specified airline's company notams
+* `'count'` can be any number (like `50`) to pick latest *EFFECTIVE* specified number of notams
+* `'user'` can be either `true` or `false` to check user's current location (default is `false`)
+* `'airport'` can be an airport id (like `$airport->id` or `BIKF`) to check only specified airport notams
+* `'airline'` can be an airline id (like `$airline->id` or `18`) to check specified airline's company notams
 
-User and Airport can not be used together due to nature of the selection (they are both airport based), rest can be combined
+User and airport options can not be used together due to nature of the selection (they are both airport based), rest can be combined
 
-* `['count' => 20, 'airline' => $airline->id, 'airport' => $hub->id]` this combination will display 20 notams of selected airline for specified airport  
+* `['count' => 20, 'airline' => $airline->id, 'airport' => $hub->id]` this combination will display 20 notams of selected airline for specified airport
+
+Widget will **always** display **effective** notams, config options can not change this behavior.
 
 ### Dynamic Expenses
 
@@ -185,7 +187,7 @@ Settings are simple, if it is not just an enable/disable checkbox then you need 
 
 If you want to go realistic, chose cap and mtow as the authorities do. Always the bigger one, if you want more dynamic and flexible values you can chose cap or lw/tow etc.
 
-Base values are ok for Euro and USD (since they are pretty close to each other, there will be no surprises about the generated monetary amounts). But if you are using something different as your phpVMS currency, I kindly suggest adjusting all base prices according to your needs. "Unit Rate" is the monetary amount being used in the calculations, imagine it like the per pax catering price including hot meal, soft drinks etc. Or the amount being used while doing calculations with the weights etc.
+Base values are ok for Euro and USD (since they are pretty close to each other, there will be no surprises about the generated monetary amounts). But if you are using something different as your phpVMS currency, I kindly suggest adjusting all base prices according to your needs. *"Unit Rate"* is the monetary amount being used in the calculations, imagine it like the per pax catering price including hot meal, soft drinks etc. Or the amount being used while doing calculations with the weights etc.
 
 ### Dynamic Income
 
