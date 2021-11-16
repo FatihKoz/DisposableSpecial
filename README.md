@@ -70,6 +70,12 @@ Below order and steps are really important for proper update from old modules to
 * Go to admin > maintenance and clean `all` cache
 * Install Disposable Special module (by following installation procedure)
 
+After successfull installation, followed by last application cache cleaning
+
+* Go to phpvms admin > awards and re-assign new classes to your old tour awards.
+
+This last step is important, skipping this will result errors during pirep accept process! (Either manual or automatic, they will fail)
+
 ## Module links and routes
 
 Module does not provide auto links to your phpvms theme, Disposable Theme v3 has some built in menu items but in case you need to manually adjust or use a different theme/menu, below are the routes and their respective url's module provide
