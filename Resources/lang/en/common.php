@@ -3,10 +3,12 @@
 return [
     // Common
     'block_time' => 'Block Time',
+    'dist'       => 'Distance',
     'duty_time'  => 'Duty Time',
     'completed'  => 'Completed',
     'flight_no'  => 'Flight Num.',
     'fuelob'     => 'Fuel On Board',
+    'notes'      => 'Notes',
     'optional'   => '(Optional)',
     'selectac'   => 'Please select an aircraft',
     'total'      => 'Total',

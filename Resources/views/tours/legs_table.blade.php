@@ -6,7 +6,7 @@
     <th>@lang('DSpecial::common.dest')</th>
     <th class="text-center">@lang('DSpecial::common.notes')</th>
     <th class="text-center">@lang('DSpecial::common.dist')</th>
-    <th class="text-center">@lang('DSpecial::common.btime')</th>
+    <th class="text-center">@lang('DSpecial::common.block_time')</th>
     <th class="text-center">@lang('common.status')</th>
   </tr>
   @foreach($tour->legs->sortby('route_leg') as $leg)
@@ -34,7 +34,7 @@
       <td class="text-center">@if($leg->distance > 0) {{ number_format(ceil($leg->distance)) }} nm @endif</td>
       <td class="text-center">@if($leg->flight_time > 0) @minutestotime($leg->flight_time) @endif</td>
       <td class="text-center">
-        @if(Dsp_IsTourLegFlown($tour->id,$leg->id,Auth::id()) === true)
+        @if(DS_IsTourLegFlown($tour->id,$leg->id,Auth::id()) === true)
           <i class="fas fa-check-circle text-success" title="@lang('DSpecial::tours.icontrue')"></i>
         @else
           <i class="fas fa-times-circle text-danger" title="@lang('DSpecial::tours.iconfalse')"></i>
