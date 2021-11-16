@@ -47,22 +47,22 @@ class DS_ServiceProvider extends ServiceProvider
             'middleware' => ['web', 'auth'],
             'namespace'  => 'Modules\DisposableSpecial\Http\Controllers',
         ], function () {
+            // Assignment Controller Routes
+            Route::get('dassignments', 'DS_AssignmentController@index')->name('assignments');
+            Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual');
+            // Free Flight Controller Routes
+            Route::get('dfreeflight', 'DS_FreeFlightController@index')->name('freeflight');
+            Route::match(['get', 'post'], 'dfreeflight_store', 'DS_FreeFlightController@store')->name('freeflight_store');
+            // Maintenance Controller Routes
+            Route::get('dmaintenance', 'DS_MaintenanceController@index')->name('maintenance');
+            // Notam Controller Routes
+            Route::get('dnotams', 'DS_NotamController@index')->name('notams');
             // Page Controller Routes
             Route::get('dopsmanual', 'DS_PageController@ops_manual')->name('ops_manual');
             Route::get('dlandingrates', 'DS_PageController@landing_rates')->name('landing_rates');
             // Tour Controller Routes
             Route::get('dtours', 'DS_TourController@index')->name('tours');
             Route::get('dtours/{code}', 'DS_TourController@show')->name('tour');
-            // Notam Controller Routes
-            Route::get('dnotams', 'DS_NotamController@index')->name('notams');
-            // Assignment Controller Routes
-            Route::get('dassignments', 'DS_AssignmentController@index')->name('assignments');
-            Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual');
-            // Maintenance Controller Routes
-            Route::get('dmaintenance', 'DS_MaintenanceController@index')->name('maintenance');
-            // Free Flight Controller Routes
-            Route::get('dfreeflight', 'DS_FreeFlightController@index')->name('freeflight');
-            Route::match(['get', 'post'], 'dfreeflight_store', 'DS_FreeFlightController@store')->name('freeflight_store');
         });
 
         // Frontend Public

@@ -5,6 +5,7 @@ namespace Modules\DisposableSpecial\Http\Controllers;
 use App\Contracts\Controller;
 use App\Models\Airline;
 use App\Models\Airport;
+use Carbon\Carbon;
 use Modules\DisposableSpecial\Models\DS_Notam;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,7 @@ class DS_NotamController extends Controller
 {
     public function index(Request $request)
     {
+        $now = Carbon::now();
         $where = [];
         $where['active'] = 1;
 
@@ -32,7 +34,13 @@ class DS_NotamController extends Controller
             }
         }
 
-        $notams = DS_Notam::with('airline', 'airport')->where($where)->orderby('id', 'desc')->paginate(15);
+        $notams = DS_Notam::with('airline', 'airport')->where($where)
+            ->where(function ($query) use ($now) {
+                $query->where('eff_start', '<', $now)->where('eff_end', '>', $now)
+                    ->orWhere('eff_start', '<', $now)->whereNull('eff_end');
+            })->orderby('updated_at', 'desc')
+            ->paginate(15);
+
         $remove_array = array('<p>', '</p>', '<br>', '<br/>', '<br />', '<hr>', '<hr/>', '<hr />');
 
         return view('DSpecial::notams.index', [
@@ -82,7 +90,7 @@ class DS_NotamController extends Controller
         DS_Notam::updateOrCreate(
             [
                 'id' => $request->notam_id,
-            ], [
+            ],[
                 'title'        => $request->notam_title,
                 'body'         => $request->notam_body,
                 'eff_start'    => $request->eff_start,

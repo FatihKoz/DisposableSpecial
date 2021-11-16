@@ -7,7 +7,7 @@
         role="progressbar"
         style="width: {{ floor($maint->curr_state) }}%"
         aria-valuenow="{{ floor($maint->curr_state) }}" aria-valuemin="0" aria-valuemax="100">
-        Current State: %{{ floor($maint->curr_state) }}
+        @lang('DSpecial::common.current_st') %{{ floor($maint->curr_state) }}
       </div>
     </div>
   </div>
@@ -79,7 +79,10 @@
   <div class="card-footer bg-transparent p-1">
     <div class="row">
       <div class="col text-center">
-        <span>Last maintenance action for "<b>{{ $maint->last_note }}</b>" completed at {{ Carbon::parse($maint->last_time)->format('d-M-Y H:i').' UTC' }}</span>
+        <span>
+          @lang('DSpecial::common.last_action'): <b>{{ $maint->last_note }}</b> | 
+          @lang('DSpecial::common.completed'): {{ Carbon::parse($maint->last_time)->format('d-M-Y H:i').' UTC' }}
+        </span>
       </div>
     </div>
   </div>
@@ -91,14 +94,14 @@
       <div class="col">
         <table class="table table-sm table-borderless table-striped align-middle mb-0">
           <tr>
-            <th class="text-center text-danger m-0 p-0" colspan="2">Aircraft Under Maintenance</th>
+            <th class="text-center text-danger m-0 p-0" colspan="2">@lang('DSpecial::common.under_maint')</th>
           </tr>
           <tr>
-            <td class="m-0 p-0 px-1">Current Operation</td>
+            <td class="m-0 p-0 px-1">@lang('DSpecial::common.current_op')</td>
             <td class="text-end m-0 p-0 px-1">{{ $maint->act_note }}</td>
           </tr>
           <tr>
-            <td class="m-0 p-0 px-1">Remaining Time</td>
+            <td class="m-0 p-0 px-1">@lang('DSpecial::common.rem_time')</td>
             <td class="text-end m-0 p-0 px-1">{{ Carbon::parse($maint->act_end)->diffForHumans() }}</td>
           </tr>
         </table>

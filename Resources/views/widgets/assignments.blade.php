@@ -2,7 +2,7 @@
   <div class="card mb-2">
     <div class="card-header p-1">
       <h5 class="m-1">
-        Monthly Flight Assignments
+        @lang('DSpecial::common.mn_assignments')
         <i class="fas fa-hourglass-half float-end"></i>
       </h5>
     </div>
@@ -50,7 +50,7 @@
       <div class="card-footer text-start p-0 px-1 small fw-bold">
         {{ $counts['completed'].'/'.$counts['total'] }}
         <span class="float-end">
-          <a href="{{ route('DSpecial.assignments') }}">Assignments</a>
+          <a href="{{ route('DSpecial.assignments') }}">@lang('DSpecial::common.assignments')</a>
         </span>
       </div>
     @endif

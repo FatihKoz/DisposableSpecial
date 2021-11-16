@@ -3,6 +3,7 @@
 namespace Modules\DisposableSpecial\Widgets;
 
 use App\Contracts\Widget;
+use Carbon\Carbon;
 use Modules\DisposableSpecial\Models\DS_Notam;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,9 +13,10 @@ class Notams extends Widget
 
     public function run()
     {
-        $count = is_numeric($this->config['count']) ? $this->config['count'] : 5;
+        $count = is_numeric($this->config['count']) ? $this->config['count'] : null;
         $remove_array = ['<p>', '</p>', '<br>', '<br/>', '<br />', '<hr>', '<hr/>', '<hr />'];
 
+        $now = Carbon::now();
         $where = [];
         $where['active'] = 1;
 
@@ -35,7 +37,14 @@ class Notams extends Widget
             $where['ref_airline'] = $this->config['airline'];
         }
 
-        $notams = DS_Notam::with('airline', 'airport')->where($where)->orderby('updated_at', 'desc')->take($count)->get();
+        $notams = DS_Notam::with(['airline', 'airport'])->where($where)
+            ->where(function ($query) use ($now) {
+                return $query->where('eff_start', '<', $now)->where('eff_end', '>', $now)
+                    ->orWhere('eff_start', '<', $now)->whereNull('eff_end');
+            })->when(is_numeric($count), function ($query) use ($count) {
+                return $query->take($count);
+            })
+            ->orderby('updated_at', 'desc')->get();
 
         return view('DSpecial::widgets.notams', [
             'config' => $this->config,

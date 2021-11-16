@@ -80,7 +80,7 @@
           <div class="card-footer p-1 text-end">
             <input type="hidden" name="ff_id" value="{{ $fflight->id }}">
             <input type="hidden" name="user_id" value="{{ $user->id }}">
-            <button class="btn btn-sm btn-primary p-0 px-1" type="submit">@lang('DSpecial::common.ffbutton')</button>
+            <button class="btn btn-sm btn-primary p-0 px-1" type="submit">@lang('DSpecial::common.ff_button')</button>
           </div>
         </div>
       {{ Form::close() }}

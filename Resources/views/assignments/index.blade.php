@@ -6,13 +6,13 @@
     {{-- Left Column --}}
     <div class="col-8">
       @if(count($assignments) === 0)
-        <div class="alert alert-primary p-1 px-2 fw-bold">You have no Flight Assignments !</div>
+        <div class="alert alert-primary p-1 px-2 fw-bold">@lang('DSpecial::common.no_assignments')</div>
       @endif
       @foreach($assignments as $group => $tas)
       <div class="card mb-2">
         <div class="card-header p-1">
           <h5 class="m-1">
-            Flight Assignments | {{ Carbon::create()->day(1)->month($group)->format('F') }}
+            @lang('DSpecial::common.fl_assignments') | {{ Carbon::create()->day(1)->month($group)->format('F') }}
             <i class="fas fa-hourglass-half float-end"></i>
           </h5>
         </div>
@@ -20,10 +20,10 @@
           <table class="table table-sm table-striped table-borderless mb-0 text-start align-middle">
             <tr>
               <th class="text-center">#</th>
-              <th>@lang('flights.flightnumber')</th>
+              <th>@lang('DSpecial::common.flight_no')</th>
               <th>@lang('airports.departure')</th>
               <th>@lang('airports.arrival')</th>
-              <th class="text-center">B.Time</th>
+              <th class="text-center">@lang('DSpecial::common.block_time')</th>
               <th class="text-center">&nbsp;</th>
             </tr>
             @foreach($tas->sortBy('assignment_order', SORT_NATURAL) as $as)
@@ -77,7 +77,7 @@
         <div class="card mb-2">
           <div class="card-header p-1">
             <h5 class="m-1">
-              Personal Assignment Stats
+              @lang('DSpecial::common.personal_stats')
               <i class="fas fa-dna float-end"></i>
             </h5>
           </div>
@@ -86,9 +86,9 @@
               @if($month === 'Overall')
                 <table class="table table-sm table-borderless table-striped align-middle text-center mb-0">
                   <tr>
-                    <th class="col-4">Assignments</th>
-                    <th class="col-4">Completed</th>
-                    <th class="col-4">Earnings <span class="small">&sup1;</span></th>
+                    <th class="col-4">@lang('DSpecial::common.assignments')</th>
+                    <th class="col-4">@lang('DSpecial::common.completed')</th>
+                    <th class="col-4">@lang('DSpecial::common.earnings')<span class="small">&sup1;</span></th>
                   </tr>
                   <tr>
                     <td>{{ $stat['total'] }}</td>
@@ -110,9 +110,9 @@
                     <th class="text-start" colspan="3">{{ $month }}</th>
                   </tr>
                   <tr>
-                    <th class="col-4">Assignments</th>
-                    <th class="col-4">Completed</th>
-                    <th class="col-4">Earnings <span class="small">&sup1;</span></th>
+                    <th class="col-4">@lang('DSpecial::common.assignments')</th>
+                    <th class="col-4">@lang('DSpecial::common.completed')</th>
+                    <th class="col-4">@lang('DSpecial::common.earnings')<span class="small">&sup1;</span></th>
                   </tr>
                   <tr>
                     <td>{{ $stat['total'] }}</td>
@@ -131,7 +131,7 @@
             @endforeach
           </div>
           <div class="card-footer p-0 px-1 text-start small">
-            <b>&sup1;</b> Displayed earnings may differ according to Flight or Manual/Acars pirep pay rates.
+            <b>&sup1;</b> @lang('DSpecial::common.earning_note')
           </div>
         </div>
       @endif
