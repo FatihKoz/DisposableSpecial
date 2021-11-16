@@ -121,8 +121,7 @@ Below you can find some details about how this module is designed and how it beh
 
 ### How to define Tours ?
 
-First you need to define your tour from *Admin > Disposable Special*, then you need to add each tour leg from *PhpVms Admin > Flights* interface.  
-When inserting your flights, the tour's legs in particular you need to use the tour code you defined as the route code and you need to define the legs in order. This is a little bit common knowledge about the tours and I think you already know that very well.
+First you need to define your tour from *Admin > Disposable Special*, then you need to add each tour leg from *PhpVms Admin > Flights* interface. When inserting your flights, the tour's legs in particular you need to use the tour code you defined as the route code and you need to define the legs in order. This is a little bit common knowledge about the tours and I think you already know that very well.
 
 We are able to use different validity dates for the tours and the legs. Tours must have start and end dates, but the flights (legs) do not have to but if you want the legs to be flown between particular dates then  you can define each legs validity while inserting (or editing) the legs.
 
@@ -130,8 +129,7 @@ Imagine you are defining a tour for Formula1 Season 2021, your tour should start
 
 This logic may be extended as you wish.
 
-If you have a multiple airline setup, then you can setup your tours for your airlines too. Checks will done according to that.  
-Also two Award Classes are provided, one for Open/Generic Tours (no airline defined) one for Airline Tours (with airline checks).
+If you have a multiple airline setup, then you can setup your tours for your airlines too. Checks will done according to that. Also two Award Classes are provided, one for Open/Generic Tours (no airline defined) one for Airline Tours (with airline checks).
 
 ### How to use NOTAMs ?
 
@@ -225,9 +223,7 @@ If you have multiple airlines in your setup, code tries to use the same airline 
 
 ## Duplicating Module Blades/Views
 
-Technically all blade files should work with your template but they are mainly designed for Bootstrap v5.* compatible themes.  
-So if something looks weird in your template then you need to edit the blades files.  
-I kindly suggest copying/duplicating them under your theme folder and do your changes there, directly editing module files will only make updating harder for you.
+Technically all blade files should work with your template but they are mainly designed for Bootstrap v5.* compatible themes. So if something looks weird in your template then you need to edit the blades files. I kindly suggest copying/duplicating them under your theme folder and do your changes there, directly editing module files will only make updating harder for you.
 
 All Disposable Modules are capable of displaying customized files located under your theme folders;
 
