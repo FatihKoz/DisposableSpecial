@@ -31,6 +31,14 @@ class DS_Maintenance extends Model
         'op_type',
     ];
 
+    protected $dates = [
+        'act_start',
+        'act_end',
+        'last_time',
+        'created_at',
+        'updated_at',
+    ];
+
     protected $attributes = [
         'curr_state' => 100,
     ];

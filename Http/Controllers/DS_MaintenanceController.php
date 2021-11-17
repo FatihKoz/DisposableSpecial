@@ -16,6 +16,7 @@ class DS_MaintenanceController extends Controller
         $maintenance = DS_Maintenance::with('aircraft')->where('curr_state', '<', 95)->orderby('curr_state', 'asc')->paginate(20);
 
         return view('DSpecial::maintenance.index', [
+            'DBasic'      => DS_CheckModule('DisposableBasic'),
             'maintenance' => $maintenance,
         ]);
     }

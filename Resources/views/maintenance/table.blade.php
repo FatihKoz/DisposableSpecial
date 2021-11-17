@@ -81,7 +81,7 @@
       <div class="col text-center">
         <span>
           @lang('DSpecial::common.last_action'): <b>{{ $maint->last_note }}</b> | 
-          @lang('DSpecial::common.completed'): {{ Carbon::parse($maint->last_time)->format('d-M-Y H:i').' UTC' }}
+          @lang('DSpecial::common.completed'): {{ $maint->last_time->format('d.M.Y H:i').' UTC' }}
         </span>
       </div>
     </div>
@@ -102,7 +102,7 @@
           </tr>
           <tr>
             <td class="m-0 p-0 px-1">@lang('DSpecial::common.rem_time')</td>
-            <td class="text-end m-0 p-0 px-1">{{ Carbon::parse($maint->act_end)->diffForHumans() }}</td>
+            <td class="text-end m-0 p-0 px-1">{{ $maint->act_end->diffForHumans() }}</td>
           </tr>
         </table>
       </div>

@@ -124,6 +124,23 @@ if (!function_exists('DS_CheckModule')) {
     }
 }
 
+// Convert Minutes
+// Return string
+if (!function_exists('DS_ConvertMinutes')) {
+    function DS_ConvertMinutes($minutes = 0, $format = '%02d:%02d')
+    {
+        $minutes = intval($minutes);
+
+        if ($minutes < 1) {
+            return null;
+        }
+        $hours = floor($minutes / 60);
+        $minutes = ($minutes % 60);
+
+        return sprintf($format, $hours, $minutes);
+    }
+}
+
 // Convert Weight from LBS to KGS
 // Return string
 if (!function_exists('DS_ConvertWeight')) {
