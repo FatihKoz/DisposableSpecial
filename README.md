@@ -241,6 +241,10 @@ If you have duplicated blades and encounter problems after updating the module o
 
 ## Release / Update Notes
 
-* 16.NOV.21
+**17.NOV.21**
 
-Initial Release
+* Maintenance fixes (added missing index page, fixed table and settings)
+
+**16.NOV.21**
+
+* Initial Release
