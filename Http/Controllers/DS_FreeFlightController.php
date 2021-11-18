@@ -48,7 +48,8 @@ class DS_FreeFlightController extends Controller
             $al_where['id'] = $user->airline_id;
             $sf_where['airline_id'] = $user->airline_id;
 
-            $allowed_sf = filled($allowed_sf) ? $allowed_sf->where($sf_where) : Subfleet::where($sf_where)->pluck('id')->toArray();
+            $airline_sf = Subfleet::where($sf_where)->pluck('id')->toArray();
+            $allowed_sf = filled($allowed_sf) ? array_intersect($allowed_sf, $airline_sf) : $airline_sf;
         }
 
         // Get airlines

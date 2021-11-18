@@ -31,7 +31,7 @@ class Gen_Comments
         }
 
         $pirep = $event->pirep;
-        // $pirep->loadMissing('aircraft', 'simbrief');
+        $pirep->loadMissing('aircraft', 'simbrief');
         $aircraft = $pirep->aircraft;
         $simbrief = $pirep->simbrief;
         $pirep_comments = collect();
