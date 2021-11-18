@@ -241,10 +241,16 @@ If you have duplicated blades and encounter problems after updating the module o
 
 ## Release / Update Notes
 
-**17.NOV.21**
+18.NOV.21
+
+* Some refactoring at event listeners (dynamic income/expense/maintenance to gain performance)
+* Fixed a bug at FreeFlights (now both rank and airline restrictions do apply)
+* Still a lot to do (specially for admin side Tour and Assignment reports and some cron automation for bigger Maintenance checks)
+
+17.NOV.21
 
 * Maintenance fixes (added missing index page, fixed table and settings)
 
-**16.NOV.21**
+16.NOV.21
 
 * Initial Release
