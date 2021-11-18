@@ -14,15 +14,12 @@ class Gen_Diversion
     public function handle(PirepAccepted $event)
     {
         $pirep = $event->pirep;
-        // Check PirepFields for diversion
-        $diversion_apt = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'diversion-airport'])->value('value');
+        $diversion_apt = optional($pirep->fields->where('slug', 'diversion-airport')->first())->value;
 
         if ($diversion_apt) {
-            // Check and load related User and Aircraft models
             $pirep->loadMissing('aircraft', 'user');
-            $user = $pirep->user; // User::where('id', $pirep->user_id)->first();
-            $aircraft = $pirep->aircraft; // Aircraft::where('id', $pirep->aircraft_id)->first();
-            // Get The Diversion Airport
+            $user = $pirep->user;
+            $aircraft = $pirep->aircraft;
             $diverted = Airport::select('id')->where('id', $diversion_apt)->first();
 
             if (!$diverted) {
@@ -31,12 +28,10 @@ class Gen_Diversion
                 $diverted = $airportSvc->lookupAirportIfNotFound($diversion_apt) ?? null;
             }
 
-            // Send out Discord Message For Admins
             if (DS_Setting('turksim.discord_divertmsg')) {
                 $this->SendDiversionMessage($pirep, $diversion_apt, $diverted);
             }
 
-            // Check Settings
             if (DS_Setting('turksim.pireps_handle_diversions', true)) {
                 // Airport found
                 if ($diverted) {
@@ -52,7 +47,7 @@ class Gen_Diversion
                     $pirep->flight_id = null;
                     $pirep->save();
 
-                    Log::info('TurkSim Module: Pirep=' . $pirep->id . ' Flight=' . $pirep->airline->code . $pirep->flight_number . ' DIVERTED to ' . $diversion_apt . ', assets MOVED to Diversion Airport');
+                    Log::info('TurkSim Module: Pirep=' . $pirep->id . ' Flight=' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', assets MOVED to Diversion Airport');
                 }
 
                 // Airport NOT found (only edit Pirep values)
@@ -61,7 +56,7 @@ class Gen_Diversion
                     $pirep->flight_id = null;
                     $pirep->save();
 
-                    Log::info('TurkSim Module: Pirep=' . $pirep->id . ' Flight=' . $pirep->airline->code . $pirep->flight_number . ' DIVERTED to ' . $diversion_apt . ', NOT ABLE to move assets !');
+                    Log::info('TurkSim Module: Pirep=' . $pirep->id . ' Flight=' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', NOT ABLE to move assets !');
                 }
             }
         }
@@ -94,10 +89,10 @@ class Gen_Diversion
                     "type" => "rich",
                     "timestamp" => date("c", strtotime($pirep->submitted_at)),
                     "color" => hexdec("FF0000"),
-                    "author" => ["name" => "Pilot In Command: " . $pirep->user->name_private, "url" => route('frontend.profile.show', [$pirep->user->id])],
+                    "author" => ["name" => "Pilot In Command: " . $pirep->user->name_private, "url" => route('frontend.profile.show', [$pirep->user_id])],
                     "fields" =>
                     [
-                        ["name" => "__Flight #__", "value" => $pirep->airline->code . $pirep->flight_number, "inline" => true],
+                        ["name" => "__Flight #__", "value" => $pirep->ident, "inline" => true],
                         ["name" => "__Origin__", "value" => $pirep->dpt_airport_id, "inline" => true],
                         ["name" => "__Destination__", "value" => $pirep->alt_airport_id, "inline" => true],
                         ["name" => "__Equipment__", "value" => $pirep_aircraft, "inline" => true],

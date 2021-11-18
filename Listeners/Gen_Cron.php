@@ -43,7 +43,7 @@ class Gen_Cron extends Listener
     public function ProcessMaintenance()
     {
         $current_time = Carbon::now();
-        $active_maint_ops = DS_Maintenance::whereNotNull('act_end')->get();
+        $active_maint_ops = DS_Maintenance::with('aircraft')->whereNotNull('act_end')->get();
         foreach ($active_maint_ops as $active) {
             if ($active->act_end < $current_time) {
                 $active->last_note = $active->act_note;
@@ -56,7 +56,7 @@ class Gen_Cron extends Listener
                     $active->aircraft->save();
                 }
                 $active->save();
-                Log::debug('CRON, ' . $active->aircraft->registration . ' released back to service after ' . $active->last_note);
+                Log::info('CRON, ' . $active->aircraft->registration . ' released back to service after ' . $active->last_note);
             }
         }
     }

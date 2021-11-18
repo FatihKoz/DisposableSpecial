@@ -24,20 +24,29 @@ class Gen_Comments
 
         // Pick A Random Admin
         if ($poster === false) {
-            $adm_role = DB::table('roles')->where('name', 'admin')->value('id');
-            $adm_users = DB::table('role_user')->where('role_id', $adm_role)->pluck('user_id');
+            $adm_users = DB::table('role_user')->where('role_id', function ($query) {
+                return $query->select('id')->from('roles')->where('name', 'admin')->limit(1);
+            })->pluck('user_id');
             $poster = $adm_users->random();
         }
 
         $pirep = $event->pirep;
+        // $pirep->loadMissing('aircraft', 'simbrief');
         $aircraft = $pirep->aircraft;
         $simbrief = $pirep->simbrief;
         $pirep_comments = collect();
 
-        // Get Pirep data directly from field values table
+        // Read necessary field values (from pirep attributes)
+        $act_tow = optional($pirep->fields->where('slug', 'takeoff-weight')->first())->value;
+        $act_ldw = optional($pirep->fields->where('slug', 'landing-weight')->first())->value;
+        $act_lfuel = optional($pirep->fields->where('slug', 'landing-fuel')->first())->value;
+
+        /*
+        // Read necessary field values (from db table)
         $act_tow = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-weight'])->value('value');
         $act_ldw = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-weight'])->value('value');
         $act_lfuel = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-fuel'])->value('value');
+        */
 
         // Generic Pirep checks
         if ($pirep->fuel_used < 5) {
@@ -75,8 +84,17 @@ class Gen_Comments
             if ($check_times === true) {
                 // Get Departure and Arrival Times
                 $dla_margin = DS_Setting('turksim.auto_comment_dlamargin', 20);
+
+                // Read field values (from pirep attributes)
+                $blocks_off = optional($pirep->fields->where('slug', 'blocks-off-time-real')->first())->value;
+                $blocks_on = optional($pirep->fields->where('slug', 'blocks-on-time-real')->first())->value;
+
+                /*
+                // Read field values (from db table)
                 $blocks_off = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'blocks-off-time-real'])->value('value');
                 $blocks_on = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'blocks-on-time-real'])->value('value');
+                */
+
                 $sb_dep = Carbon::createFromTimestamp($pirep->simbrief->xml->times->sched_out);
                 $sb_arr = Carbon::createFromTimestamp($pirep->simbrief->xml->times->sched_in);
                 $act_dep = Carbon::parse($blocks_off);
@@ -174,8 +192,10 @@ class Gen_Comments
     {
         if (is_null($poster)) {
             // Get A Random Admin
-            $adm_role = DB::table('roles')->where('name', 'admin')->value('id');
-            $adm_users = DB::table('role_user')->where('role_id', $adm_role)->pluck('user_id');
+            $adm_users = DB::table('role_user')->where('role_id', function ($query) {
+                return $query->select('id')->from('roles')->where('name', 'admin')->limit(1);
+            })->pluck('user_id');
+
             $poster = $adm_users->random();
         }
         // Post The Message

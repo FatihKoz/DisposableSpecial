@@ -4,6 +4,7 @@ namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\Expenses;
 use App\Models\Expense;
+use App\Models\Pirep;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FuelType;
 use App\Services\FinanceService;
@@ -11,6 +12,7 @@ use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Modules\DisposableBasic\Models\DB_Tech;
 use Modules\DisposableSpecial\Models\DS_Maintenance;
 
 class Expense_Maintenance
@@ -27,19 +29,17 @@ class Expense_Maintenance
         $maint_wing = DS_Setting('turksim.maint_strwing', false);
         $maint_user = DS_Setting('turksim.maint_chguser', false);
 
-        // Return Empty Array (Admin Settings)
         if (!$maint_hard && !$maint_soft && !$maint_tail && !$maint_wing) {
             return $expenses;
         }
 
-        // Main Definitions
         $maint_hardlimit = DS_Setting('turksim.maint_lndhard_limit', 500);
         $maint_softlimit = DS_Setting('turksim.maint_lndsoft_limit', 50);
         $maint_taillimit = DS_Setting('turksim.maint_strtail_limit', 15);
         $maint_winglimit = DS_Setting('turksim.maint_strwing_limit', 10);
 
-        // Get Pirep and Some Values
         $pirep = $event->pirep;
+        $pirep->loadMissing('aircraft.airline', 'aircraft.subfleet', 'user.journal');
 
         $landing_rate = optional($pirep->fields->where('slug', 'landing-rate')->first())->value;
         $landing_pitch = optional($pirep->fields->where('slug', 'landing-pitch')->first())->value;
@@ -47,7 +47,6 @@ class Expense_Maintenance
         $takeoff_pitch = optional($pirep->fields->where('slug', 'takeoff-pitch')->first())->value;
         $takeoff_roll = optional($pirep->fields->where('slug', 'takeoff-roll')->first())->value;
 
-        // If we have nothing usefull in hand, no need to run checks
         if (!is_numeric($landing_rate)) {
             $maint_hard = false;
             $maint_soft = false;
@@ -60,8 +59,9 @@ class Expense_Maintenance
         }
 
         // Get ICAO Specific Roll And Pitch limits
-        if (DS_CheckModule('DisposableBasic') && $pirep->aircraft && filled($pirep->aircraft->icao)) {
-            $tech_limits = DB::table('disposable_tech_details')->where('icao', $pirep->aircraft->icao)->first();
+        $aircraft = $pirep->aircraft;
+        if (DS_CheckModule('DisposableBasic') && $aircraft && filled($aircraft->icao)) {
+            $tech_limits = DB_Tech::where('icao', $aircraft->icao)->first();
 
             if ($tech_limits && is_numeric($tech_limits->max_pitch)) {
                 $maint_taillimit = $tech_limits->max_pitch;
@@ -74,10 +74,9 @@ class Expense_Maintenance
 
         // Hard Landing
         if ($maint_hard && abs($landing_rate) > $maint_hardlimit) {
-            $service_cost = $this->MaintenanceChecks('Hard Landing Check', $pirep->aircraft, true);
+            $service_cost = $this->MaintenanceChecks('Hard Landing Check', $aircraft, true);
             $service_cost = round($service_cost * (abs($landing_rate) / $maint_hardlimit), 2);
-
-            Log::debug('Disposable Special, Maintenance Check Expense (Hard Landing) applied Pirep=' . $event->pirep->id);
+            // Log::debug('Disposable Special, Maintenance Check Expense (Hard Landing) applied Pirep=' . $pirep->id);
             $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (Hard Landing)');
 
             if ($maint_user) {
@@ -87,11 +86,10 @@ class Expense_Maintenance
 
         // Soft Landing
         if ($maint_soft && abs($landing_rate) < $maint_softlimit) {
-            if ($pirep->aircraft->subfleet->fuel_type === FuelType::JET_A) {
-                $service_cost = $this->MaintenanceChecks('Soft Landing Check', $pirep->aircraft, true);
+            if ($aircraft->subfleet->fuel_type === FuelType::JET_A) {
+                $service_cost = $this->MaintenanceChecks('Soft Landing Check', $aircraft, true);
                 $service_cost = round($service_cost * ($maint_softlimit / abs($landing_rate)), 2);
-
-                Log::debug('Disposable Special, Maintenance Check Expense (Soft Landing) applied Pirep=' . $pirep->id);
+                // Log::debug('Disposable Special, Maintenance Check Expense (Soft Landing) applied Pirep=' . $pirep->id);
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (Soft Landing)');
 
                 if ($maint_user) {
@@ -103,10 +101,9 @@ class Expense_Maintenance
         // Engine/Wing Strike
         if ($maint_wing) {
             if (is_numeric($landing_roll) && abs($landing_roll) > $maint_winglimit) {
-                $service_cost = $this->MaintenanceChecks('Engine/Wing Strike Check', $pirep->aircraft, true);
+                $service_cost = $this->MaintenanceChecks('Engine/Wing Strike Check', $aircraft, true);
                 $service_cost = round($service_cost * (abs($landing_roll) / $maint_winglimit), 2);
-
-                Log::debug('Disposable Special, Maintenance Check Expense (Landing Engine/Wing Strike) applied Pirep=' . $pirep->id);
+                // Log::debug('Disposable Special, Maintenance Check Expense (Landing Engine/Wing Strike) applied Pirep=' . $pirep->id);
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (Landing Engine/Wing Strike)');
 
                 if ($maint_user) {
@@ -115,10 +112,9 @@ class Expense_Maintenance
             }
 
             if (is_numeric($takeoff_roll) && abs($takeoff_roll) > $maint_winglimit) {
-                $service_cost = $this->MaintenanceChecks('Engine/Wing Strike Check', $pirep->aircraft, true);
+                $service_cost = $this->MaintenanceChecks('Engine/Wing Strike Check', $aircraft, true);
                 $service_cost = round($service_cost * (abs($takeoff_roll) / $maint_winglimit), 2);
-
-                Log::debug('Disposable Special, Maintenance Check Expense (TakeOff Engine/Wing Strike) applied Pirep=' . $pirep->id);
+                // Log::debug('Disposable Special, Maintenance Check Expense (TakeOff Engine/Wing Strike) applied Pirep=' . $pirep->id);
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (TakeOff Engine/Wing Strike)');
 
                 if ($maint_user) {
@@ -130,10 +126,9 @@ class Expense_Maintenance
         // Tail Strike
         if ($maint_tail) {
             if (is_numeric($landing_pitch) && abs($landing_pitch) > $maint_taillimit) {
-                $service_cost = $this->MaintenanceChecks('Tail Strike Check', $pirep->aircraft, true);
+                $service_cost = $this->MaintenanceChecks('Tail Strike Check', $aircraft, true);
                 $service_cost = round($service_cost * (abs($landing_pitch) / $maint_taillimit), 2);
-
-                Log::debug('Disposable Special, Maintenance Check Expense (Landing Tail Strike) applied Pirep=' . $pirep->id);
+                // Log::debug('Disposable Special, Maintenance Check Expense (Landing Tail Strike) applied Pirep=' . $pirep->id);
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (Landing Tail Strike)');
 
                 if ($maint_user) {
@@ -142,10 +137,9 @@ class Expense_Maintenance
             }
 
             if (is_numeric($takeoff_pitch) && abs($takeoff_pitch) > $maint_taillimit) {
-                $service_cost = $this->MaintenanceChecks('Tail Strike Check', $pirep->aircraft, true);
+                $service_cost = $this->MaintenanceChecks('Tail Strike Check', $aircraft, true);
                 $service_cost = round($service_cost * (abs($takeoff_pitch) / $maint_taillimit), 2);
-
-                Log::debug('Disposable Special, Maintenance Check Expense (TakeOff Tail Strike) applied Pirep=' . $pirep->id);
+                // Log::debug('Disposable Special, Maintenance Check Expense (TakeOff Tail Strike) applied Pirep=' . $pirep->id);
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (TakeOff Tail Strike)');
 
                 if ($maint_user) {
@@ -154,14 +148,12 @@ class Expense_Maintenance
             }
         }
 
-        // Return The Array To Pirep Finance Service
         return $expenses;
     }
 
     // Generic Expense Array Generation Method
     public function MaintenanceExpense($group, $amount, $memo, $multiplier = false, $charge_user = false)
     {
-
         return new Expense([
             'type' => ExpenseType::FLIGHT,
             'amount' => $amount,
@@ -208,34 +200,33 @@ class Expense_Maintenance
             $flight_only = true;
         }
 
-        // Get Aircraft MTOW or Last TakeOff Weight with a fixed failsafe
         $mtow = $aircraft->mtow;
 
         if (!is_numeric($mtow)) {
-            $where_pirep = ['aircraft_id' => $aircraft->id, 'state' => 2, 'status' => 'ONB'];
-            $last_pirep = DB::table('pireps')->select('id')->where($where_pirep)->orderby('submitted_at', 'desc')->first();
-            $last_tow = DB::table('pirep_field_values')->where(['pirep_id' => $last_pirep->id, 'slug' => 'takeoff-weight'])->value('value');
-            $mtow = round($last_tow, 2);
+            // Try to get at last TOW
+            $last_pirep = Pirep::where(['aircraft_id' => $aircraft->id, 'state' => 2])->orderby('submitted_at', 'desc')->first();
+            $last_tow = optional($last_pirep->fields->where('slug', 'takeoff-weight')->first())->value;
+            $mtow = is_numeric($last_tow) ? round($last_tow, 2) : null;
 
-            if ($units['weight'] === 'kg' && is_numeric($mtow)) {
+            if (is_numeric($mtow) && $units['weight'] === 'kg') {
                 $mtow = round($mtow / 2.20462262185, 2);
             }
         }
 
         if (!is_numeric($mtow)) {
             if ($units['weight'] === 'kg') {
-                $mtow = 79015;
+                $mtow = 79015; // Fixed failsafe B738 MTOW metric
             } else {
-                $mtow = 174200;
+                $mtow = 174200; // Fixed failsafe B738 MTOW imperial
             }
         }
 
         $maintenance_cost = round(($unit_rate * $mtow) * $multiplier, 2);
-        Log::debug('Disposable Maintenance, Calculation Details T=' . $check . ' W=' . $mtow . ' ' . $units['weight'] . ' C=' . $maintenance_cost . ' ' . $units['currency']);
+        // Log::debug('Disposable Maintenance, Calculation Details T=' . $check . ' W=' . $mtow . ' ' . $units['weight'] . ' C=' . $maintenance_cost . ' ' . $units['currency']);
 
         // Change aircraft status, Write actual maintenance operation details
         if ($change_status) {
-            $ds_maint = DS_Maintenance::where('aircraft_id', $aircraft->id)->first();
+            $ds_maint = DS_Maintenance::with('aircraft.airline')->where('aircraft_id', $aircraft->id)->first();
 
             if ($ds_maint) {
                 // Durations
@@ -258,7 +249,7 @@ class Expense_Maintenance
                 $ds_maint->act_end = Carbon::now()->addMinutes($duration);
                 $ds_maint->save();
 
-                Log::debug('Disposable Maintenance, ' . $ds_maint->aircraft->registration . ' grounded until ' . Carbon::now()->addMinutes($duration));
+                Log::info('Disposable Maintenance, ' . $ds_maint->aircraft->registration . ' grounded until ' . Carbon::now()->addMinutes($duration));
             }
         }
 
@@ -267,8 +258,7 @@ class Expense_Maintenance
             return $maintenance_cost;
         }
 
-        // Get Airline And Charge The Amount
-        $airline = $aircraft->subfleet->airline;
+        $airline = $aircraft->airline;
 
         $amount = Money::createFromAmount($maintenance_cost);
         $financeSvc = app(FinanceService::class);
@@ -303,7 +293,7 @@ class Expense_Maintenance
 
         // Credit Airline
         $financeSvc->creditToJournal(
-            $pirep->aircraft->subfleet->airline->journal,
+            $pirep->aircraft->airline->journal,
             $amount,
             $pirep->user,
             $memo . ' User=' . $pirep->user->name_private . ' Pirep=' . $pirep->id,

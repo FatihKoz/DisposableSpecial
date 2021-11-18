@@ -23,24 +23,26 @@ class Gen_RandomFlights
             return;
         }
 
+        $pirep = $event->pirep;
+        $pirep->loadMissing('user.rank', 'user.journal', 'flight.airline');
+
         $where = [];
-        $where['user_id'] = $event->pirep->user_id;
-        $where['flight_id'] = $event->pirep->flight_id;
+        $where['user_id'] = $pirep->user_id;
+        $where['flight_id'] = $pirep->flight_id;
 
         if ($DBasic && $reward_rf) {
-            $random_flight = DB_RandomFlight::where($where)->whereNull('pirep_id')->whereDate('assign_date', $event->pirep->submitted_at)->first();
+            $random_flight = DB_RandomFlight::where($where)->whereNull('pirep_id')->whereDate('assign_date', $pirep->submitted_at)->first();
 
             if ($random_flight) {
                 $multiplier = DS_Setting('turksim.randomflights_multiplier', 10);
-                $this->RewardUser($event->pirep, $multiplier, 'Random Flights');
-
+                $this->RewardUser($pirep, $multiplier, 'Random Flights');
                 // Update Random Flight record to prevent further rewards
-                $random_flight->pirep_id = $event->pirep->id;
+                $random_flight->pirep_id = $pirep->id;
                 $random_flight->save();
             }
         }
 
-        $pirep_date = Carbon::parse($event->pirep->submitted_at);
+        $pirep_date = Carbon::parse($pirep->submitted_at);
 
         $where['assignment_year'] = $pirep_date->year;
         $where['assignment_month'] = $pirep_date->month;
@@ -50,10 +52,9 @@ class Gen_RandomFlights
 
             if ($assignment) {
                 $multiplier = DS_Setting('turksim.assignments_multiplier', 10);
-                $this->RewardUser($event->pirep, $multiplier, 'Monthly Flight Assignments');
-
+                $this->RewardUser($pirep, $multiplier, 'Monthly Flight Assignments');
                 // Update Assignment record to prevent further rewards
-                $assignment->pirep_id = $event->pirep->id;
+                $assignment->pirep_id = $pirep->id;
                 $assignment->pirep_date = Carbon::now();
                 $assignment->save();
             }
@@ -66,11 +67,7 @@ class Gen_RandomFlights
         $airline = $pirep->flight->airline;
         $today = Carbon::now()->format('Y-m-d');
         // Define Reward amount by base Rank payment
-        if ($pirep->source === 0) {
-            $base_rate = $user->rank->manual_base_pay_rate;
-        } else {
-            $base_rate = $user->rank->acars_base_pay_rate;
-        }
+        $base_rate = ($pirep->source === 0) ? $user->rank->manual_base_pay_rate : $user->rank->acars_base_pay_rate;
         // Or by the Flight's Pilot Pay
         if (is_numeric(optional($pirep->flight)->pilot_pay)) {
             $base_rate = $pirep->flight->pilot_pay;
@@ -80,7 +77,6 @@ class Gen_RandomFlights
         $amount = Money::createFromAmount($amount);
 
         $financeSvc = app(FinanceService::class);
-
         // Credit User
         $financeSvc->creditToJournal(
             $user->journal,
@@ -91,7 +87,6 @@ class Gen_RandomFlights
             'rewards',
             $today
         );
-
         // Debit Airline
         $financeSvc->debitFromJournal(
             $airline->journal,
