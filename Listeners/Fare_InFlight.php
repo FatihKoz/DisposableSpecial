@@ -21,7 +21,6 @@ class Fare_InFlight
         if ($df_method === 'disabled' && $bs_method === 'disabled') {
             return $fares;
         }
-
         // Airlines NOT offering Bouffet Sales
         $airline_codes = ['THY', 'SVA', 'AHO'];
 
@@ -29,15 +28,15 @@ class Fare_InFlight
         $pirep->loadMissing('airline', 'arr_airport', 'dpt_airport', 'fares.fare');
 
         $airline = $pirep->airline;
-        $fares = $pirep->fares;
         $orig = $pirep->dpt_airport;
         $dest = $pirep->arr_airport;
         // $currency = setting('units.currency');
+        $int = ($orig && $dest && $orig->country === $dest->country) ? false : true;
         $pax = null;
 
-        if ($fares->count() > 0) {
+        if ($pirep->fares->count() > 0) {
             $act_pax = 0;
-            foreach ($fares as $fare) {
+            foreach ($pirep->fares as $fare) {
                 if ($fare->fare->type === FareType::PASSENGER) {
                     $act_pax = $act_pax + $fare->count;
                 }
@@ -50,13 +49,10 @@ class Fare_InFlight
         if (!is_numeric($pax)) {
             return $fares;
         }
+        // Log::debug('Disposable Special, InFlight Sales | Flight=' . $pirep->ident . ' Total Passengers=' . $pax . ' Pirep=' . $pirep->id);
 
-        // Log::debug('Disposable Special, InFlight Sales | Flight=' . $airline->code . $pirep->flight_number . ' Total Passengers=' . $pax . ' Pirep=' . $pirep->id);
-        $int = ($orig && $dest && $orig->country === $dest->country) ? false : true;
-
-        // Duty Free Sales
         if ($df_method === 'int' && $int === true || $df_method === 'all') {
-
+            // Duty Free Sales
             $memo = 'InFlight Sales | Duty Free';
             $df_prices = explode(',', DS_Setting('turksim.income_dfprices', '5,10,15,20,25,30,35,40,45,50,55,60,65,70')); // Array of available items
             $df_cost = round((100 - intval(DS_Setting('turksim.income_dfprofit', '35'))) / 100, 2); // 0.65 Cost of each DutyFree item %35 profit on each item
@@ -88,9 +84,8 @@ class Fare_InFlight
             return $fares;
         }
 
-        // Bouffet Sales
         if ($bs_method === 'int' && $int === true || $bs_method === 'dom' && $int === false || $bs_method === 'all') {
-
+            // Bouffet Sales
             $memo = 'InFlight Sales | Cabin Bouffet';
             $bs_prices = explode(',', DS_Setting('turksim.income_bsprices', '1.5,2,2.5,3,4,5,6,7,8,9,10,11,14,18,20')); // Array of available item prices (coffee,tea,snack etc)
             $bs_cost = round((100 - intval(DS_Setting('turksim.income_bsprofit', '45'))) / 100, 2); // 0.55 Cost of each Bouffet item %45 profit on each item
