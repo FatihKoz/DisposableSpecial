@@ -58,6 +58,6 @@ class DSpecial_AirlineTour extends Award
             }
         }
 
-        return ($pirep_count > 0 && $tour->legs_count === $pirep_count) ? true : false;
+        return ($pirep_count > 0 && $tour->legs_count == $pirep_count) ? true : false;
     }
 }

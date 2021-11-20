@@ -241,6 +241,11 @@ If you have duplicated blades and encounter problems after updating the module o
 
 ## Release / Update Notes
 
+20.NOV.21
+
+* Tour Award classes fixed (equality type check)
+* Refactored auto comments (not active, still on test)
+
 18.NOV.21
 
 * Some refactoring at event listeners (dynamic income/expense/maintenance to gain performance)
