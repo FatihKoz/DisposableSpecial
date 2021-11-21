@@ -25,6 +25,6 @@ return [
     'tptitle'   => 'Tour in Esecuzione',
     'tpyour'    => 'Tuoi Tours:',
     'tpactive'  => 'Tour Attivi:',
-    'tpnotour'  => 'Non hai Tour Attivi...  ',
+    'tpnotour'  => 'Non hai Tour Attivi...',
     'tpclick'   => 'Click per vedere i Tour',
 ];
