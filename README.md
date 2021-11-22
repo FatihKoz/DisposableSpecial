@@ -241,6 +241,11 @@ If you have duplicated blades and encounter problems after updating the module o
 
 ## Release / Update Notes
 
+22.NOV.21
+
+* Fixed actual TOW and LW field checks (Airport Expenses)
+* Added Italian translation (Thanks to Fabietto for his support)
+
 20.NOV.21
 
 * Tour Award classes fixed (equality type check)

@@ -117,15 +117,15 @@ class Expense_Airport
             $act_lw = optional($pirep->fields->where('slug', 'landing-weight')->first())->value;
             $act_tow = optional($pirep->fields->where('slug', 'takeoff-weight')->first())->value;
 
-            if ($act_lw && is_numeric($act_lw->value)) {
-                $lw = round($act_lw->value);
+            if (is_numeric($act_lw)) {
+                $lw = round($act_lw);
                 if ($units['weight'] === 'kg') {
                     $lw = round($lw / 2.20462262185);
                 }
             }
 
-            if ($act_tow && is_numeric($act_tow->value)) {
-                $tow = round($act_tow->value);
+            if (is_numeric($act_tow)) {
+                $tow = round($act_tow);
                 if ($units['weight'] === 'kg') {
                     $tow = round($tow / 2.20462262185);
                 }
