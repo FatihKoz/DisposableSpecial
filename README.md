@@ -5,8 +5,7 @@ phpVMS v7 module for Extended VA features
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 Compatible with any latest development (dev) build of phpVMS v7 released after **09.NOV.21**.  
-Using this module along with *Disposable Basic* and *Disposable Theme* is highly advised but not mandatory.  
-Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
+Using this module along with *Disposable Basic* and *Disposable Theme* is highly advised but not mandatory. Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
 
 This module pack aims to cover extended needs of any Virtual Airline with some new pages, widgets and backend tools. Provides;
 
@@ -32,14 +31,15 @@ This module pack aims to cover extended needs of any Virtual Airline with some n
 Yes, the module is not FREE but it does not have fixed price tag too. So you will decide how much you donate and where you donate. Below you will see some options, and yes I am at the very last line of that list.
 
 * Religious Community (nearby church or mosque etc, people you really know helping others in need for the glory of God)
-* Neighborhood community (like the one above, helping homeless and poor)
-* Military staff community (like helping wounded soldiers of your country, those men risked their lives for us amd deserve some support from us too)
+* Neighborhood Community (like the one above, helping homeless and poor)
+* Military Staff Community (like helping wounded soldiers of your country, those men risked their lives for us amd deserve some support from us too)
 * Animal shelters nearby (yes, their lives are important too and much more important than most of crowd around us)
+* Any other humanitarian/animal charity for saving lives and helping the ones in need (like donating vaccines, or fighting with hunger at Africa etc)
 * Author of this module (if you really want to and can not find somewhere else for donation)
 
-How you can donate to me ? As this is the last choice, there are no pre-defined ways. You may gift something from simulation software shops (like gift cards etc) or just send me an email about it so we can find a way. You can follow me on Patreon for continuous monthly support (I really do not know how it works or even if I can get the money from them).
+How you can donate to me ? As this is the last choice, there are no pre-defined ways. You may gift something from simulation software shops (like gift cards/vouchers etc) or just send me an email about it so we can find a way. You can follow me on Patreon for continuous monthly support (I really do not know how it works or even if I can get the money from them).
 
-And just a friendly reminder, by doing a donation you will not own the code or will have priority support etc. As long as I am around, I will keep updating the module 'cause development never ends. But this does not mean that I will add everything to this module or when you request it :) If your request is reasonable and not va/company specific I may work on it. If not you may need to come up with our own solution, prefably as a separate module for yourself (so you can easily update this module when needed)
+And just a friendly reminder, by doing a donation you will not "own" the code or will have priority support etc. As long as I am around, I will keep updating the module 'cause development never ends. But this does not mean that I will add everything to this module or when you request it :) If your request is reasonable and not va/company specific I may work on it. If not you may need to come up with our own solution, preferably as a separate module for yourself (so you can easily update this module when needed)
 
 ## Installation and Updates
 
@@ -94,7 +94,7 @@ DSpecial.notams         /dnotams           // Notams index page
 DSpecial.ops_manual     /dopsmanual        // Operations Manual page (partly db driven, mostly static)
 DSpecial.landing_rates  /dlandingrates     // Landing Rates page (Static content)
 DSpecial.about_us       /daboutus          // About US page (Static content, public)
-DSpecial.rules_reg      /drulesandregs     // Rules and Regulations page (Static content, public)
+DSpecial.rules_regs     /drulesandregs     // Rules and Regulations page (Static content, public)
 ```
 
 Usage examples;
@@ -240,6 +240,10 @@ As you can see from the above example, filename and sub-folder location is not c
 If you have duplicated blades and encounter problems after updating the module or after editing, just rename them to see if the updated/provided original works fine.
 
 ## Release / Update Notes
+
+26.NOV.21
+
+* Added positive (or zero) landing rate failsafe for pirep based maintenance checks
 
 22.NOV.21
 

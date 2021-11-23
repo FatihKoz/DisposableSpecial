@@ -10,7 +10,6 @@ use App\Models\Enums\FuelType;
 use App\Services\FinanceService;
 use App\Support\Money;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableBasic\Models\DB_Tech;
 use Modules\DisposableSpecial\Models\DS_Maintenance;
@@ -47,7 +46,7 @@ class Expense_Maintenance
         $takeoff_pitch = optional($pirep->fields->where('slug', 'takeoff-pitch')->first())->value;
         $takeoff_roll = optional($pirep->fields->where('slug', 'takeoff-roll')->first())->value;
 
-        if (!is_numeric($landing_rate)) {
+        if (!is_numeric($landing_rate) || is_numeric($landing_rate) && !$landing_rate < 0) {
             $maint_hard = false;
             $maint_soft = false;
         }
