@@ -46,7 +46,7 @@ class Expense_Maintenance
         $takeoff_pitch = optional($pirep->fields->where('slug', 'takeoff-pitch')->first())->value;
         $takeoff_roll = optional($pirep->fields->where('slug', 'takeoff-roll')->first())->value;
 
-        if (!is_numeric($landing_rate) || is_numeric($landing_rate) && !$landing_rate < 0) {
+        if (!is_numeric($landing_rate) || is_numeric($landing_rate) && $landing_rate >= 0) {
             $maint_hard = false;
             $maint_soft = false;
         }
