@@ -4,7 +4,7 @@ phpVMS v7 module for Extended VA features
 
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
-Compatible with any latest development (dev) build of phpVMS v7 released after **09.NOV.21**.  
+Compatible with any latest development (dev) build of phpVMS v7 released after **30.NOV.21**.  
 Using this module along with *Disposable Basic* and *Disposable Theme* is highly advised but not mandatory. Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
 
 This module pack aims to cover extended needs of any Virtual Airline with some new pages, widgets and backend tools. Provides;
@@ -240,6 +240,10 @@ As you can see from the above example, filename and sub-folder location is not c
 If you have duplicated blades and encounter problems after updating the module or after editing, just rename them to see if the updated/provided original works fine.
 
 ## Release / Update Notes
+
+02.DEC.21
+
+* Modified admin handy functions (Return Aircraft to Hub, requires phpVms 7.0.0-dev+211130.c45d52 or later)
 
 26.NOV.21
 

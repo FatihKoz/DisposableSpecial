@@ -190,15 +190,18 @@ class DS_AdminController extends Controller
                 $this->AdjustFuelPrice($pct);
             }
         } elseif ($action === 'returnbase') {
-            // Return all aircrafts to their bases
-            $aircrafts = Aircraft::where('landing_time', '<', Carbon::today()->subDays(7))->get();
-            foreach ($aircrafts as $aircraft) {
-                if ($aircraft->subfleet->hub_id && $aircraft->airport_id != $aircraft->subfleet->hub_id) {
-                    $aircraft->airport_id = $aircraft->subfleet->hub_id;
-                    $aircraft->save();
+            // Return all aircraft to their bases
+            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::today()->subDays(7))->get();
+            foreach ($aircraft as $ac) {
+                if ($ac->hub_id && $ac->airport_id != $ac->hub_id) {
+                    $ac->airport_id = $ac->hub_id;
+                    $ac->save();
+                } elseif (!$ac->hub_id && $ac->subfleet->hub_id && $ac->airport_id != $ac->subfleet->hub_id) {
+                    $ac->airport_id = $ac->subfleet->hub_id;
+                    $ac->save();
                 }
             }
-            flash()->success('Aircrafts Returned to their Hubs.');
+            flash()->success('Fleet members returned to their hubs.');
         }
     }
 }

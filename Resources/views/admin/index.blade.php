@@ -49,9 +49,9 @@
       {{-- Middle --}}
       <div class="col-sm-4">
         <div class="card border-blue-bottom" style="padding:5px;">
-          <a href="{{ route('DSpecial.admin') }}?action=returnbase">Move Aircrafts To Their Hubs</a>
+          <a href="{{ route('DSpecial.admin') }}?action=returnbase">Return Aircraft To Their Hubs</a>
           <br><br>
-          <span class="text-info">Only aircrafts which are left over at airports with no movement for the <b>last 7 days</b> are affected. Also subfleet hubs must be defined !</span>
+          <span class="text-info">Only aircraft which are left over at airports with no movement for the <b>last 7 days</b> are affected. Also aircraft or subfleet hub must be defined!</span>
         </div>
         <div class="card border-blue-bottom" style="padding:5px;">
           <a href="{{ route('DSpecial.tour_admin') }}">Tours Management</a>
