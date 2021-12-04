@@ -22,6 +22,7 @@ class DS_AdminController extends Controller
     {
         if (filled($request->input('action'))) {
             $this->AdminActions($request->input('action'), $request);
+            return redirect()->route('DSpecial.admin');
         }
 
         $settings = DB::table('disposable_settings')->where('key', 'LIKE', 'turksim.%')->orWhere('key', 'LIKE', 'phpvms.%')->get();
