@@ -21,15 +21,13 @@ class DS_FreeFlightController extends Controller
     {
         $settings = [];
         $settings['ac_rank'] = setting('pireps.restrict_aircraft_to_rank', true);
+        $settings['ac_rating'] = setting('pireps.restrict_aircraft_to_typerating', false);
         $settings['sb_block'] = setting('simbrief.block_aircraft', false);
         $settings['sb_callsign'] = setting('simbrief.callsign', false);
         $settings['pilot_company'] = setting('pilots.restrict_to_company', false);
         $settings['pilot_location'] = setting('pilots.only_flights_from_current', false);
 
-        $eager_user = ['airline', 'last_pirep'];
-        if ($settings['ac_rank']) {
-            $eager_user[] = 'rank.subfleets';
-        }
+        $eager_user = ['airline', 'last_pirep', 'rank'];
 
         $user = User::with($eager_user)->find(Auth::id());
         $user_loc = optional($user)->curr_airport_id ?? optional($user)->home_airport_id;
@@ -41,7 +39,13 @@ class DS_FreeFlightController extends Controller
         $allowed_sf = [];
 
         if ($settings['ac_rank']) {
-            $allowed_sf = $user->rank->subfleets->pluck('id')->toArray();
+            $subfleets_rank = $user->rank->subfleets()->pluck('id')->toArray();
+            $allowed_sf = $subfleets_rank;
+        }
+
+        if ($settings['ac_rating']) {
+            $subfleets_rating = $user->rated_types()->pluck('id')->toArray();
+            $allowed_sf = filled($allowed_sf) ? array_intersect($allowed_sf, $subfleets_rating) : $subfleets_rating;
         }
 
         if ($settings['pilot_company']) {
@@ -69,7 +73,7 @@ class DS_FreeFlightController extends Controller
         }];
         $aircraft = Aircraft::withCount($withCount)
             ->where($ac_where)
-            ->when(($settings['ac_rank'] || $settings['pilot_company']), function ($query) use ($allowed_sf) {
+            ->when(($settings['ac_rank'] || $settings['ac_rating'] || $settings['pilot_company']), function ($query) use ($allowed_sf) {
                 return $query->whereIn('subfleet_id', $allowed_sf);
             })
             ->when($settings['sb_block'], function ($query) {
