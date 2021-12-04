@@ -245,7 +245,7 @@ If you have duplicated blades and encounter problems after updating the module o
 
 * Fixed possible migration errors when a custom table prefix is defined during phpvms install
 * Added "Type Ratings" restrictions support to Free Flight feature
-* Improved admin handy functions (to fix possible problematic "active" SimBrief packages)
+* Improved admin handy functions (to fix possible problematic "active" SimBrief packages)  
   ( Problematic = Has flight and pirep attachements but does not belong to an active flight/pirep, only blocking aircraft)
 
 02.DEC.21
