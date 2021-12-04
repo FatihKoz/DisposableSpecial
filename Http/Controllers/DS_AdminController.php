@@ -9,6 +9,7 @@ use App\Models\Bid;
 use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\SimBrief;
+use App\Models\Enums\PirepState;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -139,6 +140,19 @@ class DS_AdminController extends Controller
             // Clean ALL Unused SimBrief Packs
             SimBrief::whereNull('pirep_id')->delete();
             flash()->success('ALL Unused SimBrief packs deleted');
+        } elseif ($action === 'fixpsb') {
+            // Clean "active" looking but not properly handled SimBrief Packs
+            $active_pireps = DB::table('pireps')->where('state', PirepState::IN_PROGRESS)->orWhere('state', PirepState::PAUSED)->pluck('id')->toArray();
+            $sb_packs = SimBrief::whereNotNull('flight_id')->whereNotNull('pirep_id')->whereNotIn('pirep_id', $active_pireps)->get();
+            if (filled($sb_packs)) {
+                foreach ($sb_packs as $sb) {
+                    $sb->flight_id = null;
+                    $sb->save();
+                }
+                flash()->success('Problematic SimBrief packs fixed');
+            } else {
+                flash()->info('No problematic SimBrief packs found, nothing done');
+            }
         } elseif ($action === 'dist') {
             // Calculate Distance for flights with no gc distance
             $flights = Flight::whereNull('distance')->orwhere('distance', 1)->get();

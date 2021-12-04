@@ -91,6 +91,8 @@
         <div class="card border-blue-bottom" style="padding:5px;">
           <a href="{{ route('DSpecial.admin') }}?action=cleansb">Clean Old SimBrief Packages</a> | <a href="{{ route('DSpecial.admin') }}?action=cleansball">( Clean ALL )</a>
           <br><br>
+          <a href="{{ route('DSpecial.admin') }}?action=fixpsb">Fix Problematic SimBrief Packages</a>
+          <br><br>
           <span class="text-info">Only SimBrief Packs older than <b>3 Hours</b> and have no pirep attachements will be deleted.</span>
         </div>
         <div class="card border-blue-bottom" style="padding:5px;">
@@ -234,6 +236,6 @@
         </div>
       </div>
     </div>
-  @endif 
+  @endif
 
 @endsection

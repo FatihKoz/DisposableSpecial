@@ -241,6 +241,13 @@ If you have duplicated blades and encounter problems after updating the module o
 
 ## Release / Update Notes
 
+04.DEC.21
+
+* Fixed possible migration errors when a custom table prefix is defined during phpvms install
+* Added "Type Ratings" restrictions support to Free Flight feature
+* Improved admin handy functions (to fix possible problematic "active" SimBrief packages)
+  ( Problematic = Has flight and pirep attachements but does not belong to an active flight/pirep, only blocking aircraft)
+
 02.DEC.21
 
 * Modified admin handy functions (Return Aircraft to Hub, requires phpVms 7.0.0-dev+211130.c45d52 or later)
