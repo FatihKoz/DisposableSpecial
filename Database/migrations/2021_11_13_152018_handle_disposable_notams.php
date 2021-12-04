@@ -29,8 +29,8 @@ class HandleDisposableNotams extends Migration
 
         if (Schema::hasTable('turksim_notams') && !Schema::hasTable('disposable_notams')) {
             Schema::table('turksim_notams', function (Blueprint $table) {
-                $table->dropIndex('turksim_notams_id_index');
-                $table->dropUnique('turksim_notams_id_unique');
+                $table->dropIndex(['id']);
+                $table->dropUnique(['id']);
             });
 
             Schema::rename('turksim_notams', 'disposable_notams');

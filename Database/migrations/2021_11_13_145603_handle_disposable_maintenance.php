@@ -72,9 +72,9 @@ class HandleDisposableMaintenance extends Migration
 
         if (Schema::hasTable('turksim_maintenance') && !Schema::hasTable('disposable_maintenance')) {
             Schema::table('turksim_maintenance', function (Blueprint $table) {
-                $table->dropIndex('turksim_maintenance_id_index');
-                $table->dropUnique('turksim_maintenance_id_unique');
-                $table->dropUnique('turksim_maintenance_aircraft_id_unique');
+                $table->dropIndex(['id']);
+                $table->dropUnique(['id']);
+                $table->dropUnique(['aircraft_id']);
             });
 
             Schema::rename('turksim_maintenance', 'disposable_maintenance');

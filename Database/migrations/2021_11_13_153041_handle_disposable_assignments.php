@@ -26,8 +26,8 @@ class HandleDisposableAssignments extends Migration
 
         if (Schema::hasTable('turksim_assignments') && !Schema::hasTable('disposable_assignments')) {
             Schema::table('turksim_assignments', function (Blueprint $table) {
-                $table->dropIndex('turksim_assignments_id_index');
-                $table->dropUnique('turksim_assignments_id_unique');
+                $table->dropIndex(['id']);
+                $table->dropUnique(['id']);
             });
 
             Schema::rename('turksim_assignments', 'disposable_assignments');

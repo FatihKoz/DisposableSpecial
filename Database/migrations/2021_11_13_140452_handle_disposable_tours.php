@@ -45,8 +45,8 @@ class HandleDisposableTours extends Migration
 
         if (Schema::hasTable('turksim_tours') && !Schema::hasTable('disposable_tours')) {
             Schema::table('turksim_tours', function (Blueprint $table) {
-                $table->dropIndex('turksim_tours_id_index');
-                $table->dropUnique('turksim_tours_id_unique');
+                $table->dropIndex(['id']);
+                $table->dropUnique(['id']);
             });
 
             Schema::rename('turksim_tours', 'disposable_tours');
