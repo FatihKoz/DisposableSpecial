@@ -5,6 +5,7 @@ phpVMS v7 module for Extended VA features
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 Compatible with any latest development (dev) build of phpVMS v7 released after **30.NOV.21**.  
+*Module is tested/being used with php versions: 7.4, 8.0.x but NOT with 8.1.x yet.*
 Using this module along with *Disposable Basic* and *Disposable Theme* is highly advised but not mandatory. Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
 
 This module pack aims to cover extended needs of any Virtual Airline with some new pages, widgets and backend tools. Provides;
@@ -239,12 +240,23 @@ All Disposable Modules are capable of displaying customized files located under 
 As you can see from the above example, filename and sub-folder location is not changed. We only copy a file from a location to another and have a copied version of it.  
 If you have duplicated blades and encounter problems after updating the module or after editing, just rename them to see if the updated/provided original works fine.
 
+## Known Bugs / Problems
+
+If you are using an SSL certificate and your hosting's http > https redirection logic is somehow different, or not done properly you may loose valueable data specially when submitting forms. And when this happens, you will either get an error saying *"GET" method is not supported by the route and it should be "POST" instead* or at best the changes you want to make with that form will not be saved at all.
+
+Personally I am using an SSL certificate and it is working fine, even with the redirection defined by me at CPanel it works fine. What you can do maybe is, using url's starting with https:// in your links/favorites to avoid on-the-fly redirections being applied, or you can request support from your hosting company to re-define them etc.
+
+Even though the forms and routes are tested with possible scenarios, there is no much here I can offer you to solve hosting/redirection/certificate related issues. Sorry about that.
+
 ## Release / Update Notes
+
+05.DEC.21
+
+* Added "Type Ratings" support to Free Flight and Monthly Flight Assignments features
 
 04.DEC.21
 
 * Fixed possible migration errors when a custom table prefix is defined during phpvms install
-* Added "Type Ratings" restrictions support to Free Flight feature
 * Improved admin handy functions (to fix possible problematic "active" SimBrief packages)  
   (Problematic = Has flight and pirep attachements but does not belong to an active flight/pirep, only blocking aircraft)
 

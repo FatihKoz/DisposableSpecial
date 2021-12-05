@@ -5,6 +5,7 @@ namespace Modules\DisposableSpecial\Http\Controllers;
 use App\Contracts\Controller;
 use App\Models\Flight;
 use App\Models\User;
+use App\Services\UserService;
 use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -195,7 +196,8 @@ class DS_AssignmentController extends Controller
         // Suitable flights
         $force_airline = setting('pilots.restrict_to_company', false);
         $force_hubs = DS_Setting('turksim.assignments_usehubs', false);
-        $force_rank = setting('pireps.restrict_aircraft_to_rank', false);
+        $force_rank = setting('pireps.restrict_aircraft_to_rank', true);
+        $force_rate = setting('pireps.restrict_aircraft_to_typerating', false);
         $prefer_icao = DS_Setting('turksim.assignments_preficao', false);
 
         $where_flight = [];
@@ -210,25 +212,38 @@ class DS_AssignmentController extends Controller
             $where_flight['dpt_airport_id'] = filled($user->curr_airport_id) ? $user->curr_airport_id : $user->home_airport_id;
         }
 
+        if ($force_rank || $force_rate) {
+            // Get what the user is allowed to fly
+            $userSvc = app(UserService::class);
+            $restricted_to = $userSvc->getAllowableSubfleets($user);
+            $allowed_subfleets = $restricted_to->pluck('id')->toArray();
+        } else {
+            $allowed_subfleets = null;
+        }
+
         if ($prefer_icao) {
-            // Preferred ICAO types (detirmined by pireps)
+            // Preferred ICAO types (determined by accepted pireps also gets through allowed subfleets)
             $used_aircraft = DB::table('pireps')->where($where_pirep)->whereNotNull('aircraft_id')->groupby('aircraft_id')->pluck('aircraft_id')->toArray();
             $used_types = DB::table('aircraft')->whereIn('id', $used_aircraft)->groupby('icao')->pluck('icao')->toArray();
-            $subfleets = DB::table('aircraft')->whereIn('icao', $used_types)->groupby('subfleet_id')->pluck('subfleet_id')->toArray();
+            $subfleets = DB::table('aircraft')->whereIn('icao', $used_types)
+                ->when(($force_rank || $force_rate), function ($query) use ($allowed_subfleets) {
+                    return $query->whereIn('subfleet_id', $allowed_subfleets);
+                })->groupby('subfleet_id')->pluck('subfleet_id')->toArray();
         } else {
-            // Allowed subfleets by rank or all
-            $subfleets = ($force_rank) ? $user->rank->subfleets()->pluck('id')->toArray() : DB::table('subfleets')->pluck('id')->toArray();
+            // Allowed subfleets by rank/type rating or all
+            $subfleets = ($force_rank || $force_rate) ? $allowed_subfleets : DB::table('subfleets')->pluck('id')->toArray();
         }
 
         $suitable_flights = [];
-        if ($prefer_icao || $force_rank) {
+        if ($prefer_icao || $force_rank || $force_rate) {
             $suitable_flights = DB::table('flight_subfleet')->whereIn('subfleet_id', $subfleets)->groupby('flight_id')->pluck('flight_id')->toArray();
 
             if (is_countable($suitable_flights) && count($suitable_flights) === 0) {
                 // No subfleets found assigned to flights, revert restrictions to false and move on
-                Log::debug('Disposable Assignments, Subfleets not assigned to flights. Reverting to less-restricted mode');
+                Log::debug('Disposable Assignments, No suitable flights found (by prefered icao/rank/rating)! Reverting to less-restricted mode');
                 $prefer_icao = false;
                 $force_rank = false;
+                $force_rate = false;
             }
         }
 
@@ -249,7 +264,7 @@ class DS_AssignmentController extends Controller
                 ->when(($avoid_flown || $avoid_tours), function ($query) use ($avoid_array) {
                     return $query->whereNotIn('id', $avoid_array);
                 })
-                ->when(($prefer_icao || $force_rank), function ($query) use ($suitable_flights) {
+                ->when(($prefer_icao || $force_rank || $force_rate), function ($query) use ($suitable_flights) {
                     return $query->whereIn('id', $suitable_flights);
                 })
                 ->get();

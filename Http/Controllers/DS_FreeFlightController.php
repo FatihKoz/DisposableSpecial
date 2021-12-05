@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Enums\AircraftState;
 use App\Models\Enums\AircraftStatus;
 use App\Services\AirportService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,14 +39,10 @@ class DS_FreeFlightController extends Controller
         $sf_where = [];
         $allowed_sf = [];
 
-        if ($settings['ac_rank']) {
-            $subfleets_rank = $user->rank->subfleets()->pluck('id')->toArray();
-            $allowed_sf = $subfleets_rank;
-        }
-
-        if ($settings['ac_rating']) {
-            $subfleets_rating = $user->rated_types()->pluck('id')->toArray();
-            $allowed_sf = filled($allowed_sf) ? array_intersect($allowed_sf, $subfleets_rating) : $subfleets_rating;
+        if ($settings['ac_rank'] || $settings['ac_rating']) {
+            $userSvc = app(UserService::class);
+            $restricted_to = $userSvc->getAllowableSubfleets($user);
+            $allowed_sf = $restricted_to->pluck('id')->toArray();
         }
 
         if ($settings['pilot_company']) {
