@@ -59,6 +59,11 @@
           <span class="text-info">Manage your tours, insert or edit here.<br>(Legs must be defined/edited via PhpVms Admin > Flights)</span>
         </div>
         <div class="card border-blue-bottom" style="padding:5px;">
+          <a href="{{ route('DSpecial.event_admin') }}">Events Management</a>
+          <br><br>
+          <span class="text-info">Manage your events, insert or edit here.<br>(Legs must be defined/edited via PhpVms Admin > Flights)</span>
+        </div>
+        <div class="card border-blue-bottom" style="padding:5px;">
           <a href="{{ route('DSpecial.notam_admin') }}">Notams Management</a>
           <br><br>
           <span class="text-info">Manage your notams, insert or edit here.</span>
@@ -89,9 +94,9 @@
       {{-- Right --}}
       <div class="col-sm-4">
         <div class="card border-blue-bottom" style="padding:5px;">
-          <b>SimBrief Packs:</b> 
-          <a href="{{ route('DSpecial.admin') }}?action=cleansb"> Clean Old</a> | 
-          <a href="{{ route('DSpecial.admin') }}?action=cleansball"> Clean ALL</a> | 
+          <b>SimBrief Packs:</b>
+          <a href="{{ route('DSpecial.admin') }}?action=cleansb"> Clean Old</a> |
+          <a href="{{ route('DSpecial.admin') }}?action=cleansball"> Clean ALL</a> |
           <a href="{{ route('DSpecial.admin') }}?action=fixpsb"> Fix Problems</a>
           <br><br>
           <span class="text-info">Only SimBrief Packs older than <b>3 Hours</b> and have no pirep attachements will be deleted.</span>

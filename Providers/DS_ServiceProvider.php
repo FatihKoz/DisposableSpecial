@@ -94,6 +94,15 @@ class DS_ServiceProvider extends ServiceProvider
             // Tour Admin Routes
             Route::get('dtour_admin', 'DS_TourController@index_admin')->name('tour_admin');
             Route::post('dtour_store', 'DS_TourController@store')->name('tour_store');
+            // Event Admin Routes
+            Route::get('devent_admin', 'DS_EventController@index_admin')->name('event_admin');
+            Route::post('devent_store', 'DS_EventController@store')->name('event_store');
+            Route::match([
+                'get',
+                'post',
+                'put',
+                'delete',
+            ], 'devent_admin/{id}/users', 'DS_EventController@users');
         });
     }
 
