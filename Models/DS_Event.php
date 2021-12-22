@@ -7,10 +7,6 @@ use App\Models\Flight;
 use App\Models\User;
 use Carbon\Carbon;
 
-/**
- * Class DS_Event
- * @package Modules\DisposableSpecial\Models
- */
 class DS_Event extends Model
 {
     public $table = 'disposable_events';
@@ -21,7 +17,7 @@ class DS_Event extends Model
         'event_desc',
         'start_date',
         'end_date',
-        'public'
+        'public',
     ];
 
     public static $rules = [
@@ -29,7 +25,7 @@ class DS_Event extends Model
         'event_code'    => 'required|max:5',
         'event_desc'    => 'nullable',
         'start_date'    => 'required',
-        'end_date'      => 'required',
+        'end_date'      => 'nullable',
         'public'        => 'nullable',
     ];
 
@@ -48,6 +44,6 @@ class DS_Event extends Model
     // Relationship with users (pilots)
     public function users()
     {
-        return $this->belongsToMany(User::class, 'disposable_events_users', 'event_id', 'user_id');
+        return $this->belongsToMany(User::class, 'disposable_event_user', 'event_id', 'user_id');
     }
 }
