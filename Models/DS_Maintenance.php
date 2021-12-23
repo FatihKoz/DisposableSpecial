@@ -75,17 +75,17 @@ class DS_Maintenance extends Model
         }
 
         // A Check
-        $limits->cycle_a = !empty($dtech->cycle_a) ? $dtech->cycle_a : DS_Setting('turksim.maint_lim_ac', 250);
-        $limits->time_a = 60 * (!empty($dtech->time_a) ? $dtech->time_a : DS_Setting('turksim.maint_lim_at', 500));
-        $limits->duration_a = 60 * (!empty($dtech->hour_a) ? $dtech->hour_a : DS_Setting('turksim.maint_hours_a', 10));
+        $limits->cycle_a = !empty($dtech->max_cycle_a) ? $dtech->max_cycle_a : DS_Setting('turksim.maint_lim_ac', 250);
+        $limits->time_a = 60 * (!empty($dtech->max_time_a) ? $dtech->max_time_a : DS_Setting('turksim.maint_lim_at', 500));
+        $limits->duration_a = 60 * (!empty($dtech->duration_a) ? $dtech->duration_a : DS_Setting('turksim.maint_hours_a', 10));
         // B Check
-        $limits->cycle_b = !empty($dtech->cycle_b) ? $dtech->cycle_b : DS_Setting('turksim.maint_lim_bc', 500);
-        $limits->time_b = 60 * (!empty($dtech->time_b) ? $dtech->time_b : DS_Setting('turksim.maint_lim_bt', 1000));
-        $limits->duration_b = 60 * (!empty($dtech->hour_b) ? $dtech->hour_b : DS_Setting('turksim.maint_hours_b', 48));
+        $limits->cycle_b = !empty($dtech->max_cycle_b) ? $dtech->max_cycle_b : DS_Setting('turksim.maint_lim_bc', 500);
+        $limits->time_b = 60 * (!empty($dtech->max_time_b) ? $dtech->max_time_b : DS_Setting('turksim.maint_lim_bt', 1000));
+        $limits->duration_b = 60 * (!empty($dtech->duration_b) ? $dtech->duration_b : DS_Setting('turksim.maint_hours_b', 48));
         // C Check
-        $limits->cycle_c = !empty($dtech->cycle_c) ? $dtech->cycle_c : DS_Setting('turksim.maint_lim_cc', 2500);
-        $limits->time_c = 60 * (!empty($dtech->time_c) ? $dtech->time_c : DS_Setting('turksim.maint_lim_ct', 5000));
-        $limits->duration_c = 60 * (!empty($dtech->hour_c) ? $dtech->hour_c : DS_Setting('turksim.maint_hours_c', 120));
+        $limits->cycle_c = !empty($dtech->max_cycle_c) ? $dtech->max_cycle_c : DS_Setting('turksim.maint_lim_cc', 2500);
+        $limits->time_c = 60 * (!empty($dtech->max_time_c) ? $dtech->max_time_c : DS_Setting('turksim.maint_lim_ct', 5000));
+        $limits->duration_c = 60 * (!empty($dtech->duration_c) ? $dtech->duration_c : DS_Setting('turksim.maint_hours_c', 120));
         // Pitch and Roll Limits
         $limits->pitch = !empty($dtech->max_pitch) ? $dtech->max_pitch : DS_Setting('turksim.maint_strtail_limit', 15);
         $limits->roll = !empty($dtech->max_roll) ? $dtech->max_roll : DS_Setting('turksim.maint_strwing_limit', 10);
