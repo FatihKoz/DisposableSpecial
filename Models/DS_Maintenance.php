@@ -64,7 +64,9 @@ class DS_Maintenance extends Model
         'op_type'     => 'nullable',
     ];
 
-    // Check Max Limit Attribute
+    // Limits Attribute
+    // Via Disposable Basic > Tech Model
+    // Use module settings as failsafe
     public function getLimitsAttribute()
     {
         $limits = new stdClass();
