@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
+use Modules\DisposableSpecial\Models\DS_Event;
 use Modules\DisposableSpecial\Models\DS_Tour;
 
 // Generate automatic fare price based on GC distance
@@ -292,5 +293,58 @@ if (!function_exists('DS_IsTourLegFlown')) {
         }
 
         return ($aircraft_check && $airline_check && $date_check) ? true : false;
+    }
+}
+
+// Event Specific Helpers
+
+// Check if the user has an accepted pirep for a particular event Leg
+// Check all details for events like code, leg, dates, aircraft
+// Return boolean
+if (!function_exists('DS_IsEventLegFlown')) {
+    function DS_IsEventLegFlown($event_id, $flight_id, $user_id)
+    {
+        $event = DS_Event::with('flights.subfleets')->where('id', $event_id)->first();
+        $flight = $event->flights->where('id', $flight_id)->first();
+        // Get User's Pirep either with Flight ID (acars or prefile via button) or pinpoint with more details (manual or free flight)
+        $pirep = Pirep::with('aircraft')->where([
+            'user_id'   => $user_id,
+            'flight_id' => $flight->id,
+            'state'     => 2,
+            'status'    => 'ONB',
+        ])->orWhere('user_id', $user_id)->where([
+            'route_code'     => $flight->route_code,
+            'route_leg'      => $flight->route_leg,
+            'dpt_airport_id' => $flight->dpt_airport_id,
+            'arr_airport_id' => $flight->arr_airport_id,
+            'state'          => 2,
+            'status'         => 'ONB',
+        ])->orderby('submitted_at', 'desc')->first();
+
+        // Get The Dates either for Flight or the Tour
+        $start_date = $flight->start_date ?? $event->start_date;
+        $end_date = ($flight->end_date ?? $event->end_date) ?? Carbon::now();
+
+        // Define Default Check Results
+        $aircraft_check = false;
+        $date_check = false;
+
+        if ($pirep) {
+            // Check Dates
+            if ($pirep->submitted_at->between($start_date, $end_date)) {
+                $date_check = true;
+            }
+
+            // Aircraft Check
+            if ($flight->subfleets->count() > 0) {
+                if ($flight->subfleets->contains('id', $pirep->aircraft->subfleet_id)) {
+                    $aircraft_check = true;
+                }
+            } else {
+                $aircraft_check = true;
+            }
+        }
+
+        return ($aircraft_check && $date_check) ? true : false;
     }
 }

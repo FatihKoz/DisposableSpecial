@@ -24,19 +24,120 @@ class DS_EventController extends Controller
         $with = ['users', 'flights'];
         $withCount = ['users' => function ($query) use ($user_id) {
             $query->where('user_id', $user_id);
-        }];
+        }, 'flights'];
 
         $events = DS_Event::withCount($withCount)->with($with)->where(function ($query) use ($now) {
             $query->where('start_date', '<', $now)->where('end_date', '>', $now)->orWhere('start_date', '<', $now)->whereNull('end_date');
-        })->having('users_count', '>', 0)->paginate(20);
+        })->having('users_count', '>', 0)->orderby('start_date')->orderby('event_name')->get();
 
-        // we need to return the $events to a view
+        
+        return view('DSpecial::events.index', [
+            'events'    => $events
+        ]);
     }
 
     // Frontend Event Details
     public function show($code)
     {
-        // Event details if we need to show them like the tours, may not be needed though
+        if (!$code) {
+            flash()->error('Tour not specified !');
+            return redirect(route('DSpecial.tours'));
+        }
+
+        $with = ['users', 'flights.dpt_airport', 'flights.arr_airport', 'flights.airline'];
+        $withCount = ['users' => function ($query) {
+            $query->where('user_id', Auth::id());
+        }, 'flights'];
+
+        $event = DS_Event::withCount($withCount)->with($with)->where('event_code', $code)->having('users_count', '>', 0)->first();
+
+        if (!$event) {
+            flash()->error('Event not found !');
+            return redirect(route('DSpecial.events'));
+        }
+
+        // Map Center
+        $user = User::with('current_airport')->find(Auth::id());
+
+        if ($user && $user->current_airport && $event->flights->contains('dpt_airport_id', $user->current_airport->id)) {
+            $user_mapCenter = $user->current_airport->lat . ',' . $user->current_airport->lon;
+            $user_loc = $user->current_airport->id;
+        } else {
+            $tour_mapCenter = setting('acars.center_coords');
+        }
+
+        foreach ($event->flights->where('route_leg', 1) as $fleg) {
+            $tour_mapCenter = $fleg->dpt_airport->lat . ',' . $fleg->dpt_airport->lon;
+        }
+
+        // Map Icons Array
+        $mapIcons = [];
+
+        $vmsUrl = public_asset('/assets/img/acars/marker.png');
+        $RedUrl = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png';
+        $GreenUrl = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png';
+        $BlueUrl = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png';
+        $YellowUrl = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png';
+
+        $shadowUrl = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png';
+        $iconSize = [12, 20];
+        $shadowSize = [20, 20];
+
+        $mapIcons['vmsIcon'] = json_encode(['iconUrl' => $vmsUrl, 'shadowUrl' => $shadowUrl, 'iconSize' => $iconSize, 'shadowSize' => $shadowSize]);
+        $mapIcons['RedIcon'] = json_encode(['iconUrl' => $RedUrl, 'shadowUrl' => $shadowUrl, 'iconSize' => $iconSize, 'shadowSize' => $shadowSize]);
+        $mapIcons['GreenIcon'] = json_encode(['iconUrl' => $GreenUrl, 'shadowUrl' => $shadowUrl, 'iconSize' => $iconSize, 'shadowSize' => $shadowSize]);
+        $mapIcons['BlueIcon'] = json_encode(['iconUrl' => $BlueUrl, 'shadowUrl' => $shadowUrl, 'iconSize' => $iconSize, 'shadowSize' => $shadowSize]);
+        $mapIcons['YellowIcon'] = json_encode(['iconUrl' => $YellowUrl, 'shadowUrl' => $shadowUrl, 'iconSize' => $iconSize, 'shadowSize' => $shadowSize]);
+
+        // Map Airport Array
+        $mapAirports = [];
+
+        $airports_pack = collect();
+        foreach ($event->flights as $flight) {
+            $airports_pack->push($flight->dpt_airport);
+            $airports_pack->push($flight->arr_airport);
+        }
+        $airports = $airports_pack->unique('id');
+
+        foreach ($airports as $airport) {
+            $apop = '<a href="' . route('frontend.airports.show', [$airport->id]) . '" target="_blank">' . $airport->id . ' ' . str_replace("'", "", $airport->name) . '</a>';
+            if (isset($user_loc) && $user_loc === $airport->id) {
+                $iconColor = "YellowIcon";
+            } else {
+                $iconColor = "BlueIcon";
+            }
+            $mapAirports[] = [
+                'id'   => $airport->id,
+                'loc'  => $airport->lat . ', ' . $airport->lon,
+                'pop'  => $apop,
+                'icon' => $iconColor,
+            ];
+        }
+
+        // Map Flights Array
+        $mapFlights = [];
+
+        foreach ($event->flights as $mf) {
+            $pop = '<a href="/flights/' . $mf->id . '" target="_blank"><b>Leg #';
+            $pop .= $mf->route_leg . ': ' . $mf->airline->code . $mf->flight_number . ' ' . $mf->dpt_airport_id . '-' . $mf->arr_airport_id;
+            $pop .= '</b></a>';
+
+            $mapFlights[] = [
+                'id'   => $mf->id,
+                'geod' => '[[' . $mf->dpt_airport->lat . ',' . $mf->dpt_airport->lon . '],[' . $mf->arr_airport->lat . ',' . $mf->arr_airport->lon . ']]',
+                'geoc' => (DS_IsEventLegFlown($event->id, $mf->id, optional($user)->id) === true) ? 'Flown' : 'NotFlown',
+                'pop'  => $pop,
+            ];
+        }
+
+        return view('DSpecial::events.show', [
+            'event'       => $event,
+            'mapIcons'    => $mapIcons,
+            'mapCenter'   => isset($user_mapCenter) ? '['.$user_mapCenter.']' : '['.$tour_mapCenter.']',
+            'mapAirports' => $mapAirports,
+            'mapFlights'  => $mapFlights,
+            'test'        => null, // $airports_unique,
+        ]);
     }
 
     // Events Admin Index
