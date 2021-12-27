@@ -30,9 +30,8 @@ class DS_EventController extends Controller
             $query->where('start_date', '<', $now)->where('end_date', '>', $now)->orWhere('start_date', '<', $now)->whereNull('end_date');
         })->having('users_count', '>', 0)->orderby('start_date')->orderby('event_name')->get();
 
-        
         return view('DSpecial::events.index', [
-            'events'    => $events
+            'events' => $events
         ]);
     }
 
@@ -40,13 +39,15 @@ class DS_EventController extends Controller
     public function show($code)
     {
         if (!$code) {
-            flash()->error('Tour not specified !');
-            return redirect(route('DSpecial.tours'));
+            flash()->error('Event not specified !');
+            return redirect(route('DSpecial.events'));
         }
 
+        $user_id = Auth::id();
+
         $with = ['users', 'flights.dpt_airport', 'flights.arr_airport', 'flights.airline'];
-        $withCount = ['users' => function ($query) {
-            $query->where('user_id', Auth::id());
+        $withCount = ['users' => function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
         }, 'flights'];
 
         $event = DS_Event::withCount($withCount)->with($with)->where('event_code', $code)->having('users_count', '>', 0)->first();
@@ -57,17 +58,17 @@ class DS_EventController extends Controller
         }
 
         // Map Center
-        $user = User::with('current_airport')->find(Auth::id());
+        $user = User::with('current_airport')->find($user_id);
 
         if ($user && $user->current_airport && $event->flights->contains('dpt_airport_id', $user->current_airport->id)) {
             $user_mapCenter = $user->current_airport->lat . ',' . $user->current_airport->lon;
             $user_loc = $user->current_airport->id;
         } else {
-            $tour_mapCenter = setting('acars.center_coords');
+            $event_mapCenter = setting('acars.center_coords');
         }
 
         foreach ($event->flights->where('route_leg', 1) as $fleg) {
-            $tour_mapCenter = $fleg->dpt_airport->lat . ',' . $fleg->dpt_airport->lon;
+            $event_mapCenter = $fleg->dpt_airport->lat . ',' . $fleg->dpt_airport->lon;
         }
 
         // Map Icons Array
@@ -101,7 +102,9 @@ class DS_EventController extends Controller
 
         foreach ($airports as $airport) {
             $apop = '<a href="' . route('frontend.airports.show', [$airport->id]) . '" target="_blank">' . $airport->id . ' ' . str_replace("'", "", $airport->name) . '</a>';
-            if (isset($user_loc) && $user_loc === $airport->id) {
+            if (
+                isset($user_loc) && $user_loc === $airport->id
+            ) {
                 $iconColor = "YellowIcon";
             } else {
                 $iconColor = "BlueIcon";
@@ -133,7 +136,7 @@ class DS_EventController extends Controller
         return view('DSpecial::events.show', [
             'event'       => $event,
             'mapIcons'    => $mapIcons,
-            'mapCenter'   => isset($user_mapCenter) ? '['.$user_mapCenter.']' : '['.$tour_mapCenter.']',
+            'mapCenter'   => isset($user_mapCenter) ? '[' . $user_mapCenter . ']' : '[' . $event_mapCenter . ']',
             'mapAirports' => $mapAirports,
             'mapFlights'  => $mapFlights,
             'test'        => null, // $airports_unique,
