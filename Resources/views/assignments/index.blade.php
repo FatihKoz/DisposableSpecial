@@ -52,7 +52,11 @@
                     </a>
                   @endif
                 </td>
-                <td class="text-center">@minutestotime($as->flight->flight_time)</td>
+                <td class="text-center">
+                  @if($as->flight)
+                    @minutestotime($as->flight->flight_time)
+                  @endif
+                </td>
                 <td class="text-center" style="width: 3%;">
                   @if($as->completed)
                     @if(filled($as->pirep_id))

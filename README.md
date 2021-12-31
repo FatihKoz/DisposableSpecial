@@ -250,6 +250,11 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
+31.DEC.21
+
+* Fixed the missing failsafe of Monthly Flight Assignments
+* Fixed the typo error braking maintenance limits defined at Disposable Basic ICAO level
+
 05.DEC.21
 
 * Added "Type Ratings" support to Free Flight and Monthly Flight Assignments features
