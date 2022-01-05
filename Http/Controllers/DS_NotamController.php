@@ -36,8 +36,8 @@ class DS_NotamController extends Controller
 
         $notams = DS_Notam::with('airline', 'airport')->where($where)
             ->where(function ($query) use ($now) {
-                $query->where('eff_start', '<', $now)->where('eff_end', '>', $now)
-                    ->orWhere('eff_start', '<', $now)->whereNull('eff_end');
+                $query->whereDate('eff_start', '<=', $now)->whereDate('eff_end', '>=', $now)
+                    ->orWhereDate('eff_start', '<=', $now)->whereNull('eff_end');
             })->orderby('updated_at', 'desc')
             ->paginate(15);
 
