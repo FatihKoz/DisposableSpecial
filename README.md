@@ -250,6 +250,10 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
+05.JAN.22
+
+* Fixed a bug at NOTAM controller effecting proper display of effective NOTAMs
+
 31.DEC.21
 
 * Fixed the missing failsafe of Monthly Flight Assignments
