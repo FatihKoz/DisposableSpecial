@@ -7,6 +7,7 @@ use App\Models\Airline;
 use App\Models\Flight;
 use App\Models\Subfleet;
 use App\Models\User;
+use Carbon\Carbon;
 use Modules\DisposableSpecial\Models\DS_Tour;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,8 @@ class DS_TourController extends Controller
         $tours = DS_Tour::withCount('legs')->with('airline')->where('active', 1)->orderby('start_date')->orderby('tour_name')->get();
 
         return view('DSpecial::tours.index', [
-            'tours' => $tours
+            'tours'      => $tours, 
+            'carbon_now' => Carbon::now(),
         ]);
     }
 
@@ -30,17 +32,26 @@ class DS_TourController extends Controller
             return redirect(route('DSpecial.tours'));
         }
 
-        $tour = DS_Tour::withCount('legs')->with('legs.dpt_airport', 'legs.arr_airport', 'legs.airline', 'airline')->where('tour_code', $code)->first();
+        $tour = DS_Tour::withCount('legs')->with([
+            'legs' => function ($query) {
+                $query->withCount('subfleets');
+            },
+            'legs.dpt_airport',
+            'legs.arr_airport',
+            'legs.airline',
+            'airline',
+        ])->where('tour_code', $code)->first();
 
         if (!$tour) {
             flash()->error('Tour not found !');
             return redirect(route('DSpecial.tours'));
         }
 
-        // Map Center
+        // Logged in user
         $user = User::with('current_airport')->find(Auth::id());
 
-        if ($user && $user->current_airport && $tour->legs->contains('dpt_airport_id', $user->current_airport->id)) {
+        // Map Center
+        if ($user && $user->current_airport && filled($tour->legs()->where('dpt_airport_id', $user->current_airport->id))) {
             $user_mapCenter = $user->current_airport->lat . ',' . $user->current_airport->lon;
             $user_loc = $user->current_airport->id;
         } else {
@@ -95,29 +106,35 @@ class DS_TourController extends Controller
             ];
         }
 
-        // Map Flights Array
+        // Map Flights with Leg Checks (via pireps)
         $mapFlights = [];
+        $leg_checks = [];
 
         foreach ($tour->legs as $mf) {
-            $pop = '<a href="/flights/' . $mf->id . '" target="_blank"><b>Leg #';
+            // Leg Checks
+            $leg_checks[$mf->route_leg] = DS_IsTourLegFlown($tour, $mf, optional($user)->id);
+            // Popups
+            $pop = '<a href="/flights/' . $mf->id . '" target="_blank">Leg #';
             $pop .= $mf->route_leg . ': ' . $mf->airline->code . $mf->flight_number . ' ' . $mf->dpt_airport_id . '-' . $mf->arr_airport_id;
-            $pop .= '</b></a>';
-
+            $pop .= '</a>';
+            // Flights with popups and check results
             $mapFlights[] = [
                 'id'   => $mf->id,
                 'geod' => '[[' . $mf->dpt_airport->lat . ',' . $mf->dpt_airport->lon . '],[' . $mf->arr_airport->lat . ',' . $mf->arr_airport->lon . ']]',
-                'geoc' => (DS_IsTourLegFlown($tour->id, $mf->id, optional($user)->id) === true) ? 'Flown' : 'NotFlown',
+                'geoc' => $leg_checks[$mf->route_leg] ? 'Flown' : 'NotFlown', // (DS_IsTourLegFlown($tour, $mf, optional($user)->id)) ? 'Flown' : 'NotFlown',
                 'pop'  => $pop,
             ];
         }
 
         return view('DSpecial::tours.show', [
             'tour'        => $tour,
+            'user'        => isset($user) ? $user : null,
+            'carbon_now'  => Carbon::now(),
+            'leg_checks'  => $leg_checks,
             'mapIcons'    => $mapIcons,
             'mapCenter'   => isset($user_mapCenter) ? '['.$user_mapCenter.']' : '['.$tour_mapCenter.']',
             'mapAirports' => $mapAirports,
             'mapFlights'  => $mapFlights,
-            'test'        => null, // $airports_unique,
         ]);
     }
 

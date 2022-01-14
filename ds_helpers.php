@@ -240,10 +240,12 @@ if (!function_exists('DS_UserCount')) {
 // Check all details for tours like code, leg, dates, aircraft
 // Return boolean
 if (!function_exists('DS_IsTourLegFlown')) {
-    function DS_IsTourLegFlown($tour_id, $flight_id, $user_id)
+    function DS_IsTourLegFlown($tour, $flight, $user_id)
     {
-        $tour = DS_Tour::with('legs.subfleets')->where('id', $tour_id)->first();
-        $flight = $tour->legs->where('id', $flight_id)->first();
+        if (!$tour || !$flight || !$user_id) {
+            return false;
+        }
+        
         // Get User's Pirep either with Flight ID (acars or prefile via button) or pinpoint with more details (manual or free flight)
         $pirep = Pirep::with('aircraft')->where([
             'user_id'   => $user_id,
@@ -274,19 +276,11 @@ if (!function_exists('DS_IsTourLegFlown')) {
                 $date_check = true;
             }
             // Check Airline Match if Needed
-            if ($tour->tour_airline != 0) {
-                if ($tour->tour_airline == $pirep->airline_id) {
-                    $airline_check = true;
-                }
-            } else {
+            if ($tour->tour_airline == 0 || $tour->tour_airline != 0 && $tour->tour_airline == $pirep->airline_id) {
                 $airline_check = true;
             }
-            // Aircraft Check
-            if ($flight->subfleets->count() > 0) {
-                if ($flight->subfleets->contains('id', $pirep->aircraft->subfleet_id)) {
-                    $aircraft_check = true;
-                }
-            } else {
+            // Check Aircraft if Needed
+            if ($flight->subfleets_count == 0 || $flight->subfleets_count > 0 && filled($flight->subfleets()->where('id', $pirep->aircraft->subfleet_id))) {
                 $aircraft_check = true;
             }
         }

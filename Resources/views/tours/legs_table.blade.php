@@ -23,18 +23,18 @@
       </td>
       <td class="text-center">
         @if($leg->start_date && $leg->end_date)
-          <i class="fas fa-calendar-day mx-1 text-danger" 
-            title="Valid Between: {{ Carbon::parse($leg->start_date)->format('d.M.Y').' - '.Carbon::parse($leg->end_date)->format('d.M.Y') }}">
+          <i class="fas fa-calendar-day mx-1 text-danger"
+            title="Valid Between: {{ $leg->start_date->format('d.M.Y').' - '.$leg->end_date->format('d.M.Y') }}">
           </i>
         @endif
-        @if($leg->subfleets->count())
+        @if($leg->subfleets_count > 0)
           <i class="fas fa-plane mx-1 text-primary" title="Valid Only With Assigned Subfleets"></i>
         @endif
       </td>
       <td class="text-center">@if($leg->distance > 0) {{ number_format(ceil($leg->distance)) }} nm @endif</td>
       <td class="text-center">@if($leg->flight_time > 0) @minutestotime($leg->flight_time) @endif</td>
       <td class="text-center">
-        @if(DS_IsTourLegFlown($tour->id,$leg->id,Auth::id()) === true)
+        @if($leg_checks[$leg->route_leg] === true)
           <i class="fas fa-check-circle text-success" title="@lang('DSpecial::tours.icontrue')"></i>
         @else
           <i class="fas fa-times-circle text-danger" title="@lang('DSpecial::tours.iconfalse')"></i>

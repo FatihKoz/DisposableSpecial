@@ -250,6 +250,10 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
+14.JAN.22
+
+* Tour system performance improvements (Reduced load times and resource usage)
+
 05.JAN.22
 
 * Fixed a bug at NOTAM controller effecting proper display of effective NOTAMs

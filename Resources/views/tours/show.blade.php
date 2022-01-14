@@ -14,9 +14,11 @@
             @lang('DSpecial::tours.trules')
           </a>
         @endif
-        <button type="button" class="nav-link btn btn-sm mb-2 text-start" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="ExpandTourMap()">
-          @lang('DSpecial::tours.tmap')
-        </button>
+        @if($tour->legs_count > 0)
+          <button type="button" class="nav-link btn btn-sm mb-2 text-start" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="ExpandTourMap()">
+            @lang('DSpecial::tours.tmap')
+          </button>
+        @endif
       </div>
     </div>
   </div>
@@ -51,8 +53,8 @@
             <div class="card mb-2">
               <div class="card-header p-1">
                 <h5 class="m-1">
-                @lang('DSpecial::tours.trules')
-                <i class="fas fa-book float-end"></i>
+                  @lang('DSpecial::tours.trules')
+                  <i class="fas fa-book float-end"></i>
                 </h5>
               </div>
               <div class="card-body p-1">
@@ -66,7 +68,7 @@
   </div>
 
   {{-- Map Modal --}}
-  @if($tour->legs->count())
+  @if($tour->legs_count > 0)
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-xxl" style="width: 80vw; min-width: 80vw">
         <div class="modal-content">
@@ -91,7 +93,7 @@
 
 @section('scripts')
   @parent
-  @if($tour->legs->count())
+  @if($tour->legs_count > 0)
     <script type="text/javascript">
       function ExpandTourMap() {
         // Define Icons
@@ -103,6 +105,7 @@
         // Define Geodesic Line Colors
         var Flown = 'darkgreen';
         var NotFlown = 'darkred';
+        var CheckDisabled = 'crimson';
         // Build Airports Layer
         var mAirports = L.layerGroup();
         @foreach ($mapAirports as $airport)

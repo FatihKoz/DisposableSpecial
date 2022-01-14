@@ -34,6 +34,14 @@ class DS_Tour extends Model
         'active'       => 'nullable',
     ];
 
+    // Carbon Coverted Dates
+    public $dates = [
+        'start_date',
+        'end_date',
+        'created_at',
+        'updated_at',
+    ];
+
     // Attributes
     public function getLiveAttribute()
     {

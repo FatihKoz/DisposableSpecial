@@ -25,11 +25,11 @@
         <tr>
           <th class="col-2">@lang('DSpecial::tours.tdates')</th>
           <td class="col-6">
-            {{ Carbon::parse($tour->start_date)->format('d.M.Y') }} - {{ Carbon::parse($tour->end_date)->format('d.M.Y') }}
-            @if(Carbon::now() < Carbon::parse($tour->start_date))
+            {{ $tour->start_date->format('d.M.Y') }} - {{ $tour->end_date->format('d.M.Y') }}
+            @if($carbon_now < $tour->start_date)
               <i class="fas fa-info-circle mx-2" title="@lang('DSpecial::tours.iconnoty')" style="color: darkorange;"></i>
             @endif
-            @if(Carbon::now() > Carbon::parse($tour->end_date))
+            @if($carbon_now > $tour->end_date)
               <i class="fas fa-info-circle mx-2" title="@lang('DSpecial::tours.iconend')" style="color: darkred;"></i>
             @endif
           </td>
