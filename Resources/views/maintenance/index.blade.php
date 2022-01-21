@@ -34,7 +34,11 @@
                       {{ optional($maint->aircraft)->ident }}</td>
                     @if($DBasic) </a> @endif
                   <td>{{ $maint->curr_state.' %' }}</td>
-                  <td>{{ optional($maint->aircraft)->landing_time->format('d.M.Y H:i') }}</td>
+                  <td>
+                    @if($maint->aircraft)
+                      {{ optional($maint->aircraft->landing_time)->format('d.M.Y H:i') }}
+                    @endif
+                  </td>
                   <td>{{ $maint->last_note }}</td>
                   <td>{{ $maint->last_time->format('d.M.Y H:i') }}</td>
                   <td>

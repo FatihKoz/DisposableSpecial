@@ -73,7 +73,7 @@ class DS_Maintenance extends Model
         $dtech = null;
 
         if (DS_CheckModule('DisposableBasic')) {
-            $dtech = DB_Tech::where(['icao' => $this->aircraft->icao, 'active' => 1])->first();
+            $dtech = DB_Tech::where(['icao' => optional($this->aircraft)->icao, 'active' => 1])->first();
         }
 
         // A Check
