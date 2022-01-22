@@ -280,7 +280,7 @@ if (!function_exists('DS_IsTourLegFlown')) {
                 $airline_check = true;
             }
             // Check Aircraft if Needed
-            if ($flight->subfleets_count == 0 || $flight->subfleets_count > 0 && filled($flight->subfleets()->where('id', $pirep->aircraft->subfleet_id))) {
+            if ($flight->subfleets_count == 0 || $flight->subfleets_count > 0 && filled($flight->subfleets()->where('id', optional($pirep->aircraft)->subfleet_id))) {
                 $aircraft_check = true;
             }
         }
