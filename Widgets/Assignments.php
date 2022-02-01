@@ -26,7 +26,7 @@ class Assignments extends Widget
 
         $eager_load = ['flight.airline', 'flight.dpt_airport', 'flight.arr_airport'];
 
-        $monthly = DS_Assignment::with($eager_load)->where($where)->get();
+        $monthly = DS_Assignment::with($eager_load)->where($where)->orderBy('assignment_order', 'asc')->get();
 
         $counts = [];
         $comp = 0;
