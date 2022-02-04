@@ -4,6 +4,7 @@ namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\Expenses;
 use App\Models\Expense;
+use App\Models\JournalTransaction;
 use App\Models\Pirep;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FuelType;
@@ -276,6 +277,19 @@ class Expense_Maintenance
     // Charger User Method
     public function ChargeUser($pirep, $amount, $memo)
     {
+        // Check if it is charged before and return if true
+        $check_where = [];
+        $check_where['ref_model_id'] = $pirep->user->id;
+        $check_where[] = ['ref_model', 'LIKE', '%User'];
+        $check_where[] = ['memo', 'LIKE', '%' . $pirep->id];
+
+        $check = JournalTransaction::where($check_where)->count();
+
+        if ($check > 0) {
+            Log::debug('Disposable Special, User=' . $pirep->user->name_private . ' ALREADY charged for ' . $memo . ' Pirep=' . $pirep->id . ' SKIPPING');
+            return;
+        }
+
         $amount = Money::createFromAmount($amount);
         $financeSvc = app(FinanceService::class);
 
