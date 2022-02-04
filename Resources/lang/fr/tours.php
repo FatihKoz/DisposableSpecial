@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'tour'      => 'Tour',
+    'tours'     => 'Tours',
+    'ttype'     => 'Type de tour',
+    'topen'     => 'Tour générique',
+    'tairline'  => 'Tour Compagnie',
+    'tcode'     => 'Code du Tour',
+    'tdesc'     => 'Déscription',
+    'trules'    => 'Règlement du Tour',
+    'tdates'    => 'Date de clôture',
+    'tlegs'     => 'Compte des étapes',
+    'tmap'      => 'Carte du Tour',
+    'legs'      => 'Etapes du Tour',
+    'current'   => 'Tours actifs',
+    'future'    => 'Tours à venir',
+    'past'      => 'Tours clôturés',
+    'showhide'  => 'Voir / Cacher',
+    'icontrue'  => 'Pirep Accepté et Validé',
+    'iconfalse' => 'Pirep Non trouvé ou pas Validé',
+    'iconend'   => 'Tour terminé',
+    'iconnoty'  => 'Tour non commencé',
+    // Tour Progress Widget Body
+    'tptitle'   => 'Progression du tour',
+    'tpyour'    => 'Vos Tours:',
+    'tpactive'  => 'Tours actifs:',
+    'tpnotour'  => 'Vous avez aucun tour actif... ',
+    'tpclick'   => 'Cliquez pour les tours actifs',
+];
