@@ -250,6 +250,15 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
+05.FEB.22
+
+* Added French translation (Thanks to Jbaltazar67, from phpVMS Forum)
+* Fixed Maintenance Expenses applied to pilot more than once (when a re-calculation is done)
+* Added "New User Registered" Discord notification, uses admin only channel (separate from core messages)
+* Updated Monthly Assignments Widget (for proper ordering of assignments)
+* Added a failsafe for Tour checks regarding deleted aircraft
+* Added a failsafe for Maintenance checks regarding deleted aircraft
+
 14.JAN.22
 
 * Tour system performance improvements (Reduced load times and resource usage)
