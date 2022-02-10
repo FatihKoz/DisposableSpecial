@@ -27,10 +27,11 @@ class DS_AdminController extends Controller
 
         $settings = DB::table('disposable_settings')->where('key', 'LIKE', 'turksim.%')->orWhere('key', 'LIKE', 'phpvms.%')->get();
 
-        $diversions = Pirep::where('state', 2)->where('notes', 'LIKE', '%DIVERTED%')
+        $diversions = Pirep::withCount('alt_airport')->where('state', 2)->where('notes', 'LIKE', '%DIVERTED%')
             ->whereNotNull('alt_airport_id')
             ->whereColumn('arr_airport_id', '!=', 'alt_airport_id')
             ->whereDate('submitted_at', '>=', Carbon::today()->subDays(7))
+            ->having('alt_airport_count', 1)
             ->orderby('submitted_at', 'desc')
             ->get();
 
@@ -102,22 +103,22 @@ class DS_AdminController extends Controller
             flash()->error('Pirep Not Found !');
         } else {
             // Get Intended Destination
-            $destination = !empty($dest) ? $dest : $divpirep->alt_airport_id;
+            $fix_destination = !empty($dest) ? $dest : $divpirep->alt_airport_id;
             // Fix User Location
             $divuser = $divpirep->user;
             if ($divuser->curr_airport_id === $divpirep->arr_airport_id) {
-                $divuser->curr_airport_id = $destination;
+                $divuser->curr_airport_id = $fix_destination;
                 $divuser->save();
             }
             // Fix Aircraft Location
             $divaircraft = $divpirep->aircraft;
             if ($divaircraft->airport_id === $divpirep->arr_airport_id) {
-                $divaircraft->airport_id = $destination;
+                $divaircraft->airport_id = $fix_destination;
                 $divaircraft->save();
             }
             // Fix Pirep
             if ($divpirep->arr_airport_id != $divpirep->alt_airport_id) {
-                $divpirep->arr_airport_id = $destination;
+                $divpirep->arr_airport_id = $fix_destination;
                 $divpirep->notes = null;
                 $divpirep->save();
                 flash()->success('Diversion Fixed');

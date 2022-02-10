@@ -74,7 +74,7 @@
             <br><br>
             @foreach ($diversions as $diversion)
               &bull;
-              {{ optional($diversion->airline)->code.$diversion->ident }} |
+              {{ $diversion->ident }} |
               {{ optional($diversion->aircraft)->registration }} |
               {{ optional($diversion->user)->name_private }} |
               {{ $diversion->alt_airport_id }} > {{ $diversion->arr_airport_id }} |
@@ -82,7 +82,7 @@
               <br>
             @endforeach
             <br>
-            <span class="text-info">Pilot and Aircraft will be moved to intented destination.<br>PIREP Arrival Airport will be corrected.<br>Only Diversion From <b>Last 7 Days</b> are listed</span>
+            <span class="text-info">Pilot and Aircraft will be moved to intented destination.<br>PIREP Arrival Airport will be corrected.<br>Only Diversions of <b>last 7 Days</b> are listed</span>
           </div>
         @endif
       </div>

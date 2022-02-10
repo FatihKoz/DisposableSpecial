@@ -5,7 +5,6 @@ namespace Modules\DisposableSpecial\Listeners;
 use App\Events\PirepAccepted;
 use App\Models\Airport;
 use App\Services\AirportService;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class Gen_Diversion
@@ -29,7 +28,21 @@ class Gen_Diversion
             }
 
             if (DS_Setting('turksim.discord_divertmsg')) {
-                $this->SendDiversionMessage($pirep, $diversion_apt, $diverted);
+                // Provide basic information to admins
+                // Crash, Operational Diversion or Scenery Problem
+                if (abs($pirep->landing_rate) > 1500) {
+                    // Possible crash due to the high landing rate
+                    $diversion_reason = 'Crashed Near ' . $diversion_apt;
+                } elseif ($diverted) {
+                    // Diverted but not crashed and airport is found with lookup
+                    $diversion_reason = "Operational";
+                } else {
+                    // Diverted but airport was not found with lookup
+                    $diversion_reason = "Scenery Problem";
+                }
+
+                // Send the message with reason BEFORE changing the pirep values
+                $this->SendDiversionMessage($pirep, $diversion_apt, $diversion_reason);
             }
 
             if (DS_Setting('turksim.pireps_handle_diversions', true)) {
@@ -43,11 +56,12 @@ class Gen_Diversion
                     $user->save();
 
                     $pirep->notes = 'DIVERTED (' . $pirep->arr_airport_id . ' > ' . $diversion_apt . ') ' . $pirep->notes;
-                    $pirep->arr_airport_id = $diverted->id;
-                    $pirep->flight_id = null;
+                    $pirep->alt_airport_id = $pirep->arr_airport_id; // Save intended dest as alternate for fixing it back when needed
+                    $pirep->arr_airport_id = $diverted->id; // Use diversion dest as the new arrival
+                    $pirep->flight_id = null; // Remove the flight id to drop the relationship
                     $pirep->save();
 
-                    Log::info('TurkSim Module: Pirep=' . $pirep->id . ' Flight=' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', assets MOVED to Diversion Airport');
+                    Log::info('Disposable Special | Pirep=' . $pirep->id . ' Flight=' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', assets MOVED to Diversion Airport');
                 }
 
                 // Airport NOT found (only edit Pirep values)
@@ -56,28 +70,18 @@ class Gen_Diversion
                     $pirep->flight_id = null;
                     $pirep->save();
 
-                    Log::info('TurkSim Module: Pirep=' . $pirep->id . ' Flight=' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', NOT ABLE to move assets !');
+                    Log::info('Disposable Special | Pirep=' . $pirep->id . ' Flight=' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', NOT ABLE to move assets !');
                 }
             }
         }
     }
 
-    public function SendDiversionMessage($pirep, $div_dest, $diverted = null)
+    public function SendDiversionMessage($pirep, $diversion_airport, $diversion_reason)
     {
         $webhookurl = DS_Setting('turksim.discord_divert_webhook');
         $msgposter = !empty(DS_Setting('turksim.discord_divert_msgposter')) ? DS_Setting('turksim.discord_divert_msgposter') : config('app.name');
         $pirep_aircraft = !empty($pirep->aircraft) ? $pirep->aircraft->ident : "Not Reported";
-        // Real Diversion, Crash or Error of Acars
-        if ($diverted && $diverted->id == $pirep->dpt_airport_id) {
-            $div_reason = "Acars";
-        } elseif ($diverted && $diverted->id != $pirep->dpt_airport_id && abs($pirep->landing_rate) > 1500) {
-            $div_reason = "Crash";
-        } elseif ($diverted) {
-            $div_reason = "Operational";
-        } else {
-            // User Diverted but airport was not found with lookup
-            $div_reason = "Scenery";
-        }
+
         $json_data = json_encode([
             "content" => "Diversion Occured !",
             "username" => $msgposter,
@@ -94,10 +98,10 @@ class Gen_Diversion
                     [
                         ["name" => "__Flight #__", "value" => $pirep->ident, "inline" => true],
                         ["name" => "__Origin__", "value" => $pirep->dpt_airport_id, "inline" => true],
-                        ["name" => "__Destination__", "value" => $pirep->alt_airport_id, "inline" => true],
+                        ["name" => "__Destination__", "value" => $pirep->arr_airport_id, "inline" => true],
                         ["name" => "__Equipment__", "value" => $pirep_aircraft, "inline" => true],
-                        ["name" => "__Diverted__", "value" => $div_dest, "inline" => true],
-                        ["name" => "__Reason__", "value" => $div_reason, "inline" => true],
+                        ["name" => "__Diverted__", "value" => $diversion_airport, "inline" => true],
+                        ["name" => "__Reason__", "value" => $diversion_reason, "inline" => true],
                     ],
                 ],
             ]
