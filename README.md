@@ -250,6 +250,10 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
+11.FEB.22
+
+* Fixed Divert notification, fixing and auto handling
+
 05.FEB.22
 
 * Added French translation (Thanks to Jbaltazar67, from phpVMS Forum)
