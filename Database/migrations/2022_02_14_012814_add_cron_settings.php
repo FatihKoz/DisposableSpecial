@@ -14,8 +14,8 @@ class AddCronSettings extends Migration
             // Cron and Database Related
             DB::table('disposable_settings')->updateOrInsert(['key' => 'dspecial.database_cleanup'], ['group' => 'Cron', 'name' => 'Automated Database Cleaning', 'field_type' => 'check', 'default' => 'false', 'order' => '2001']);
             DB::table('disposable_settings')->updateOrInsert(['key' => 'dspecial.delete_nonflown_members'], ['group' => 'Cron', 'name' => 'Delete new members without flights (days)', 'field_type' => 'numeric', 'default' => '0', 'order' => '2002']);
-            DB::table('disposable_settings')->updateOrInsert(['key' => 'dspecial.old_simbrief_ofp'], ['group' => 'Cron', 'name' => 'Delete SimBrief OFP packs (days)', 'field_type' => 'numeric', 'default' => '0', 'order' => '2003']);
-            DB::table('disposable_settings')->updateOrInsert(['key' => 'dspecial.old_acars_posreps'], ['group' => 'Cron', 'name' => 'Delete Acars Position Reports (days)', 'field_type' => 'numeric', 'default' => '0', 'order' => '2004']);
+            DB::table('disposable_settings')->updateOrInsert(['key' => 'dspecial.old_simbrief_ofp'], ['group' => 'Cron', 'name' => 'Delete old SimBrief OFP packs (days)', 'field_type' => 'numeric', 'default' => '0', 'order' => '2003']);
+            DB::table('disposable_settings')->updateOrInsert(['key' => 'dspecial.old_acars_posreps'], ['group' => 'Cron', 'name' => 'Delete old Acars Position Reports (days)', 'field_type' => 'numeric', 'default' => '0', 'order' => '2004']);
         }
     }
 }

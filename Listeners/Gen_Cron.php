@@ -44,7 +44,7 @@ class Gen_Cron extends Listener
         $CronSVC = app(DS_CronServices::class);
         $CronSVC->DeleteExpiredSimBrief();
         $CronSVC->FixBrokenSimBrief();
-        if (DS_Setting('cron.database_cleanup', false) === true) {
+        if (DS_Setting('dspecial.database_cleanup', false) === true) {
             $CronSVC->CheckAcarsLogs();
         }
     }
@@ -68,15 +68,15 @@ class Gen_Cron extends Listener
     {
         $CronSVC = app(DS_CronServices::class);
         $CronSVC->ProcessTours();
-        $CronSVC->DeleteOldAcars(DS_Setting('cron.old_acars_posreps', 0));
-        $CronSVC->DeleteOldSimBrief(DS_Setting('cron.old_simbrief_ofp', 0));
-        $CronSVC->DeleteNonFlownMembers(DS_Setting('cron.delete_nonflown_members', 0));
+        $CronSVC->DeleteOldAcars(DS_Setting('dspecial.old_acars_posreps', 0));
+        $CronSVC->DeleteOldSimBrief(DS_Setting('dspecial.old_simbrief_ofp', 0));
+        $CronSVC->DeleteNonFlownMembers(DS_Setting('dspecial.delete_nonflown_members', 0));
     }
 
     // Cron Weekly
     public function handle_weekly()
     {
-        if (DS_Setting('cron.database_cleanup', false) === true) {
+        if (DS_Setting('dspecial.database_cleanup', false) === true) {
             $CronSVC = app(DS_CronServices::class);
             $CronSVC->CleanAcarsRecords();
             $CronSVC->CleanRelationships();
