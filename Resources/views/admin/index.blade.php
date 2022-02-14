@@ -135,6 +135,7 @@
       <h5 style="margin:5px; padding:5px;"><b>Module Settings</b></h5>
     </div>
   </div>
+  
   <div class="row text-center" style="margin-left:5px; margin-right:5px;">
     <div class="col-sm-8">
       <div class="card border-blue-bottom" style="padding:5px;">
@@ -151,6 +152,25 @@
         @include('DSpecial::admin.settings_table', ['group' => 'Random Flights'])
         <br>
         <span class="text-info">Pilot's Rank Pay Rate or Flight's Pilot Pay will be multiplied</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row text-center" style="margin-left:5px; margin-right:5px;">
+    <div class="col-sm-6">
+      <div class="card border-blue-bottom" style="padding:5px;">
+        <b>Cron & Database Cleanup</b>
+        <br><br>
+        @include('DSpecial::admin.settings_table', ['group' => 'Cron'])
+        <span class="text-info">Setting 0 as day value will disable deletion</span>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card border-blue-bottom" style="padding:5px;">
+        <b>Disposable Free Flights</b>
+        <br><br>
+        @include('DSpecial::admin.settings_table', ['group' => 'Free Flights'])
+        <span class="text-info">This will just enable/disable web based Free Flights</span>
       </div>
     </div>
   </div>

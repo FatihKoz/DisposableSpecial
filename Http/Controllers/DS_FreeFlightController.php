@@ -20,6 +20,11 @@ class DS_FreeFlightController extends Controller
 {
     public function index()
     {
+        if (DS_Setting('dspecial.freeflights_main', false) === false) {
+            flash()->error('Web based Free Flights are disabled... Please select a flight from schedule');
+            return redirect('/flights');
+        }
+
         $settings = [];
         $settings['ac_rank'] = setting('pireps.restrict_aircraft_to_rank', true);
         $settings['ac_rating'] = setting('pireps.restrict_aircraft_to_typerating', false);

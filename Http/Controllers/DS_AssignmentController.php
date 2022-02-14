@@ -121,23 +121,23 @@ class DS_AssignmentController extends Controller
         if (!$user) {
             if ($reset === true) {
                 DS_Assignment::where(['assignment_year' => $curr_y, 'assignment_month' => $curr_m])->delete();
-                Log::info('Disposable Assignments, ALL Monthly Flight Assignments DELETED for ' . $curr_y . '/' . $curr_m);
+                Log::info('Disposable Special | ALL Monthly Flight Assignments DELETED for ' . $curr_y . '/' . $curr_m);
             }
             // Assign Flights to all ACTIVE Users
             $active_users = User::where('state', 1)->orderby('id')->get();
 
             if ($active_users) {
-                Log::info('Disposable Assignments, begin Monthly Flight Assignment process for ' . $curr_y . '/' . $curr_m);
+                Log::info('Disposable Special | Begin Monthly Flight Assignment process for ' . $curr_y . '/' . $curr_m);
                 foreach ($active_users as $user) {
                     $this->GenerateAssignments($user);
                 }
-                Log::info('Disposable Assignments, Monthly Flight Assignment process completed for ' . $curr_y . '/' . $curr_m);
+                Log::info('Disposable Special | Monthly Flight Assignment process completed for ' . $curr_y . '/' . $curr_m);
             }
         } elseif ($user) {
             // Handle a specific User's Assignments
             if ($reset === true) {
                 DS_Assignment::where(['user_id' => $user->id, 'assignment_year' => $curr_y, 'assignment_month' => $curr_m])->delete();
-                Log::info('Disposable Assignments, Monthly Flight Assignments of ' . $user->name_private . ' DELETED for ' . $curr_y . '/' . $curr_m);
+                Log::info('Disposable Special | Monthly Flight Assignments of ' . $user->name_private . ' DELETED for ' . $curr_y . '/' . $curr_m);
             }
             $this->GenerateAssignments($user);
         }
@@ -149,12 +149,12 @@ class DS_AssignmentController extends Controller
         $selected_flights = [];
 
         if (!$user) {
-            Log::debug('Disposable Assignments, User Model not provided! Aborting assignment process');
+            Log::debug('Disposable Special | User Model not provided! Aborting assignment process');
             return;
         }
 
         if ($user->state !== 1) {
-            Log::debug('Disposable Assignments, ' . $user->name_private . ' is not active! Aborting assignment process');
+            Log::debug('Disposable Special | ' . $user->name_private . ' is not active! Aborting assignment process');
             return;
         }
 
@@ -240,7 +240,7 @@ class DS_AssignmentController extends Controller
 
             if (is_countable($suitable_flights) && count($suitable_flights) === 0) {
                 // No subfleets found assigned to flights, revert restrictions to false and move on
-                Log::debug('Disposable Assignments, No suitable flights found (by prefered icao/rank/rating)! Reverting to less-restricted mode');
+                Log::debug('Disposable Special | No suitable flights found (by prefered icao/rank/rating)! Reverting to less-restricted mode');
                 $prefer_icao = false;
                 $force_rank = false;
                 $force_rate = false;
@@ -294,7 +294,7 @@ class DS_AssignmentController extends Controller
 
             // Still no flights, break the operation and return
             if (!$flights->count() && $pass_airport > 1) {
-                Log::debug('Disposable Assignments, No suitable flights found for ' . $user->name_private . ' aborting process !');
+                Log::debug('Disposable Special | No suitable flights found for ' . $user->name_private . ' aborting process !');
                 break;
             }
 
@@ -341,7 +341,7 @@ class DS_AssignmentController extends Controller
         $check = DS_Assignment::where(['user_id' => $user->id, 'assignment_year' => $as_year, 'assignment_month' => $as_month])->get();
 
         if ($check->count() > 0) {
-            Log::debug('Disposable Assignments, User ' . $user->name_private . ' already have assignments for ' . $as_year . '/' . $as_month . ' skipping.');
+            Log::info('Disposable Special | User ' . $user->name_private . ' already have assignments for ' . $as_year . '/' . $as_month . ' skipping.');
             return;
         }
 
@@ -356,7 +356,7 @@ class DS_AssignmentController extends Controller
 
             $ta->save();
 
-            Log::debug('Disposable Assignments, ' . $as_year . '/' . $as_month . ' Flight (' . $order . ') ' . $flight->id . ' assigned to (' . $user->id . ') ' . $user->name_private);
+            Log::info('Disposable Special | ' . $as_year . '/' . $as_month . ' Flight (' . $order . ') ' . $flight->id . ' assigned to (' . $user->id . ') ' . $user->name_private);
         }
     }
 }

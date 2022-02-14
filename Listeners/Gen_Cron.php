@@ -3,108 +3,106 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Contracts\Listener;
+use App\Events\CronFiveMinute;
+use App\Events\CronFifteenMinute;
+use App\Events\CronThirtyMinute;
 use App\Events\CronHourly;
+use App\Events\CronNightly;
+use App\Events\CronWeekly;
 use App\Events\CronMonthly;
 use App\Events\UserRegistered;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableSpecial\Http\Controllers\DS_AssignmentController;
-use Modules\DisposableSpecial\Models\DS_Maintenance;
+use Modules\DisposableSpecial\Services\DS_CronServices;
+use Modules\DisposableSpecial\Services\DS_MaintenanceServices;
+use Modules\DisposableSpecial\Services\DS_NotificationServices;
+
 
 class Gen_Cron extends Listener
 {
-    // Callback to proper method
     public static $callbacks = [
+        CronFiveMinute::class => 'handle_05min',
+        CronFifteenMinute::class => 'handle_15min',
+        CronThirtyMinute::class => 'handle_30min',
         CronHourly::class  => 'handle_hourly',
+        CronNightly::class => 'handle_nightly',
+        CronWeekly::class => 'handle_weekly',
         CronMonthly::class => 'handle_monthly',
         UserRegistered::class => 'handle_newuser',
     ];
 
-    // New User Registrations
-    public function handle_newuser(UserRegistered $event)
+    // Cron 5 mins
+    public function handle_05min()
     {
-        if (DS_Setting('turksim.discord_registermsg', false)) {
-            $this->SendDiscordMessage($event->user);
+        $MaintSVC = app(DS_MaintenanceServices::class);
+        $MaintSVC->ProcessMaintenance();
+    }
+
+    // Cron 15 mins
+    public function handle_15min()
+    {
+        $CronSVC = app(DS_CronServices::class);
+        $CronSVC->DeleteExpiredSimBrief();
+        $CronSVC->FixBrokenSimBrief();
+        if (DS_Setting('cron.database_cleanup', false) === true) {
+            $CronSVC->CheckAcarsLogs();
         }
+    }
+
+    // Cron 30 mins
+    public function handle_30min()
+    {
+        $CronSVC = app(DS_CronServices::class);
+        $CronSVC->ProcessFreeFlights();
+        // $this->DS_WriteToLog('30 mins test');
     }
 
     // Cron Hourly
     public function handle_hourly()
     {
-        $this->ProcessMaintenance();
+        // $this->DS_WriteToLog('60 mins or Hourly test');
+    }
+
+    // Cron Nightly
+    public function handle_nightly()
+    {
+        $CronSVC = app(DS_CronServices::class);
+        $CronSVC->ProcessTours();
+        $CronSVC->DeleteOldAcars(DS_Setting('cron.old_acars_posreps', 0));
+        $CronSVC->DeleteOldSimBrief(DS_Setting('cron.old_simbrief_ofp', 0));
+        $CronSVC->DeleteNonFlownMembers(DS_Setting('cron.delete_nonflown_members', 0));
+    }
+
+    // Cron Weekly
+    public function handle_weekly()
+    {
+        if (DS_Setting('cron.database_cleanup', false) === true) {
+            $CronSVC = app(DS_CronServices::class);
+            $CronSVC->CleanAcarsRecords();
+            $CronSVC->CleanRelationships();
+        }
     }
 
     // Cron Monthly
     public function handle_monthly()
     {
         if (DS_Setting('turksim.assignments_auto', false)) {
-            $this->AssignFlights();
+            $FlightAssignments = app(DS_AssignmentController::class);
+            $FlightAssignments->TriggerAssignment();
         }
     }
 
-    // Assign Monthly Flights
-    public function AssignFlights()
+    // New User Registrations
+    public function handle_newuser(UserRegistered $event)
     {
-        $flightAssignments = app(DS_AssignmentController::class);
-        $flightAssignments->TriggerAssignment();
-    }
-
-    // Process Maintenance Records and Release Aircraft Back To Service
-    public function ProcessMaintenance()
-    {
-        $current_time = Carbon::now();
-        $active_maint_ops = DS_Maintenance::with('aircraft')->whereNotNull('act_end')->get();
-        foreach ($active_maint_ops as $active) {
-            if ($active->act_end < $current_time) {
-                $active->last_note = $active->act_note;
-                $active->last_time = $active->act_end;
-                $active->act_note = null;
-                $active->act_start = null;
-                $active->act_end = null;
-                if ($active->aircraft->status === 'M') {
-                    $active->aircraft->status = 'A';
-                    $active->aircraft->save();
-                }
-                $active->save();
-                Log::info('CRON, ' . $active->aircraft->registration . ' released back to service after ' . $active->last_note);
-            }
+        if (DS_Setting('turksim.discord_registermsg', false)) {
+            $NotificationSVC = app(DS_NotificationServices::class);
+            $NotificationSVC->NewUserMessage($event->user);
         }
     }
 
-    public function SendDiscordMessage($user)
+    public function DS_WriteToLog($text = null)
     {
-        $webhookurl = DS_Setting('turksim.discord_divert_webhook');
-        $msgposter = !empty(DS_Setting('turksim.discord_divert_msgposter')) ? DS_Setting('turksim.discord_divert_msgposter') : config('app.name');
-
-        $json_data = json_encode([
-            "content" => "New User Registered !",
-            "username" => $msgposter,
-            "tts" => false,
-            "embeds" =>
-            [
-                [
-                    "type" => "rich",
-                    "timestamp" => date("c", strtotime($user->created_at)),
-                    "color" => hexdec("FF0000"),
-                    "fields" =>
-                    [
-                        ["name" => "__Name__", "value" => "[".$user->name."](".route('admin.users.edit', [$user->id]).")", "inline" => true],
-                        ["name" => "__E-Mail__", "value" => $user->email, "inline" => true],
-                    ],
-                ],
-            ]
-        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        $ch = curl_init($webhookurl);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $response = curl_exec($ch);
-        if ($response) {
-            Log::debug('Discord WebHook | New User Msg Response: ' . $response);
-        }
-        curl_close($ch);
+        Log::debug('Disposable Special | ' . $text);
     }
 }
