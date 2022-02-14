@@ -7,6 +7,7 @@ use App\Models\Aircraft;
 use App\Models\Fare;
 use App\Models\Flight;
 use App\Models\Pirep;
+use App\Models\Rank;
 use App\Models\SimBrief;
 use App\Models\Subfleet;
 use App\Models\Enums\AircraftState;
@@ -190,6 +191,7 @@ class DS_CronServices
     {
         $fares = Fare::pluck('id')->toArray();
         $flights = Flight::pluck('id')->toArray();
+        $ranks = Rank::pluck('id')->toArray();
         $subfleets = Subfleet::pluck('id')->toArray();
 
         $ff_no_flight = DB::table('flight_fare')->whereNotIn('flight_id', $flights)->delete();
@@ -220,6 +222,16 @@ class DS_CronServices
         $fs_no_subfleet = DB::table('flight_subfleet')->whereNotIn('subfleet_id', $subfleets)->delete();
         if ($fs_no_subfleet > 0) {
             Log::info('Disposable Special | Deleted ' . $fs_no_subfleet . ' redundant records with no matching SUBFLEET | flight_subfleets');
+        }
+
+        $sr_no_rank = DB::table('subfleet_rank')->whereNotIn('rank_id', $ranks)->delete();
+        if ($sr_no_rank > 0) {
+            Log::info('Disposable Special | Deleted ' . $sr_no_rank . ' redundant records with no matching RANK | subfleet_rank');
+        }
+
+        $sr_no_subfleet = DB::table('subfleet_rank')->whereNotIn('subfleet_id', $subfleets)->delete();
+        if ($sr_no_subfleet > 0) {
+            Log::info('Disposable Special | Deleted ' . $sr_no_subfleet . ' redundant records with no matching SUBFLEET | subfleet_rank');
         }
     }
 }
