@@ -17,32 +17,34 @@
           <th>@lang('airports.arrival')</th>
         </tr>
         @foreach($assignments->sortBy('assignment_order', SORT_NATURAL) as $as)
-          <tr>
-            @if($hide === false)
+          @if($as->flight)  
+            <tr>
+              @if($hide === false)
+                <td>
+                  @if($as->completed)
+                    <i class="fas fa-check-circle text-success"></i>
+                  @else
+                    <i class="fas fa-exclamation-circle text-danger"></i>
+                  @endif
+                </td>
+              @endif
               <td>
-                @if($as->completed)
-                  <i class="fas fa-check-circle text-success"></i>
-                @else
-                  <i class="fas fa-exclamation-circle text-danger"></i>
-                @endif
+                <a href="{{ route('frontend.flights.show', [$as->flight->id]) }}">
+                  {{ optional($as->flight->airline)->code.' '.$as->flight->flight_number }}
+                </a>
               </td>
-            @endif
-            <td>
-              <a href="{{ route('frontend.flights.show', [$as->flight->id]) }}">
-                {{ optional($as->flight->airline)->code.' '.$as->flight->flight_number }}
-              </a>
-            </td>
-            <td>
-              <a href="{{ route('frontend.airports.show', [$as->flight->dpt_airport_id]) }}">
-                {{ optional($as->flight->dpt_airport)->name ?? $as->flight->dpt_airport_id }}
-              </a>
-            </td>
-            <td>
-              <a href="{{ route('frontend.airports.show', [$as->flight->arr_airport_id]) }}">
-                {{ optional($as->flight->arr_airport)->name ?? $as->flight->arr_airport_id }}
-              </a>
-            </td>
-          </tr>
+              <td>
+                <a href="{{ route('frontend.airports.show', [$as->flight->dpt_airport_id]) }}">
+                  {{ optional($as->flight->dpt_airport)->name ?? $as->flight->dpt_airport_id }}
+                </a>
+              </td>
+              <td>
+                <a href="{{ route('frontend.airports.show', [$as->flight->arr_airport_id]) }}">
+                  {{ optional($as->flight->arr_airport)->name ?? $as->flight->arr_airport_id }}
+                </a>
+              </td>
+            </tr>
+          @endif
         @endforeach
       </table>
     </div>
