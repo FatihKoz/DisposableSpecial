@@ -99,6 +99,6 @@ class Gen_RandomFlights
         );
 
         // Ammend Log
-        Log::debug('Disposable Special, ' . $user->name_private . ' rewarded ' . $amount . ' for ' . $group . ' completion');
+        Log::debug('Disposable Special | ' . $user->name_private . ' rewarded ' . $amount . ' for ' . $group . ' completion');
     }
 }

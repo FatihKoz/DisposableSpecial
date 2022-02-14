@@ -61,7 +61,7 @@ class Gen_Diversion
                     $pirep->flight_id = null; // Remove the flight id to drop the relationship
                     $pirep->save();
 
-                    Log::info('Disposable Special | Pirep=' . $pirep->id . ' Flight=' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', assets MOVED to Diversion Airport');
+                    Log::info('Disposable Special | Pirep ' . $pirep->id . ' Flight ' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', assets MOVED to Diversion Airport');
                 }
 
                 // Airport NOT found (only edit Pirep values)
@@ -70,7 +70,7 @@ class Gen_Diversion
                     $pirep->flight_id = null;
                     $pirep->save();
 
-                    Log::info('Disposable Special | Pirep=' . $pirep->id . ' Flight=' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', NOT ABLE to move assets !');
+                    Log::info('Disposable Special | Pirep ' . $pirep->id . ' Flight ' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', NOT ABLE to move assets !');
                 }
             }
         }
@@ -97,8 +97,8 @@ class Gen_Diversion
                     "fields" =>
                     [
                         ["name" => "__Flight #__", "value" => $pirep->ident, "inline" => true],
-                        ["name" => "__Origin__", "value" => $pirep->dpt_airport_id, "inline" => true],
-                        ["name" => "__Destination__", "value" => $pirep->arr_airport_id, "inline" => true],
+                        ["name" => "__Orig__", "value" => $pirep->dpt_airport_id, "inline" => true],
+                        ["name" => "__Dest__", "value" => $pirep->arr_airport_id, "inline" => true],
                         ["name" => "__Equipment__", "value" => $pirep_aircraft, "inline" => true],
                         ["name" => "__Diverted__", "value" => $diversion_airport, "inline" => true],
                         ["name" => "__Reason__", "value" => $diversion_reason, "inline" => true],

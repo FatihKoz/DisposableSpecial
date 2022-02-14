@@ -249,7 +249,7 @@ class Expense_Maintenance
                 $ds_maint->act_end = Carbon::now()->addMinutes($duration);
                 $ds_maint->save();
 
-                Log::info('Disposable Maintenance, ' . $ds_maint->aircraft->registration . ' grounded until ' . Carbon::now()->addMinutes($duration));
+                Log::info('Disposable Special | ' . $ds_maint->aircraft->registration . ' grounded until ' . Carbon::now()->addMinutes($duration));
             }
         }
 
@@ -286,7 +286,7 @@ class Expense_Maintenance
         $check = JournalTransaction::where($check_where)->count();
 
         if ($check > 0) {
-            Log::debug('Disposable Special, User=' . $pirep->user->name_private . ' ALREADY charged for ' . $memo . ' Pirep=' . $pirep->id . ' SKIPPING');
+            Log::debug('Disposable Special | User ' . $pirep->user->name_private . ' ALREADY charged for ' . $memo . ' Pirep=' . $pirep->id . ' SKIPPING');
             return;
         }
 
@@ -315,6 +315,6 @@ class Expense_Maintenance
             Carbon::now()->format('Y-m-d')
         );
         // Note Transaction
-        Log::debug('Disposable Special, User=' . $pirep->user->name_private . ' charged for ' . $memo . ' Pirep=' . $pirep->id);
+        Log::debug('Disposable Special | User ' . $pirep->user->name_private . ' charged for ' . $memo . ' Pirep=' . $pirep->id);
     }
 }
