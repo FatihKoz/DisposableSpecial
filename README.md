@@ -4,7 +4,7 @@ phpVMS v7 module for Extended VA features
 
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
-Compatible with any latest development (dev) build of phpVMS v7 released after **30.NOV.21**.  
+Compatible with any latest development (dev) build of phpVMS v7 released after **10.FEB.22**.  
 *Module is tested/being used with php versions: 7.4, 8.0.x but NOT with 8.1.x yet.*
 Using this module along with *Disposable Basic* and *Disposable Theme* is highly advised but not mandatory. Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
 
@@ -19,6 +19,7 @@ This module pack aims to cover extended needs of any Virtual Airline with some n
 * Configurable per flight dynamic income (Duty Free and Cabin Bouffet Sales)
 * Some static pages (About Us, Rules & Regulations, Ops Manual, Landing Rates)
 * Handy administrative functions
+* CRON based automated database cleanup features
 
 ## Important info about License Conditions
 
@@ -249,6 +250,11 @@ Personally I am using an SSL certificate and it is working fine, even with the r
 Even though the forms and routes are tested with possible scenarios, there is no much here I can offer you to solve hosting/redirection/certificate related issues. Sorry about that.
 
 ## Release / Update Notes
+
+14.FEB.22
+
+* Updated and added new cron based features (Requires phpVms 7.0.0-dev+220211.78fd83 or later)
+* Added a setting to enable/disable Web based Free Flights
 
 11.FEB.22
 
