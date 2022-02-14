@@ -17,7 +17,6 @@ use Modules\DisposableSpecial\Services\DS_CronServices;
 use Modules\DisposableSpecial\Services\DS_MaintenanceServices;
 use Modules\DisposableSpecial\Services\DS_NotificationServices;
 
-
 class Gen_Cron extends Listener
 {
     public static $callbacks = [
