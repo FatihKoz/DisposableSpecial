@@ -9,7 +9,6 @@ use App\Models\Bid;
 use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\SimBrief;
-use App\Models\Subfleet;
 use App\Models\Enums\PirepState;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -129,6 +128,7 @@ class DS_AdminController extends Controller
         }
     }
 
+    // Handy Admin Features
     public function AdminActions($action, Request $request)
     {
         if ($action === 'cleanbids') {
@@ -219,69 +219,6 @@ class DS_AdminController extends Controller
                 }
             }
             flash()->success('Fleet members returned to their hubs.');
-        } elseif ($action === 'afs') {
-            // Assign Fleets to flights, by range and airline
-            if ($request->input('range') == 'short') {
-                $oper = 'short';
-                $distance = [0, 2500];
-                $multiplier = [0, 110];
-            } elseif ($request->input('range') == 'medium') {
-                $oper = 'medium';
-                $distance = [2501, 4000];
-                $multiplier = [101, 119];
-            } elseif ($request->input('range') == 'long') {
-                $oper = 'long';
-                $distance = [4001, 10000];
-                $multiplier = [120, 200];
-            } else {
-                flash()->error('Range not defined');
-
-                return;
-            }
-
-            if (filled($request->input('airline')) && is_numeric($request->input('airline'))) {
-                $sal = $request->input('airline');
-            } else {
-                flash()->error('Airline not defined');
-
-                return;
-            }
-
-            if (isset($oper) && isset($sal)) {
-                // Flight Where
-                $where = [];
-                $where['airline_id'] = $sal;
-                $where[] = ['flight_type', '!=', 'E'];
-                // SubFleet Where
-                $where_sf = [];
-                $where_sf['airline_id'] = $sal;
-
-                $selected_flights = Flight::where($where)->whereBetween('distance', $distance)->pluck('id')->toArray();
-                $selected_subfleets = Subfleet::where($where_sf)->whereBetween('ground_handling_multiplier', $multiplier)->pluck('id')->toArray();
-
-                if (blank($selected_flights) || blank($selected_subfleets)) {
-                    flash()->error('No flights and/or Subfleets found');
-
-                    return;
-                }
-
-                $count_inserted = 0;
-                $count_skipped = 0;
-                foreach ($selected_flights as $fl) {
-                    foreach ($selected_subfleets as $sf) {
-                        if (DB::table('flight_subfleet')->where(['flight_id' => $fl, 'subfleet_id' => $sf])->count() == 0) {
-                            DB::table('flight_subfleet')->insert(['flight_id' => $fl, 'subfleet_id' => $sf]);
-                            $count_inserted++;
-                        } else {
-                            $count_skipped++;
-                        }
-                    }
-                }
-
-                if (is_countable($selected_flights) && is_countable($selected_subfleets)) {
-                    flash()->success(count($selected_subfleets) . ' subfleets and ' . count($selected_flights) . ' flights processed. Inserted ' . $count_inserted . ', skipped ' . $count_skipped . ' records');
-                }
-            }
         }
     }
 }
