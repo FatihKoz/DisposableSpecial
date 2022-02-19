@@ -251,6 +251,11 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
+19.FEB.22
+
+* Added a failsafe for Flight Assignments widget (for deleted flights)
+* Re-organized module admin page
+
 14.FEB.22
 
 * Updated and added new cron based features (Requires phpVms 7.0.0-dev+220211.78fd83 or later)
