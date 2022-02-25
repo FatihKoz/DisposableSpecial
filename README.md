@@ -251,6 +251,11 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
+25.FEB.22
+
+* Refactored Tour Award classes for better performance (execute deeper checks when needed)
+* Re-enabled tour leg order checks
+
 19.FEB.22
 
 * Added a failsafe for Flight Assignments widget (for deleted flights)
