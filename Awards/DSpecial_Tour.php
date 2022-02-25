@@ -30,6 +30,7 @@ class DSpecial_Tour extends Award
             }
         } else {
             // Tour not found or not active
+            Log::debug('Disposable Special | ' . $tour->tour_code . ' Tour not active');
             return false;
         }
 
@@ -57,6 +58,7 @@ class DSpecial_Tour extends Award
         // If the intersection of arrays do not give what we want, return false
         // No need to proceed and do a flight based check
         if (count($ordered_tour_flights) != count($pirep_order_check)) {
+            Log::debug('Disposable Special | ' . $tour->tour_code . ' Tour legs not completed or not flown in correct order');
             return false;
         } elseif (count($ordered_tour_flights) == count($pirep_order_check) && $deep_check === false) {
             return true;
