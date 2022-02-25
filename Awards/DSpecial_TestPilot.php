@@ -4,6 +4,8 @@ namespace Modules\DisposableSpecial\Awards;
 
 use App\Contracts\Award;
 use App\Models\Pirep;
+use App\Models\Enums\PirepState;
+use Illuminate\Support\Facades\Log;
 
 class DSpecial_TestPilot extends Award
 {
@@ -13,12 +15,13 @@ class DSpecial_TestPilot extends Award
     public function check($start_date = null): bool
     {
         if (!$start_date) {
-            $start_date = '2021-01-01';
+            Log::error('Disposable Special | Test Pilot Award Date Not Set');
+            return false;
         }
 
         $where = [
             'user_id' => $this->user->id,
-            'state' => 2
+            'state'   => PirepState::ACCEPTED,
         ];
 
         $check = Pirep::where($where)->where('submitted_at', '<', $start_date)->count();
