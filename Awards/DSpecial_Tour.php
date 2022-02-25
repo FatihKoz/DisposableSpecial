@@ -28,6 +28,11 @@ class DSpecial_Tour extends Award
                 // Current date is not between tour start/end dates
                 return false;
             }
+            if (filled($tour->tour_airline)) {
+                // Airline defined but award is being checked as Open Tour
+                Log::error('Disposable Special | Open Tour Award class is being used but ' . $tour->tour_code . ' Tour has an airline defined');
+                return false;
+            }
         } else {
             // Tour not found or not active
             Log::debug('Disposable Special | ' . $tour->tour_code . ' Tour not active');
