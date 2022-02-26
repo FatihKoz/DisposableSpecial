@@ -19,6 +19,11 @@
             @lang('DSpecial::tours.tmap')
           </button>
         @endif
+        @ability('admin', 'admin-access')
+          <a class="nav-link mb-2" id="pills-report-tab" data-toggle="pill" href="#pills-report" role="tab" aria-controls="pills-report" aria-selected="false">
+            @lang('DSpecial::tours.treport')
+          </a>
+        @endability
       </div>
     </div>
   </div>
@@ -65,6 +70,26 @@
         </div>
       </div>
     @endif
+    {{-- Report --}}
+    @ability('admin', 'admin-access')
+      <div class="tab-pane fade" id="pills-report" role="tabpanel" aria-labelledby="pills-report-tab">
+        <div class="row">
+          <div class="col">
+            <div class="card mb-2">
+              <div class="card-header p-1">
+                <h5 class="m-1">
+                  @lang('DSpecial::tours.treport')
+                  <i class="fas fa-file-prescription float-end"></i>
+                </h5>
+              </div>
+              <div class="card-body p-1">
+                @include('DSpecial::tours.report_table')
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endability
   </div>
 
   {{-- Map Modal --}}

@@ -9,6 +9,7 @@ return [
     'tcode'     => 'Tour Code',
     'tdesc'     => 'Description',
     'trules'    => 'Tour Rules',
+    'treport'   => 'Tour Report',
     'tdates'    => 'Valid Between',
     'tlegs'     => 'Leg Count',
     'tmap'      => 'Tour Map',

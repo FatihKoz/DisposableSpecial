@@ -5,6 +5,7 @@ namespace Modules\DisposableSpecial\Http\Controllers;
 use App\Contracts\Controller;
 use App\Models\Airline;
 use App\Models\Flight;
+use App\Models\Pirep;
 use App\Models\Subfleet;
 use App\Models\User;
 use Carbon\Carbon;
@@ -46,6 +47,10 @@ class DS_TourController extends Controller
             flash()->error('Tour not found !');
             return redirect(route('DSpecial.tours'));
         }
+
+        // Tour Report Collections
+        $tour_pilots = Pirep::where('route_code', $code)->where('state', 2)->groupBy('user_id')->pluck('user_id')->toArray();
+        $pilots = User::whereIn('id', $tour_pilots)->orderBy('pilot_id', 'asc')->get();
 
         // Logged in user
         $user = User::with('current_airport')->find(Auth::id());
@@ -135,6 +140,7 @@ class DS_TourController extends Controller
             'mapCenter'   => isset($user_mapCenter) ? '['.$user_mapCenter.']' : '['.$tour_mapCenter.']',
             'mapAirports' => $mapAirports,
             'mapFlights'  => $mapFlights,
+            'pilots'      => $pilots,
         ]);
     }
 
