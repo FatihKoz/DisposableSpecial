@@ -4,6 +4,7 @@ use App\Models\Airport;
 use App\Models\Pirep;
 use App\Models\User;
 use App\Models\Enums\FareType;
+use App\Models\Enums\PirepState;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Geotools\Geotools;
@@ -172,10 +173,30 @@ if (!function_exists('DS_GetAirports')) {
 // Get Tour name for matching flight route_code
 // Return string
 if (!function_exists('DS_GetTourName')) {
-    function DS_GetTourName($route_code = null) 
+    function DS_GetTourName($route_code = null)
     {
         $tour = DS_Tour::select('tour_name')->where('tour_code', $route_code)->first();
-        return filled($tour) ? $tour->tour_name : $route_code; 
+        return filled($tour) ? $tour->tour_name : $route_code;
+    }
+}
+
+// Get Required Units
+// Return array
+if (!function_exists('DS_GetUnits')) {
+    function DS_GetUnits($type = null)
+    {
+        $units = [];
+        $units['currency'] = setting('units.currency');
+        $units['distance'] = setting('units.distance');
+        $units['fuel'] = setting('units.fuel');
+        $units['weight'] = setting('units.weight');
+
+        if ($type === 'full') {
+            $units['volume'] = settings('units.volume');
+            $units['altitude'] = settings('units.altitude');
+        }
+
+        return $units;
     }
 }
 
@@ -205,26 +226,6 @@ if (!function_exists('DS_Setting')) {
     }
 }
 
-// Get Required Units
-// Return array
-if (!function_exists('DS_GetUnits')) {
-    function DS_GetUnits($type = null)
-    {
-        $units = [];
-        $units['currency'] = setting('units.currency');
-        $units['distance'] = setting('units.distance');
-        $units['fuel'] = setting('units.fuel');
-        $units['weight'] = setting('units.weight');
-
-        if ($type === 'full') {
-            $units['volume'] = settings('units.volume');
-            $units['altitude'] = settings('units.altitude');
-        }
-
-        return $units;
-    }
-}
-
 // Get Total User Count
 // Return integer
 if (!function_exists('DS_UserCount')) {
@@ -233,8 +234,6 @@ if (!function_exists('DS_UserCount')) {
         return User::count();
     }
 }
-
-// Tour Specific Helpers
 
 // Check if the user has an accepted pirep for a particular tour Leg
 // Check all details for tours like code, leg, dates, aircraft
@@ -245,20 +244,15 @@ if (!function_exists('DS_IsTourLegFlown')) {
         if (!$tour || !$flight || !$user_id) {
             return false;
         }
-        
-        // Get User's Pirep either with Flight ID (acars or prefile via button) or pinpoint with more details (manual or free flight)
+
+        // Get User's Pirep with details, covers both acars and manual pireps
         $pirep = Pirep::with('aircraft')->where([
-            'user_id'   => $user_id,
-            'flight_id' => $flight->id,
-            'state'     => 2,
-            'status'    => 'ONB',
-        ])->orWhere('user_id', $user_id)->where([
+            'user_id'        => $user_id,
             'route_code'     => $flight->route_code,
             'route_leg'      => $flight->route_leg,
             'dpt_airport_id' => $flight->dpt_airport_id,
             'arr_airport_id' => $flight->arr_airport_id,
-            'state'          => 2,
-            'status'         => 'ONB',
+            'state'          => PirepState::ACCEPTED,
         ])->orderby('submitted_at', 'desc')->first();
 
         // Get The Dates either for Flight or the Tour
