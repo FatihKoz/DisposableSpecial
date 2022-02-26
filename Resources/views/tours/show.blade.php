@@ -82,7 +82,7 @@
                   <i class="fas fa-file-prescription float-end"></i>
                 </h5>
               </div>
-              <div class="card-body p-1">
+              <div class="card-body table-responsive p-0">
                 @include('DSpecial::tours.report_table')
               </div>
             </div>
