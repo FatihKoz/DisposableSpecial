@@ -29,7 +29,7 @@ class Notams extends Widget
             }
         }
 
-        if ($this->config['user'] === false && !empty($this->config['airport'])) {
+        if ($this->config['user'] === false && isset($this->config['airport'])) {
             $where['ref_airport'] = $this->config['airport'];
         }
 
@@ -39,8 +39,8 @@ class Notams extends Widget
 
         $notams = DS_Notam::with(['airline', 'airport'])->where($where)
             ->where(function ($query) use ($now) {
-                return $query->where('eff_start', '<', $now)->where('eff_end', '>', $now)
-                    ->orWhere('eff_start', '<', $now)->whereNull('eff_end');
+                return $query->whereDate('eff_start', '<=', $now)->whereDate('eff_end', '>=', $now)
+                    ->orWhereDate('eff_start', '<=', $now)->whereNull('eff_end');
             })->when(is_numeric($count), function ($query) use ($count) {
                 return $query->take($count);
             })
