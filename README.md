@@ -251,6 +251,10 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
+28.FEB.22
+
+* Fixed the Tour award classes (was causing an error when a non defined or non active tour is being checked)
+
 25.FEB.22
 
 * Refactored Tour Award classes for better performance (execute deeper checks when needed)
