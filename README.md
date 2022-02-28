@@ -253,12 +253,10 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 28.FEB.22
 
-* Fixed the Tour award classes (was causing an error when a non defined or non active tour is being checked)
-
-25.FEB.22
-
 * Refactored Tour Award classes for better performance (execute deeper checks when needed)
+* Fixed Tour Award classes (was causing an error when a non-defined or non-active tour is being checked)
 * Re-enabled tour leg order checks
+* Added Tour Reports (visible to admins only, still Work In Progress)
 
 19.FEB.22
 
