@@ -33,7 +33,8 @@ class TourProgress extends Widget
     foreach ($tours as $tour) {
       foreach ($pireps as $pirep) {
         if ($pirep->tour_code === $tour->tour_code) {
-          $ratio = ceil((100 * $pirep->flown_legs) / $tour->legs_count);
+          $leg_count = ($tour->legs_count > 0) ? $tour->legs_count : 100;
+          $ratio = ceil((100 * $pirep->flown_legs) / $leg_count);
           $end_date = Carbon::parse($tour->end_date);
           $diff = $end_date->diffInDays($now);
           $progress[$tour->tour_code] = [
