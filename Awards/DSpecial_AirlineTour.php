@@ -35,7 +35,7 @@ class DSpecial_AirlineTour extends Award
             }
         } else {
             // Tour not found or not active
-            Log::debug('Disposable Special | ' . $tour->tour_code . ' Tour not active');
+            Log::debug('Disposable Special | ' . $tour_code . ' Tour not active or not found');
             return false;
         }
 
