@@ -4,11 +4,14 @@ phpVMS v7 module for Extended VA features
 
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
-Compatible with any latest development (dev) build of phpVMS v7 released after **10.FEB.22**.  
-*Module is tested/being used with php versions: 7.4, 8.0.x but NOT with 8.1.x yet.*
-Using this module along with *Disposable Basic* and *Disposable Theme* is highly advised but not mandatory. Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
+Compatible with latest development (dev) builds of phpVMS v7 as described below, which are released after **10.FEB.22**.
 
-This module pack aims to cover extended needs of any Virtual Airline with some new pages, widgets and backend tools. Provides;
+* Module version v3.0.19 is the latest version with php7.4 and laravel8 support.
+* Module versions starting with v3.1.xx will support only php8 and laravel9 as per phpVMS v7 improvements.
+
+Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
+
+Using this module along with *Disposable Basic* and *Disposable Theme* is advised but not mandatory. This module pack aims to cover extended needs of any Virtual Airline with some new features, widgets and backend tools. Provides;
 
 * Tours (with Awards and a tracking Widget)
 * Free Flights (with full SimBrief integration)
@@ -39,7 +42,7 @@ Yes, the module is not FREE but it does not have fixed price tag too. So you wil
 * Any other humanitarian/animal charity for saving lives and helping the ones in need (like donating vaccines, or fighting with hunger at Africa etc)
 * Author of this module (if you really want to and can not find somewhere else for donation)
 
-How you can donate to me ? As this is the last choice, there are no pre-defined ways. You may gift something from simulation software shops (like gift cards/vouchers etc) or just send me an email about it so we can find a way. You can follow me on Patreon for continuous monthly support (I really do not know how it works or even if I can get the money from them).
+How you can donate to me ? As this is the last choice, there are no pre-defined ways. You may gift something from simulation software shops (like gift cards/vouchers etc) or just send me an email about it so we can find a way.
 
 And just a friendly reminder, by doing a donation you will not "own" the code or will have priority support etc. As long as I am around, I will keep updating the module 'cause development never ends. But this does not mean that I will add everything to this module or when you request it :) If your request is reasonable and not va/company specific I may work on it. If not you may need to come up with our own solution, preferably as a separate module for yourself (so you can easily update this module when needed)
 
@@ -57,7 +60,7 @@ And just a friendly reminder, by doing a donation you will not "own" the code or
 
 ### Update (from v3.xx to v3.yy)
 
-Just follow the installation procedure by overwriting your old module files
+Just upload updated files by overwriting your old module files, visit /update and clean `application` cache when update process finishes.
 
 ### Update (from v2.xx series to v3.xx)
 
@@ -250,6 +253,13 @@ Personally I am using an SSL certificate and it is working fine, even with the r
 Even though the forms and routes are tested with possible scenarios, there is no much here I can offer you to solve hosting/redirection/certificate related issues. Sorry about that.
 
 ## Release / Update Notes
+
+01.MAR.22
+
+**WARNING: THIS IS THE LAST VERSION SUPPORTING PHP 7.4.xx AND LARAVEL 8**
+
+* Failsafe (yes another one) for Tour Progress Widget
+  *To cover division by zero error, happens if admin decides to delete all legs of an active tour after they have been flown*
 
 28.FEB.22
 
