@@ -59,6 +59,7 @@ class Gen_Diversion
                     $pirep->alt_airport_id = $pirep->arr_airport_id; // Save intended dest as alternate for fixing it back when needed
                     $pirep->arr_airport_id = $diverted->id; // Use diversion dest as the new arrival
                     $pirep->flight_id = null; // Remove the flight id to drop the relationship
+                    $pirep->route_leg = null; // Remove the route_leg to exclude this pirep from tour checks
                     $pirep->save();
 
                     Log::info('Disposable Special | Pirep ' . $pirep->id . ' Flight ' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', assets MOVED to Diversion Airport');
@@ -67,7 +68,8 @@ class Gen_Diversion
                 // Airport NOT found (only edit Pirep values)
                 else {
                     $pirep->notes = 'DIVERTED (' . $pirep->arr_airport_id . ' > ' . $diversion_apt . ') ' . $pirep->notes;
-                    $pirep->flight_id = null;
+                    $pirep->flight_id = null; // Remove the flight id to drop the relationship
+                    $pirep->route_leg = null; // Remove the route_leg to exclude this pirep from tour checks
                     $pirep->save();
 
                     Log::info('Disposable Special | Pirep ' . $pirep->id . ' Flight ' . $pirep->ident . ' DIVERTED to ' . $diversion_apt . ', NOT ABLE to move assets !');
