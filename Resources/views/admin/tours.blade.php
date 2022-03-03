@@ -46,11 +46,11 @@
           </div>
           <div class="col-sm-2">
             <label class="pl-1 mb-1" for="start_date">Start Date *</label>
-            <input name="start_date" type="date" class="form-control" placeholder="2021-03-15" value="{{ $tour->start_date ?? '' }}">
+            <input name="start_date" type="text" class="form-control" placeholder="2021-03-15" value="{{ optional(optional($tour)->start_date)->format('Y-m-d') ?? '' }}">
           </div>
           <div class="col-sm-2">
             <label class="pl-1 mb-1" for="end_date">End Date *</label>
-            <input name="end_date" type="date" class="form-control" placeholder="2021-06-30" value="{{ $tour->end_date ?? '' }}">
+            <input name="end_date" type="text" class="form-control" placeholder="2021-06-30" value="{{ optional(optional($tour)->end_date)->format('Y-m-d') ?? '' }}">
           </div>
         </div>
 
