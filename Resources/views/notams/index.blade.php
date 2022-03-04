@@ -5,9 +5,9 @@
   @if(!$notams->count())
     <div class="alert alert-info p-1 fw-bold">@lang('DSpecial::common.no_notams')</div>
   @else
-    <div class="row row-cols-3">
+    <div class="row row-cols-lg-2 row-cols-xl-3">
       @foreach($notams as $notam)
-        <div class="col">
+        <div class="col-lg">
           <div class="card mb-2">
             <div class="card-header p-1">
               <h5 class="m-1">

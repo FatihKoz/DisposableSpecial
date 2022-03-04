@@ -1,10 +1,12 @@
 @extends('app')
 @section('title', 'Tour Details')
-
+@php
+  $units = isset($units) ? $units : DS_GetUnits();    
+@endphp
 @section('content')
   <div class="row">
     @include('DSpecial::tours.table')
-    <div class="col-2">
+    <div class="col-lg-2">
       <div class="nav flex-column nav-pills" id="pills-tab" role="tablist" aria-orientation="vertical">
         @if(filled($tour->tour_rules))
           <a class="nav-link mb-2 active" id="pills-legs-tab" data-toggle="pill" href="#pills-legs" role="tab" aria-controls="pills-legs" aria-selected="false">
@@ -95,7 +97,7 @@
   {{-- Map Modal --}}
   @if($tour->legs_count > 0)
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-xxl" style="width: 80vw; min-width: 80vw">
+      <div class="modal-dialog modal-dialog-xxl mx-auto" style="width: 80vw; min-width: 80vw">
         <div class="modal-content">
           <div class="modal-header p-1 border-0">
             <h5 class="m-1" id="staticBackdropLabel">

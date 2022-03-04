@@ -2,7 +2,7 @@
 @section('title', 'My Flight')
 
 @section('content')
-  <div class="row row-cols-1 mb-2">
+  <div class="row mb-2">
     <div class="col">
       {{ Form::open(array('route' => 'DSpecial.freeflight_store', 'method' => 'post')) }}
         <div class="card mb-2">
@@ -13,8 +13,8 @@
             </h5>
           </div>
           <div class="card-body p-2 text-start">
-            <div class="row row-cols-5 mb-2">
-              <div class="col">
+            <div class="row row-cols-xl-5 mb-2">
+              <div class="col-lg">
                 <div class="input-group input-group-sm">
                   <span class="input-group-text" title="@lang('common.airline') & @lang('flights.flightnumber')"><i class="fas fa-paper-plane"></i></span>
                   @if($airlines->count() > 1 && !$settings['pilot_company'])
@@ -31,7 +31,7 @@
                 </div>
               </div>
               @if(!$settings['sb_callsign'])
-                <div class="col">
+                <div class="col-lg">
                   <div class="input-group input-group-sm">
                     <span class="input-group-text" title="@lang('flights.callsign') @lang('DSpecial::common.optional')">
                       <i class="fas fa-headset"></i>
@@ -41,7 +41,7 @@
                   </div>
                 </div>
               @endif
-              <div class="col">
+              <div class="col-md">
                 <div class="input-group input-group-sm">
                   <span class="input-group-text" title="@lang('airports.departure')"><i class="fas fa-plane-departure"></i></span>
                   <input type="text" name="ff_orig" class="form-control" maxlength="4"
@@ -49,14 +49,14 @@
                         @if($settings['pilot_location']) readonly @endif>
                 </div>
               </div>
-              <div class="col">
+              <div class="col-md">
                 <div class="input-group input-group-sm">
                   <span class="input-group-text" title="@lang('airports.arrival')"><i class="fas fa-plane-arrival"></i></span>
                   <input type="text" name="ff_dest" class="form-control" value="{{ $fflight->arr_airport_id }}" maxlength="4">
                 </div>
               </div>
               @if($aircraft->count())
-                <div class="col">
+                <div class="col-xl">
                   <div class="input-group input-group-sm">
                     <span class="input-group-text" title="@lang('common.aircraft') @lang('DSpecial::common.optional')">
                       <i class="fas fa-plane"></i>
@@ -66,7 +66,7 @@
                       @foreach($aircraft as $ac)
                         <option value="{{ $ac->id }}">
                           {{ $ac->ident }}
-                          @if($ac->fuel_onboard > 0)
+                          @if($ac->fuel_onboard[$units['fuel']] > 0)
                             {{ ' | '.__('DSpecial::common.fuelob').': '.DS_ConvertWeight($ac->fuel_onboard, $units['fuel']) }}
                           @endif
                         </option>
@@ -87,11 +87,11 @@
     </div>
   </div>
 
-  <div class="row row-cols-2">
-    <div class="col">
+  <div class="row row-cols-xl-2">
+    <div class="col-xl-6">
       {{-- Empty Column For Spacing --}}
     </div>
-    <div class="col-6">
+    <div class="col-xl-6">
       <div class="card mb-2">
         <div class="card-header p-1">
           <h5 class="m-1">

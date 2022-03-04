@@ -1,4 +1,4 @@
-<div class="col">
+<div class="col-lg">
   <div class="card mb-2">
     <div class="card-header p-0">
       <table class="table table-sm table-borderless align-middle py-0 my-0">
@@ -20,7 +20,7 @@
           <th class="col-2">@lang('DSpecial::tours.ttype')</th>
           <td class="col-6">@if(!$tour->airline) @lang('DSpecial::tours.topen') @else @lang('DSpecial::tours.tairline') @endif</td>
           <th class="col-2 text-end">@lang('DSpecial::tours.tcode')</th>
-          <td class="cold-2">{{ $tour->tour_code }}</td>
+          <td class="col-2">{{ $tour->tour_code }}</td>
         </tr>
         <tr>
           <th class="col-2">@lang('DSpecial::tours.tdates')</th>

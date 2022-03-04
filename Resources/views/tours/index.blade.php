@@ -1,6 +1,9 @@
 @extends('app')
 @section('title', 'Tours')
-
+@php
+  $units = isset($units) ? $units : DS_GetUnits();
+  $carbon_now = Carbon::now();
+@endphp
 @section('content')
   @if(!$tours->count())
     <div class="alert alert-info p-1 fw-bold">No Tours Found!</div>
@@ -30,27 +33,27 @@
 
     <div class="tab-content" id="pills-tabContent">
       <div class="tab-pane fade show active" id="pills-activet" role="tabpanel" aria-labelledby="pills-activet-tab">
-        <div id="activet" class="row row-cols-3">
+        <div id="activet" class="row row-cols-lg-3">
           @foreach($tours as $tour)
-            @if(Carbon::now() >= Carbon::parse($tour->start_date) && Carbon::now() <= Carbon::parse($tour->end_date))
+            @if($carbon_now >= $tour->start_date && $carbon_now <= $tour->end_date)
               @include('DSpecial::tours.table')
             @endif
           @endforeach
         </div>
       </div>
       <div class="tab-pane fade" id="pills-futuret" role="tabpanel" aria-labelledby="pills-futuret-tab">
-        <div id="futuret" class="row row-cols-3">
+        <div id="futuret" class="row row-cols-lg-3">
           @foreach ($tours as $tour)
-            @if(Carbon::now() < Carbon::parse($tour->start_date))
+            @if($carbon_now < $tour->start_date)
               @include('DSpecial::tours.table')
             @endif
           @endforeach
         </div>
       </div>
       <div class="tab-pane fade" id="pills-closedt" role="tabpanel" aria-labelledby="pills-closedt-tab">
-        <div id="closedt" class="row row-cols-3">
+        <div id="closedt" class="row row-cols-lg-3">
           @foreach ($tours as $tour)
-            @if(Carbon::now() > Carbon::parse($tour->end_date))
+            @if($carbon_now > $tour->end_date)
               @include('DSpecial::tours.table')
             @endif
           @endforeach

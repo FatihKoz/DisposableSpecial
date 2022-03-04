@@ -1,5 +1,5 @@
 @if($pilots->count() > 0)
-  <table class="table table-sm table-borderless table-striped text-start align-middle mb-0">
+  <table class="table table-sm table-borderless table-striped text-start text-nowrap align-middle mb-0">
     <tr>
       <th class="text-nowrap">Pilot</th>
       @for($x = 1; $x <= $tour->legs_count; $x++)
