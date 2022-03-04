@@ -17,7 +17,7 @@ class DSpecial_Tour extends Award
     public function check($tour_code = null): bool
     {
         if (!$tour_code) {
-            Log::error('Disposable Special | Tour Code Not Set');
+            Log::error('Disposable Special | Tour Code Not Set !');
             return false;
         }
 
