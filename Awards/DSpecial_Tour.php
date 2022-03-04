@@ -26,6 +26,7 @@ class DSpecial_Tour extends Award
         if (filled($tour)) {
             if (Carbon::now()->between($tour->start_date->startOfDay(), $tour->end_date->endOfDay()) === false) {
                 // Current date is not between tour start/end dates
+                Log::debug('Disposable Special | ' . $tour_code . ' is ended or not started yet, award check should be disabled');
                 return false;
             }
             if (filled($tour->tour_airline)) {
@@ -56,6 +57,12 @@ class DSpecial_Tour extends Award
         ];
 
         $ordered_user_pireps = Pirep::where($pirep_where)->whereNotNull('route_leg')->orderBy('submitted_at', 'asc')->pluck('route_leg')->toArray();
+
+        if (count($ordered_user_pireps) == 0) {
+            Log::debug('Disposable Special | User not participating ' . $tour_code . ' tour');
+            return false;
+        }
+
         $ordered_tour_flights = $tour->legs()->whereNotNull('route_leg')->orderBy('route_leg', 'asc')->pluck('route_leg')->toArray();
 
         $pirep_order_check = array_intersect_assoc($ordered_tour_flights, $ordered_user_pireps);
