@@ -33,7 +33,7 @@ class Expense_Fuel
         $drain_service_cost = DS_Setting('turksim.expense_fuel_drncost', 0.05);
         $fuel_lowuplift_cost = DS_Setting('turksim.expense_fuel_lowcost', 250);
         $fuel_lowuplift_limit = DS_Setting('turksim.expense_fuel_lowlimit', 1769.95); // Pounds -> 1000 Liters
-        $fuel_domestic_tax = DS_Setting('turksim.expense_fuel_domtax', 7); // Percentage of VAT or similar like %7
+        $fuel_domestic_tax = DS_Setting('turksim.expense_fuel_domtax', 6); // Percentage of VAT or similar like %7
         $domestic = false;
 
         $pirep = $event->pirep;
@@ -75,16 +75,16 @@ class Expense_Fuel
                 ->orderby('submitted_at', 'desc')->skip(1)->first();
 
             if ($prev_flight) {
-                $fuel_amount = $pirep->block_fuel - ($prev_flight->block_fuel - $prev_flight->fuel_used);
+                $fuel_amount = $pirep->block_fuel->internal(2) - ($prev_flight->block_fuel->internal(2) - $prev_flight->fuel_used->internal(2));
                 if ($fuel_amount < 0 && $fuel_type === FuelType::JET_A) {
                     $drain_amount = abs($fuel_amount);
                     $fuel_amount = 0;
                 }
             } else {
-                $fuel_amount = $pirep->block_fuel;
+                $fuel_amount = $pirep->block_fuel->internal(2);
             }
         } else {
-            $fuel_amount = $pirep->fuel_used;
+            $fuel_amount = $pirep->fuel_used->internal(2);
         }
 
         // Apply Fuel Draining or De-Fuelling Cost (per drained amount)

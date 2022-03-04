@@ -33,7 +33,7 @@ class Expense_Enroute
         $tow = null;
         $mtow = null;
         $unit_rate = is_numeric($atc_base) ? $atc_base : null;
-        $distance = is_numeric($pirep->distance) ? round($pirep->distance * 1.852, 2) : null;
+        $distance = is_numeric($pirep->distance->internal()) ? $pirep->distance->toUnit('km', 2) : null;
         $distance_factor = is_numeric($distance) ? round($distance / 100, 2) : null;
         $time_factor = is_numeric($pirep->flight_time) ? round($pirep->flight_time / 100, 2) : null;
 
