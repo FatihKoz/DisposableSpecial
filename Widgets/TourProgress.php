@@ -4,6 +4,8 @@ namespace Modules\DisposableSpecial\Widgets;
 
 use App\Contracts\Widget;
 use App\Models\Pirep;
+use App\Models\Enums\PirepState;
+use App\Models\Enums\PirepStatus;
 use Modules\DisposableSpecial\Models\DS_Tour;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -23,9 +25,10 @@ class TourProgress extends Widget
     $tour_codes = $tours->pluck('tour_code')->toArray();
 
     // Get Tour pireps
-    $pireps = Pirep::whereNotNull('route_leg')->where(['user_id' => $user_id, 'state' => 2, 'status'  => 'ONB'])
+    $pirep_where = ['user_id' => $user_id, 'state' => PirepState::ACCEPTED, 'status'  => PirepStatus::ARRIVED];
+    $pireps = Pirep::whereNotNull('route_leg')->where($pirep_where)
       ->whereIn('route_code', $tour_codes)
-      ->selectRaw('route_code as tour_code')->selectRaw('count(DISTINCT route_leg) as flown_legs')
+      ->selectRaw('route_code as tour_code, count(DISTINCT route_leg) as flown_legs')
       ->groupby('route_code')->get();
 
     // Prepare Tour Progress array
