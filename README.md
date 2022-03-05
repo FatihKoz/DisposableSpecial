@@ -4,10 +4,13 @@ phpVMS v7 module for Extended VA features
 
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
-Compatible with latest development (dev) builds of phpVMS v7 as described below, which are released after **10.FEB.22**.
+Compatible with phpVMS v7 builds as described below;
 
-* Module version v3.0.19 is the latest version with php7.4 and laravel8 support.
-* Module versions starting with v3.1.xx will support only php8 and laravel9 as per phpVMS v7 improvements.
+* Module versions starting with v3.1.xx supports only php8 and laravel9
+* Minimum required phpVMS v7 version is phpVms `7.0.0-Laravel9` for v3.1.xx
+* Module version v3.0.19 is the latest version with php7.4 and laravel8 support
+* Latest available phpVMS v7 version is phpVms `7.0.0-dev+220228.b81dd9` (28.FEB.22) for v3.0.19
+* Minimum required phpVMS v7 version is phpVms `7.0.0-dev+220211.78fd83` (11.FEB.22) for v3.0.19
 
 Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
 
@@ -169,6 +172,10 @@ Simple, just use standard Laravel call for widgets, currently 3 widgets are avai
 * `'user'` can be a user's id (lie `$user->id` or `3`) and will force the widget to display that user's progress
 * `'warn'` can be any number of days like `30` and it will change the progress bar color according to Tour's end date (default is 14 days)
 
+Widget will show progress with yellow (warning) color until the tour is finished and turns to green (success). However if the legs are not flown in correct order it will turn to red (danger) and will not return to green/yellow again.
+
+This also applies to Tour Award classes. If a pilot brokes the leg order, to get the award then those faulty legs should be rejected and must be re-flown.
+
 **Notams** widget can be configured to display users current location notams or specific notams for an airport or airline.
 
 * `'count'` can be any number (like `50`) to pick latest *EFFECTIVE* specified number of notams
@@ -253,6 +260,15 @@ Personally I am using an SSL certificate and it is working fine, even with the r
 Even though the forms and routes are tested with possible scenarios, there is no much here I can offer you to solve hosting/redirection/certificate related issues. Sorry about that.
 
 ## Release / Update Notes
+
+06.MAR.22
+
+* Module is now only compatible with php8 and laravel9
+* All module blades changed to provide better support mobile devices
+* Module helpers updated to meet new core requirements
+* Module controller and services updated to meet new core requirements
+* Some more failsafe checks added to cover admin/user errors
+* Tour Progress widget now checks the flown legs order along with progress ratio
 
 01.MAR.22
 
