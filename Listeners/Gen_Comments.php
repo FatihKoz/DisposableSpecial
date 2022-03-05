@@ -46,7 +46,7 @@ class Gen_Comments
             $act_lfuel = optional($pirep->fields->where('slug', 'landing-fuel')->first())->value;
         }
 
-        if ($pirep->fuel_used < 5) {
+        if ($pirep->fuel_used->internal(2) < 5) {
             $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Non Reliable or Missing Fuel Information']);
             $pirep_state = PirepState::REJECTED;
         }
