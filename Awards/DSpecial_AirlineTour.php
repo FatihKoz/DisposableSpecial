@@ -60,7 +60,7 @@ class DSpecial_AirlineTour extends Award
         $ordered_user_pireps = Pirep::where($pirep_where)->whereNotNull('route_leg')->orderBy('submitted_at', 'asc')->pluck('route_leg')->toArray();
 
         if (count($ordered_user_pireps) == 0) {
-            Log::debug('Disposable Special | User not participating ' . $tour_code . ' tour');
+            Log::debug('Disposable Special | User ID:' . $user_id . ' not participating ' . $tour_code . ' tour');
             return false;
         }
 
@@ -71,7 +71,7 @@ class DSpecial_AirlineTour extends Award
         // If the intersection of arrays do not give what we want, return false
         // No need to proceed and do a flight based check
         if (count($ordered_tour_flights) != count($pirep_order_check)) {
-            Log::debug('Disposable Special | ' . $tour->tour_code . ' Tour legs not completed or not flown in correct order');
+            Log::debug('Disposable Special | User ID:' . $user_id . ' > ' . $tour->tour_code . ' legs not completed or not flown in correct order');
             return false;
         } elseif (count($ordered_tour_flights) == count($pirep_order_check) && $deep_check === false) {
             return true;
