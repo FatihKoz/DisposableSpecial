@@ -185,7 +185,7 @@ class DS_AdminController extends Controller
             // Calculate Block Times for flights with no time defined
             $flights = Flight::whereNull('flight_time')->whereNotNull('distance')->orwhere('flight_time', 1)->whereNotNull('distance')->get();
             foreach ($flights as $flight) {
-                $flight->flight_time = DS_CalculateBlockTime($flight->distance, 485, 39);
+                $flight->flight_time = DS_CalculateBlockTime($flight->distance->internal(2), 485, 39);
                 $flight->save();
             }
             flash()->success('Flight Times Calculated.');
@@ -193,7 +193,7 @@ class DS_AdminController extends Controller
             // Calculate Flight Time for all flights
             $flights = Flight::whereNotNull('distance')->get();
             foreach ($flights as $flight) {
-                $flight->flight_time = DS_CalculateBlockTime($flight->distance, 485, 39);
+                $flight->flight_time = DS_CalculateBlockTime($flight->distance->internal(2), 485, 39);
                 $flight->save();
             }
             flash()->success('All Flight Times Re-Calculated.');
