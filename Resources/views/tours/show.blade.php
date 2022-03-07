@@ -109,7 +109,7 @@
                   @endforeach
                 </table>
               </div>
-              <div class="card-footer p-0 small text-end fw-bold">
+              <div class="card-footer p-0 small text-end fw-bold px-1">
                 First 10 pilots finished {{ $tour->tour_name }}
               </div>
             </div>
