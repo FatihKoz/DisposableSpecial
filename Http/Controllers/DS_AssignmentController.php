@@ -105,7 +105,9 @@ class DS_AssignmentController extends Controller
         $curr_page = !empty($request->curr_page) ? $request->curr_page : '/dashboard';
         $reset = !empty($request->resetmonth) ? true : false;
         $user = !empty($request->userid) ? User::find($request->userid) : null;
-
+        if (filled($user)) {
+            flash()->info('User based monthly flight assignment process completed');
+        }
         $this->TriggerAssignment($user, $reset);
 
         return redirect(url($curr_page));
