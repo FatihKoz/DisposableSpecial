@@ -228,6 +228,25 @@ class DS_TourController extends Controller
         return redirect(route('DSpecial.tour_admin'));
     }
 
+    // Removes Tour Details From a Pirep
+    // By nulling both route_code and route_leg
+    public function remove_from_pirep($pirep_id)
+    {
+        $tour_codes = DS_Tour::orderBy('created_at')->pluck('tour_code')->toArray();
+        $pirep = Pirep::where('id', $pirep_id)->whereNotNull(['route_code', 'route_leg'])->whereIn('route_code', $tour_codes)->first();
+
+        if ($pirep) {
+            $pirep->route_code = null;
+            $pirep->route_leg = null;
+            $pirep->save();
+            flash()->success('Tour details removed from pirep');
+        } else {
+            flash()->error('This is not a tour report');
+        }
+
+        return back()->withInput();
+    }
+
     // Add-Remove SubFleets to Tour Legs
     public function ManageTourSubfleets($action, $tour_code, $subfleet_id)
     {
