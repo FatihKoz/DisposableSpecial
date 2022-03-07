@@ -8,6 +8,7 @@ use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\Subfleet;
 use App\Models\User;
+use App\Models\UserAward;
 use Carbon\Carbon;
 use Modules\DisposableSpecial\Models\DS_Tour;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class DS_TourController extends Controller
         $tours = DS_Tour::withCount('legs')->with('airline')->where('active', 1)->orderby('start_date')->orderby('tour_name')->get();
 
         return view('DSpecial::tours.index', [
-            'tours'      => $tours, 
+            'tours'      => $tours,
             'carbon_now' => Carbon::now(),
         ]);
     }
@@ -48,9 +49,23 @@ class DS_TourController extends Controller
             return redirect(route('DSpecial.tours'));
         }
 
-        // Tour Report Collections
+        // Tour Award Winners
+        $tour_award = DB::table('awards')->where('ref_model_params', $code)->first();
+        $tour_awards = UserAward::with('user')->where('award_id', optional($tour_award)->id)->orderBy('created_at', 'asc')->take(10)->get();
+
+        // Tour Report
+        $tour_report = [];
         $tour_pilots = Pirep::where('route_code', $code)->where('state', 2)->groupBy('user_id')->pluck('user_id')->toArray();
         $pilots = User::whereIn('id', $tour_pilots)->orderBy('pilot_id', 'asc')->get();
+
+        if (filled($pilots)) {
+            foreach ($pilots as $pilot) {
+                $tour_report[$pilot->id] = [];
+                foreach ($tour->legs->sortBy('route_leg', SORT_NATURAL) as $tl) {
+                    $tour_report[$pilot->id][$tl->route_leg] = DS_IsTourLegFlown($tour, $tl, $pilot->id);
+                }
+            }
+        }
 
         // Logged in user
         $user = User::with('current_airport')->find(Auth::id());
@@ -132,15 +147,17 @@ class DS_TourController extends Controller
         }
 
         return view('DSpecial::tours.show', [
-            'tour'        => $tour,
-            'user'        => isset($user) ? $user : null,
             'carbon_now'  => Carbon::now(),
             'leg_checks'  => $leg_checks,
             'mapIcons'    => $mapIcons,
-            'mapCenter'   => isset($user_mapCenter) ? '['.$user_mapCenter.']' : '['.$tour_mapCenter.']',
+            'mapCenter'   => isset($user_mapCenter) ? '[' . $user_mapCenter . ']' : '[' . $tour_mapCenter . ']',
             'mapAirports' => $mapAirports,
             'mapFlights'  => $mapFlights,
             'pilots'      => $pilots,
+            'tour'        => $tour,
+            'tour_awards' => $tour_awards,
+            'tour_report' => $tour_report,
+            'user'        => isset($user) ? $user : null,
         ]);
     }
 

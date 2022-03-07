@@ -12,6 +12,8 @@ return [
     'tdates'    => 'Valido Tra',
     'tlegs'     => 'Numero Leg',
     'tmap'      => 'Mappa Tour',
+    'treport'   => 'Tour Report',
+    'tawards'   => 'Tour Award Winners',
     'legs'      => 'Tour Leg',
     'current'   => 'Tour Attivi',
     'future'    => 'Tour Futuri',

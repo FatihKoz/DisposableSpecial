@@ -261,7 +261,7 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
-06.MAR.22
+07.MAR.22
 
 * Module is now only compatible with php8 and laravel9
 * All module blades changed to provide better support mobile devices
@@ -269,6 +269,8 @@ Even though the forms and routes are tested with possible scenarios, there is no
 * Module controller and services updated to meet new core requirements
 * Some more failsafe checks added to cover admin/user errors
 * Tour Progress widget now checks the flown legs order along with progress ratio
+* Added Tour Award Winners (first 10 pilots)
+* Improved Tour Reports performance
 
 01.MAR.22
 

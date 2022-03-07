@@ -8,10 +8,10 @@
     @include('DSpecial::tours.table')
     <div class="col-lg-2">
       <div class="nav flex-column nav-pills" id="pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link mb-2 active" id="pills-legs-tab" data-toggle="pill" href="#pills-legs" role="tab" aria-controls="pills-legs" aria-selected="false">
+          @lang('DSpecial::tours.legs')
+        </a>
         @if(filled($tour->tour_rules))
-          <a class="nav-link mb-2 active" id="pills-legs-tab" data-toggle="pill" href="#pills-legs" role="tab" aria-controls="pills-legs" aria-selected="false">
-            @lang('DSpecial::tours.legs')
-          </a>
           <a class="nav-link mb-2" id="pills-rules-tab" data-toggle="pill" href="#pills-rules" role="tab" aria-controls="pills-rules" aria-selected="false">
             @lang('DSpecial::tours.trules')
           </a>
@@ -20,6 +20,11 @@
           <button type="button" class="nav-link btn btn-sm mb-2 text-start" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="ExpandTourMap()">
             @lang('DSpecial::tours.tmap')
           </button>
+        @endif
+        @if(filled($tour_awards))
+          <a class="nav-link mb-2" id="pills-awards-tab" data-toggle="pill" href="#pills-awards" role="tab" aria-controls="pills-report" aria-selected="false">
+            @lang('DSpecial::tours.tawards')
+          </a>
         @endif
         @ability('admin', 'admin-access')
           <a class="nav-link mb-2" id="pills-report-tab" data-toggle="pill" href="#pills-report" role="tab" aria-controls="pills-report" aria-selected="false">
@@ -66,6 +71,46 @@
               </div>
               <div class="card-body p-1">
                 {!! $tour->tour_rules !!}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endif
+    {{-- Award Winners --}}
+    @if(filled($tour_awards))
+      <div class="tab-pane fade" id="pills-awards" role="tabpanel" aria-labelledby="pills-awards-tab">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card mb-2">
+              <div class="card-header p-1">
+                <h5 class="m-1">
+                  @lang('DSpecial::tours.tawards')
+                  <i class="fas fa-trophy float-end"></i>
+                </h5>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-sm table-borderless table-striped text-start text-nowrap mb-0">
+                  <tr>
+                    <th>#</th>
+                    <th>Pilot</th>
+                    <th class="text-end">Finished At</th>
+                  </tr>
+                  @foreach($tour_awards as $ta)
+                    @if(filled($ta->user))
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>
+                          <a href="{{ route('frontend.profile.show', [$ta->user->id]) }}">{{ $ta->user->ident.' - '.$ta->user->name_private }}</a>
+                        </td>
+                        <td class="text-end">{{ $ta->created_at->format('d F Y H:i') }}</td>
+                      </tr>
+                    @endif
+                  @endforeach
+                </table>
+              </div>
+              <div class="card-footer p-0 small text-end fw-bold">
+                First 10 pilots finished {{ $tour->tour_name }}
               </div>
             </div>
           </div>
