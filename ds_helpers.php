@@ -5,6 +5,7 @@ use App\Models\Pirep;
 use App\Models\User;
 use App\Models\Enums\FareType;
 use App\Models\Enums\PirepState;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Geotools\Geotools;
@@ -175,6 +176,23 @@ if (!function_exists('DS_GetTourName')) {
     {
         $tour = DS_Tour::select('tour_name')->where('tour_code', $route_code)->first();
         return filled($tour) ? $tour->tour_name : $route_code;
+    }
+}
+
+// Get active and ongoing Tour codes
+// Return array
+if (!function_exists('DS_GetTourCodes')) {
+    function DS_GetTourCodes()
+    {
+        $carbon_now = Carbon::today();
+        $where = [
+            'active' => 1,
+            ['start_date', '<=', $carbon_now],
+            ['end_date', '>=', $carbon_now],
+        ];
+
+        $tours = DS_Tour::where($where)->orderBy('tour_code')->pluck('tour_code')->toArray();
+        return $tours;
     }
 }
 
