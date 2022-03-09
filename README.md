@@ -225,7 +225,7 @@ Since everything is dynamic, maintenance costs are dynamic too. Default base pri
 
 Even though vmsAcars is not reporting TakeOff pitch and roll, module is able to check them too. Currently only landing phase checks will be working.
 
-Due to the current state of phpVMS v7, minimum cron execution time is one hours. So setting generic check duration to *0.50* hours (results *30 mins*) will not make your aircraft released after 30 minutes 'cause the cron runs hourly and it will be checked/released on the next hour. IF you have custom crons like Quarterly (15 mins interval) or Halfly (running every 30 mins) then setting values below 1 hour would be practical. Or you can make 1.5 hours etc as you wish.
+By design, maintenance actions are checked by cron every 5 minutes. So if an aircraft is under maintenance, it will be released to service with maximum 5 minutes delay compared to published release time.
 
 ### Monthly Flight Assignments
 
@@ -238,6 +238,8 @@ The worst scenario is, having some leftover data in some database tables and als
 Also if you plan to use `Average Flight Times` option, then setting a logical margin is important. Setting a margin of for example 120 mins (2 hours) will work of course but it will simply disable the logic behind using avg flight times of a pilot. Imagine a user, with an avg flight time of 2 hours, this means that personally he/she is not prefering to fly longer flights. With a margin of 120 minutes, you will be kindly forcing that user to have an assigment flight with for example 3 hours and 50 minutes! Or maybe a quick hop with 30 minutes only. I personally prefer having the margin set to maximum 60 minutes, best is 30 minutes in my opinion. If a flight is not found within user's flight time range (avg +/- margin) then code doubles the margin and re-checks (avg +/- 2x margin).
 
 If you have multiple airlines in your setup, code tries to use the same airline between city pairs and only attempts to change the airline in hubs.
+
+Admins can delete and re-assing monthy flights of users, there is a button for this at user profile (of Disposable Theme). You can check the code and use the same route/button in your own theme too.
 
 ## Duplicating Module Blades/Views
 
