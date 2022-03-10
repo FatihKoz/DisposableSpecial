@@ -263,7 +263,7 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
-07.MAR.22
+10.MAR.22
 
 * Module is now only compatible with php8 and laravel9
 * All module blades changed to provide better support mobile devices
