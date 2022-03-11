@@ -12,19 +12,20 @@
               @elseif($st->field_type === 'select')
                 @php $values = explode(',', $st->options); @endphp
                 <select class="form-control" name="{{ $st->id }}">
-                  @foreach($values as $value)  
+                  @foreach($values as $value)
                     <option value="{{ $value }}" @if($st->value === $value || !filled($st->value) && $st->default === $value) selected @endif>{{ $value }}</option>
                   @endforeach
-              @else 
-                <input 
+                </select>
+              @else
+                <input
                   class="form-control"
                   @if($st->field_type === 'decimal')
-                    type="number" step="0.0001" min="0" max="9999" 
-                  @elseif($st->field_type === 'numeric') 
+                    type="number" step="0.0001" min="0" max="9999"
+                  @elseif($st->field_type === 'numeric')
                     type="number" step="1" min="0" max="9999"
                   @else
                     type="text" maxlength="500"
-                  @endif 
+                  @endif
                   name="{{ $st->id }}" placeholder="{{ $st->default }}" value="{{ $st->value }}">
               @endif
             </td>
