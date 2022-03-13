@@ -81,8 +81,8 @@ class DS_CronServices
     public function RebaseParkedAircraft($days = 0)
     {
         if ($days > 0) {
-            // Return all aircraft to their bases
-            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::today()->subDays($days))->get();
+            // Return aircraft to their bases if landed n days before cron runtime
+            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::now()->subDays($days))->get();
             foreach ($aircraft as $ac) {
                 if ($ac->hub_id && $ac->airport_id != $ac->hub_id) {
                     $ac->airport_id = $ac->hub_id;
