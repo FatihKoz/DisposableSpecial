@@ -207,8 +207,8 @@ class DS_AdminController extends Controller
                 $this->AdjustFuelPrice($pct);
             }
         } elseif ($action === 'returnbase') {
-            // Return all aircraft to their bases
-            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::today()->subDays(7))->get();
+            // Return aircraft to their bases, fixed to 3 days here
+            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::today()->subDays(3))->get();
             foreach ($aircraft as $ac) {
                 if ($ac->hub_id && $ac->airport_id != $ac->hub_id) {
                     $ac->airport_id = $ac->hub_id;
