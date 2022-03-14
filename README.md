@@ -7,7 +7,7 @@ phpVMS v7 module for Extended VA features
 Compatible with phpVMS v7 builds as described below;
 
 * Module versions starting with v3.1.xx supports only php8 and laravel9
-* Minimum required phpVMS v7 version is phpVms `7.0.0-Laravel9` for v3.1.xx
+* Minimum required phpVMS v7 version is phpVms `7.0.0-dev+220314.128480` for v3.1.xx
 * Module version v3.0.19 is the latest version with php7.4 and laravel8 support
 * Latest available phpVMS v7 version is phpVms `7.0.0-dev+220307.00bf18` (07.MAR.22) for v3.0.19
 * Minimum required phpVMS v7 version is phpVms `7.0.0-dev+220211.78fd83` (11.FEB.22) for v3.0.19
@@ -263,14 +263,14 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 ## Release / Update Notes
 
-11.MAR.22
+14.MAR.22
 
 * Module is now only compatible with php8 and laravel9
-* All module blades changed to provide better support mobile devices
+* All module blades changed to provide better support for mobile devices
 * Module helpers updated to meet new core requirements
 * Module controller and services updated to meet new core requirements
 * Some more failsafe checks added to cover admin/user errors
-* Tour Progress widget now checks the flown legs order along with progress ratio
+* Tour Progress widget now checks flown legs order along with progress ratio
 * Added Tour Award Winners (first 10 pilots)
 * Improved Tour Reports performance
 
