@@ -4,10 +4,13 @@ phpVMS v7 module for Extended VA features
 
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
-Compatible with latest development (dev) builds of phpVMS v7 as described below, which are released after **10.FEB.22**.
+Compatible with phpVMS v7 builds as described below;
 
-* Module version v3.0.19 is the latest version with php7.4 and laravel8 support.
-* Module versions starting with v3.1.xx will support only php8 and laravel9 as per phpVMS v7 improvements.
+* Module versions starting with v3.1.xx supports only php8 and laravel9
+* Minimum required phpVMS v7 version is phpVms `7.0.0-Laravel9` for v3.1.xx
+* Module version v3.0.19 is the latest version with php7.4 and laravel8 support
+* Latest available phpVMS v7 version is phpVms `7.0.0-dev+220307.00bf18` (07.MAR.22) for v3.0.19
+* Minimum required phpVMS v7 version is phpVms `7.0.0-dev+220211.78fd83` (11.FEB.22) for v3.0.19
 
 Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
 
@@ -169,6 +172,10 @@ Simple, just use standard Laravel call for widgets, currently 3 widgets are avai
 * `'user'` can be a user's id (lie `$user->id` or `3`) and will force the widget to display that user's progress
 * `'warn'` can be any number of days like `30` and it will change the progress bar color according to Tour's end date (default is 14 days)
 
+Widget will show progress with yellow (warning) color until the tour is finished and turns to green (success). However if the legs are not flown in correct order it will turn to red (danger) and will not return to green/yellow again.
+
+This also applies to Tour Award classes. If a pilot brokes the leg order, to get the award then those faulty legs should be rejected and must be re-flown.
+
 **Notams** widget can be configured to display users current location notams or specific notams for an airport or airline.
 
 * `'count'` can be any number (like `50`) to pick latest *EFFECTIVE* specified number of notams
@@ -218,7 +225,7 @@ Since everything is dynamic, maintenance costs are dynamic too. Default base pri
 
 Even though vmsAcars is not reporting TakeOff pitch and roll, module is able to check them too. Currently only landing phase checks will be working.
 
-Due to the current state of phpVMS v7, minimum cron execution time is one hours. So setting generic check duration to *0.50* hours (results *30 mins*) will not make your aircraft released after 30 minutes 'cause the cron runs hourly and it will be checked/released on the next hour. IF you have custom crons like Quarterly (15 mins interval) or Halfly (running every 30 mins) then setting values below 1 hour would be practical. Or you can make 1.5 hours etc as you wish.
+By design, maintenance actions are checked by cron every 5 minutes. So if an aircraft is under maintenance, it will be released to service with maximum 5 minutes delay compared to published release time.
 
 ### Monthly Flight Assignments
 
@@ -231,6 +238,8 @@ The worst scenario is, having some leftover data in some database tables and als
 Also if you plan to use `Average Flight Times` option, then setting a logical margin is important. Setting a margin of for example 120 mins (2 hours) will work of course but it will simply disable the logic behind using avg flight times of a pilot. Imagine a user, with an avg flight time of 2 hours, this means that personally he/she is not prefering to fly longer flights. With a margin of 120 minutes, you will be kindly forcing that user to have an assigment flight with for example 3 hours and 50 minutes! Or maybe a quick hop with 30 minutes only. I personally prefer having the margin set to maximum 60 minutes, best is 30 minutes in my opinion. If a flight is not found within user's flight time range (avg +/- margin) then code doubles the margin and re-checks (avg +/- 2x margin).
 
 If you have multiple airlines in your setup, code tries to use the same airline between city pairs and only attempts to change the airline in hubs.
+
+Admins can delete and re-assing monthy flights of users, there is a button for this at user profile (of Disposable Theme). You can check the code and use the same route/button in your own theme too.
 
 ## Duplicating Module Blades/Views
 
@@ -253,6 +262,17 @@ Personally I am using an SSL certificate and it is working fine, even with the r
 Even though the forms and routes are tested with possible scenarios, there is no much here I can offer you to solve hosting/redirection/certificate related issues. Sorry about that.
 
 ## Release / Update Notes
+
+11.MAR.22
+
+* Module is now only compatible with php8 and laravel9
+* All module blades changed to provide better support mobile devices
+* Module helpers updated to meet new core requirements
+* Module controller and services updated to meet new core requirements
+* Some more failsafe checks added to cover admin/user errors
+* Tour Progress widget now checks the flown legs order along with progress ratio
+* Added Tour Award Winners (first 10 pilots)
+* Improved Tour Reports performance
 
 01.MAR.22
 

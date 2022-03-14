@@ -13,6 +13,8 @@ return [
     'tlegs'     => 'Compte des étapes',
     'tmap'      => 'Carte du Tour',
     'legs'      => 'Etapes du Tour',
+    'treport'   => 'Tour Report',
+    'tawards'   => 'Tour Award Winners',
     'current'   => 'Tours actifs',
     'future'    => 'Tours à venir',
     'past'      => 'Tours clôturés',

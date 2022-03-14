@@ -17,7 +17,7 @@ class DSpecial_Tour extends Award
     public function check($tour_code = null): bool
     {
         if (!$tour_code) {
-            Log::error('Disposable Special | Tour Code Not Set');
+            Log::error('Disposable Special | Tour Code Not Set !');
             return false;
         }
 
@@ -26,6 +26,7 @@ class DSpecial_Tour extends Award
         if (filled($tour)) {
             if (Carbon::now()->between($tour->start_date->startOfDay(), $tour->end_date->endOfDay()) === false) {
                 // Current date is not between tour start/end dates
+                Log::debug('Disposable Special | ' . $tour_code . ' is ended or not started yet, award check should be disabled');
                 return false;
             }
             if (filled($tour->tour_airline)) {
@@ -56,6 +57,12 @@ class DSpecial_Tour extends Award
         ];
 
         $ordered_user_pireps = Pirep::where($pirep_where)->whereNotNull('route_leg')->orderBy('submitted_at', 'asc')->pluck('route_leg')->toArray();
+
+        if (count($ordered_user_pireps) == 0) {
+            Log::debug('Disposable Special | User ID:' . $user_id . ' not participating ' . $tour_code . ' tour');
+            return false;
+        }
+
         $ordered_tour_flights = $tour->legs()->whereNotNull('route_leg')->orderBy('route_leg', 'asc')->pluck('route_leg')->toArray();
 
         $pirep_order_check = array_intersect_assoc($ordered_tour_flights, $ordered_user_pireps);
@@ -63,7 +70,7 @@ class DSpecial_Tour extends Award
         // If the intersection of arrays do not give what we want, return false
         // No need to proceed and do a flight based check
         if (count($ordered_tour_flights) != count($pirep_order_check)) {
-            Log::debug('Disposable Special | ' . $tour->tour_code . ' Tour legs not completed or not flown in correct order');
+            Log::debug('Disposable Special | User ID:' . $user_id . ' > ' . $tour->tour_code . ' legs not completed or not flown in correct order');
             return false;
         } elseif (count($ordered_tour_flights) == count($pirep_order_check) && $deep_check === false) {
             return true;

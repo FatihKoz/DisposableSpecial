@@ -1,7 +1,6 @@
 <?php
 
 use App\Contracts\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class AddCronSettings extends Migration

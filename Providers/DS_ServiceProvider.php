@@ -49,7 +49,6 @@ class DS_ServiceProvider extends ServiceProvider
         ], function () {
             // Assignment Controller Routes
             Route::get('dassignments', 'DS_AssignmentController@index')->name('assignments');
-            Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual');
             // Free Flight Controller Routes
             Route::get('dfreeflight', 'DS_FreeFlightController@index')->name('freeflight');
             Route::match(['get', 'post'], 'dfreeflight_store', 'DS_FreeFlightController@store')->name('freeflight_store');
@@ -85,6 +84,8 @@ class DS_ServiceProvider extends ServiceProvider
         ], function () {
             Route::get('dspecial', 'DS_AdminController@index')->name('admin');
             Route::post('dsettings_store', 'DS_AdminController@update')->name('save_settings');
+            // Assignment Admin Routes
+            Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual');
             // Maintenance Admin Routes
             Route::get('dmaint_admin', 'DS_MaintenanceController@index_admin')->name('maint_admin');
             Route::post('dmaint_finish', 'DS_MaintenanceController@finish_maint')->name('maint_finish');
@@ -94,6 +95,7 @@ class DS_ServiceProvider extends ServiceProvider
             // Tour Admin Routes
             Route::get('dtour_admin', 'DS_TourController@index_admin')->name('tour_admin');
             Route::post('dtour_store', 'DS_TourController@store')->name('tour_store');
+            Route::get('dtours/remove/{pirep_id}', 'DS_TourController@remove_from_pirep')->name('tour_remove');
         });
     }
 

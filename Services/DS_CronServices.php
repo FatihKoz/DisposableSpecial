@@ -77,6 +77,26 @@ class DS_CronServices
         }
     }
 
+    // Return aircraft to their bases
+    public function RebaseParkedAircraft($days = 0)
+    {
+        if ($days > 0) {
+            // Return aircraft to their bases if landed n days before cron runtime
+            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::now()->subDays($days))->get();
+            foreach ($aircraft as $ac) {
+                if ($ac->hub_id && $ac->airport_id != $ac->hub_id) {
+                    $ac->airport_id = $ac->hub_id;
+                    $ac->save();
+                    Log::info('Disposable Special | ' . $ac->registration . ' returned to ' . $ac->hub_id);
+                } elseif (!$ac->hub_id && $ac->subfleet->hub_id && $ac->airport_id != $ac->subfleet->hub_id) {
+                    $ac->airport_id = $ac->subfleet->hub_id;
+                    $ac->save();
+                    Log::info('Disposable Special | ' . $ac->registration . ' returned to ' . $ac->subfleet->hub_id);
+                }
+            }
+        }
+    }
+
     // Handle Tour Flights, Activate or Deactivate according to Tour Dates
     // Process only flights with no dates set, rest will be handled by phpVMS
     public function ProcessTours()

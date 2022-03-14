@@ -46,7 +46,7 @@ class Gen_Comments
             $act_lfuel = optional($pirep->fields->where('slug', 'landing-fuel')->first())->value;
         }
 
-        if ($pirep->fuel_used < 5) {
+        if ($pirep->fuel_used->internal(2) < 5) {
             $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Non Reliable or Missing Fuel Information']);
             $pirep_state = PirepState::REJECTED;
         }
@@ -65,14 +65,14 @@ class Gen_Comments
         if ($simbrief && $aircraft) {
 
             if ($simbrief->xml->params->units == 'kgs') {
-                $block_fuel = round($pirep->block_fuel / 2.20462262185, 2);
-                $fuel_used = round($pirep->fuel_used / 2.20462262185, 2);
+                $block_fuel = $pirep->block_fuel->toUnit('kg', 2);
+                $fuel_used = $pirep->fuel_used->toUnit('kg', 2);
                 $landing_fuel = is_numeric($act_lfuel) ? round($act_lfuel / 2.20462262185, 2) : round($block_fuel - $fuel_used, 2);
                 $act_tow = is_numeric($act_tow) ? round($act_tow / 2.20462262185) : null;
                 $act_ldw = is_numeric($act_ldw) ? round($act_ldw / 2.20462262185) : null;
             } else {
-                $block_fuel = round($pirep->block_fuel, 2);
-                $fuel_used = round($pirep->fuel_used, 2);
+                $block_fuel = $pirep->block_fuel->internal(2);
+                $fuel_used = $pirep->fuel_used->internal(2);
                 $landing_fuel = is_numeric($act_lfuel) ? round($act_lfuel, 2) : round($block_fuel - $fuel_used, 2);
                 $act_tow = is_numeric($act_tow) ? round($act_tow) : null;
                 $act_ldw = is_numeric($act_ldw) ? round($act_ldw) : null;
@@ -150,11 +150,11 @@ class Gen_Comments
         // Basic checks (with pirep figures)
         elseif (!$simbrief && $aircraft) {
 
-            if ($pirep->block_fuel < ($pirep->fuel_used + round(($pirep->fuel_used / $pirep->flight_time) * 30, 2))) {
+            if ($pirep->block_fuel->internal(2) < ($pirep->fuel_used->internal(2) + round(($pirep->fuel_used->internal(2) / $pirep->flight_time) * 30, 2))) {
                 $pirep_comments[] = array_merge($default_fields, ['comment' => 'TakeOff Below Minimum Required Block Fuel']);
             }
 
-            if (($pirep->block_fuel - $pirep->fuel_used) < round(($pirep->fuel_used / $pirep->flight_time) * 30, 2)) {
+            if (($pirep->block_fuel->internal(2) - $pirep->fuel_used->internal(2)) < round(($pirep->fuel_used->internal(2) / $pirep->flight_time) * 30, 2)) {
                 $pirep_comments[] = array_merge($default_fields, ['comment' => 'Landing Below Minimum Required Remaining Fuel']);
             }
         }

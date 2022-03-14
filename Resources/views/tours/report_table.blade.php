@@ -1,5 +1,5 @@
 @if($pilots->count() > 0)
-  <table class="table table-sm table-borderless table-striped text-start align-middle mb-0">
+  <table class="table table-sm table-borderless table-striped text-start text-nowrap align-middle mb-0">
     <tr>
       <th class="text-nowrap">Pilot</th>
       @for($x = 1; $x <= $tour->legs_count; $x++)
@@ -13,7 +13,7 @@
         </th>
         @for($y = 1; $y <= $tour->legs_count; $y++)
           <td class="text-center">
-            @if(DS_IsTourLegFlown($tour, $tour->legs->firstWhere('route_leg', $y), $pilot->id) === true)
+            @if(isset($tour_report[$pilot->id][$y]) && $tour_report[$pilot->id][$y] === true)
               <i class="fas fa-check-circle text-success" title="Leg {{$y}}"></i>
             @endif
           </td>

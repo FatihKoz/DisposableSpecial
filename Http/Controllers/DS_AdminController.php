@@ -185,7 +185,7 @@ class DS_AdminController extends Controller
             // Calculate Block Times for flights with no time defined
             $flights = Flight::whereNull('flight_time')->whereNotNull('distance')->orwhere('flight_time', 1)->whereNotNull('distance')->get();
             foreach ($flights as $flight) {
-                $flight->flight_time = DS_CalculateBlockTime($flight->distance, 485, 39);
+                $flight->flight_time = DS_CalculateBlockTime($flight->distance->internal(2), 485, 39);
                 $flight->save();
             }
             flash()->success('Flight Times Calculated.');
@@ -193,7 +193,7 @@ class DS_AdminController extends Controller
             // Calculate Flight Time for all flights
             $flights = Flight::whereNotNull('distance')->get();
             foreach ($flights as $flight) {
-                $flight->flight_time = DS_CalculateBlockTime($flight->distance, 485, 39);
+                $flight->flight_time = DS_CalculateBlockTime($flight->distance->internal(2), 485, 39);
                 $flight->save();
             }
             flash()->success('All Flight Times Re-Calculated.');
@@ -207,8 +207,8 @@ class DS_AdminController extends Controller
                 $this->AdjustFuelPrice($pct);
             }
         } elseif ($action === 'returnbase') {
-            // Return all aircraft to their bases
-            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::today()->subDays(7))->get();
+            // Return aircraft to their bases, fixed to 3 days here
+            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::today()->subDays(3))->get();
             foreach ($aircraft as $ac) {
                 if ($ac->hub_id && $ac->airport_id != $ac->hub_id) {
                     $ac->airport_id = $ac->hub_id;

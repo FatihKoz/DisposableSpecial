@@ -104,8 +104,10 @@ class DS_AssignmentController extends Controller
     {
         $curr_page = !empty($request->curr_page) ? $request->curr_page : '/dashboard';
         $reset = !empty($request->resetmonth) ? true : false;
-        $user = null;
-
+        $user = !empty($request->userid) ? User::find($request->userid) : null;
+        if (filled($user)) {
+            flash()->info('User based monthly flight assignment process completed');
+        }
         $this->TriggerAssignment($user, $reset);
 
         return redirect(url($curr_page));
@@ -139,7 +141,9 @@ class DS_AssignmentController extends Controller
                 DS_Assignment::where(['user_id' => $user->id, 'assignment_year' => $curr_y, 'assignment_month' => $curr_m])->delete();
                 Log::info('Disposable Special | Monthly Flight Assignments of ' . $user->name_private . ' DELETED for ' . $curr_y . '/' . $curr_m);
             }
+            Log::info('Disposable Special | Begin Monthly Flight Assignment of ' . $user->name_private . ' process for ' . $curr_y . '/' . $curr_m);
             $this->GenerateAssignments($user);
+            Log::info('Disposable Special | Monthly Flight Assignment process of ' . $user->name_private . ' completed for ' . $curr_y . '/' . $curr_m);
         }
     }
 

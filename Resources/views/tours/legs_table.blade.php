@@ -1,4 +1,4 @@
-<table class="table table-sm table-borderless table-striped text-start align-middle mb-0">
+<table class="table table-sm table-borderless table-striped text-start text-nowrap align-middle mb-0">
   <tr>
     <th>&nbsp;</th>
     <th>#</th>
@@ -31,7 +31,7 @@
           <i class="fas fa-plane mx-1 text-primary" title="Valid Only With Assigned Subfleets"></i>
         @endif
       </td>
-      <td class="text-center">@if($leg->distance > 0) {{ number_format(ceil($leg->distance)) }} nm @endif</td>
+      <td class="text-center">@if($leg->distance[$units['distance']] > 0) {{ number_format($leg->distance[$units['distance']]).' '.$units['distance'] }} @endif</td>
       <td class="text-center">@if($leg->flight_time > 0) @minutestotime($leg->flight_time) @endif</td>
       <td class="text-center">
         @if($leg_checks[$leg->route_leg] === true)

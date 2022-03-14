@@ -2,9 +2,9 @@
 @section('title', 'Flight Assignments')
 
 @section('content')
-  <div class="row row-cols-2">
+  <div class="row row-cols-lg-2">
     {{-- Left Column --}}
-    <div class="col-8">
+    <div class="col-lg-8">
       @if(count($assignments) === 0)
         <div class="alert alert-primary p-1 px-2 fw-bold">@lang('DSpecial::common.no_assignments')</div>
       @endif
@@ -17,7 +17,7 @@
           </h5>
         </div>
         <div class="card-body p-0 text-start table-responsive">
-          <table class="table table-sm table-striped table-borderless mb-0 text-start align-middle">
+          <table class="table table-sm table-striped table-borderless mb-0 text-start text-nowrap align-middle">
             <tr>
               <th class="text-center">#</th>
               <th>@lang('DSpecial::common.flight_no')</th>
@@ -76,7 +76,7 @@
       @endforeach
     </div>
     {{-- Right Column --}}
-    <div class="col-4">
+    <div class="col-lg-4">
       @if($stats)
         <div class="card mb-2">
           <div class="card-header p-1">

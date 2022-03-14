@@ -5,6 +5,7 @@ use App\Models\Pirep;
 use App\Models\User;
 use App\Models\Enums\FareType;
 use App\Models\Enums\PirepState;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Geotools\Geotools;
@@ -145,17 +146,15 @@ if (!function_exists('DS_ConvertMinutes')) {
 // Convert Weight from LBS to KGS
 // Return string
 if (!function_exists('DS_ConvertWeight')) {
-    function DS_ConvertWeight($value = 0, $target_unit = null)
+    function DS_ConvertWeight($value, $target_unit = null)
     {
-        if ($value == 0) {
-            return null;
-        }
         $target_unit = isset($target_unit) ? $target_unit : setting('units.weight');
 
-        if ($target_unit === 'kg') {
-            $value = $value / 2.20462262185;
+        if (!$value[$target_unit] > 0) {
+            return null;
         }
-        $value = number_format($value) . ' ' . $target_unit;
+
+        $value = number_format($value[$target_unit]) . ' ' . $target_unit;
 
         return $value;
     }
@@ -177,6 +176,23 @@ if (!function_exists('DS_GetTourName')) {
     {
         $tour = DS_Tour::select('tour_name')->where('tour_code', $route_code)->first();
         return filled($tour) ? $tour->tour_name : $route_code;
+    }
+}
+
+// Get active and ongoing Tour codes
+// Return array
+if (!function_exists('DS_GetTourCodes')) {
+    function DS_GetTourCodes()
+    {
+        $carbon_now = Carbon::today();
+        $where = [
+            'active' => 1,
+            ['start_date', '<=', $carbon_now],
+            ['end_date', '>=', $carbon_now],
+        ];
+
+        $tours = DS_Tour::where($where)->orderBy('tour_code')->pluck('tour_code')->toArray();
+        return $tours;
     }
 }
 

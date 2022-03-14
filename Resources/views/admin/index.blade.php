@@ -51,7 +51,7 @@
         <div class="card border-blue-bottom" style="padding:5px;">
           <a href="{{ route('DSpecial.admin') }}?action=returnbase">Return Aircraft To Their Hubs</a>
           <br><br>
-          <span class="text-info">Only aircraft which are left over at airports with no movement for the <b>last 7 days</b> are affected. Also aircraft or subfleet hub must be defined!</span>
+          <span class="text-info">Aircraft left over at airports with no movement for <b>last 3 days</b> are affected.<br>Also aircraft or subfleet hub must be defined!</span>
         </div>
         <div class="card border-blue-bottom" style="padding:5px;">
           <b>Adjust Airport Fuel Prices</b>
@@ -162,10 +162,10 @@
     </div>
     <div class="col-md-6">
       <div class="card border-blue-bottom" style="padding:5px;">
-        <b>Cron & Database Cleanup</b>
+        <b>Cron Features & Database Cleanup</b>
         <br><br>
         @include('DSpecial::admin.settings_table', ['group' => 'Cron'])
-        <span class="text-info">Setting 0 as day value will disable deletion</span>
+        <span class="text-info">Setting 0 as day value will disable the feature</span>
       </div>
     </div>
   </div>

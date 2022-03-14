@@ -7,7 +7,7 @@
       </h5>
     </div>
     <div class="card-body text-center p-0 table-responsive">
-      <table class="table table-sm table-striped table-borderless mb-0 align-middle text-start">
+      <table class="table table-sm table-striped table-borderless mb-0 align-middle text-start text-nowrap">
         <tr>
           @if($hide === false)
             <th>&nbsp;</th>
