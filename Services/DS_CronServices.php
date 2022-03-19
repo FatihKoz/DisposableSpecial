@@ -10,6 +10,7 @@ use App\Models\Pirep;
 use App\Models\Rank;
 use App\Models\SimBrief;
 use App\Models\Subfleet;
+use App\Models\User;
 use App\Models\Enums\AircraftState;
 use App\Models\Enums\PirepState;
 use Carbon\Carbon;
@@ -209,6 +210,7 @@ class DS_CronServices
     // If one of the foreing keys is missing record becomes redundant
     public function CleanRelationships()
     {
+        $users = User::pluck('id')->toArray();
         $fares = Fare::pluck('id')->toArray();
         $flights = Flight::pluck('id')->toArray();
         $ranks = Rank::pluck('id')->toArray();
@@ -252,6 +254,16 @@ class DS_CronServices
         $sr_no_subfleet = DB::table('subfleet_rank')->whereNotIn('subfleet_id', $subfleets)->delete();
         if ($sr_no_subfleet > 0) {
             Log::info('Disposable Special | Deleted ' . $sr_no_subfleet . ' redundant records with no matching SUBFLEET | subfleet_rank');
+        }
+
+        $user_field_values = DB::table('user_field_values')->whereNotIn('user_id', $users)->delete();
+        if ($user_field_values > 0) {
+            Log::info('Disposable Special | Deleted ' . $user_field_values . ' redundant records with no matching USER | user_field_values');
+        }
+
+        $journals = DB::table('journals')->where('morphed_type', 'LIKE', '%User')->whereNotIn('morphed_id', $users)->delete();
+        if ($journals > 0) {
+            Log::info('Disposable Special | Deleted ' . $journals . ' redundant records with no matching USER | journals');
         }
     }
 }
