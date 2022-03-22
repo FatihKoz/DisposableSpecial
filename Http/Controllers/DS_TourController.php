@@ -55,12 +55,15 @@ class DS_TourController extends Controller
 
         // Tour Report
         $tour_report = [];
-        $tour_pilots = Pirep::where('route_code', $code)->where('state', 2)->groupBy('user_id')->pluck('user_id')->toArray();
+        $tour_pilots = Pirep::where(['route_code' => $code, 'state' => 2])->groupBy('user_id')->pluck('user_id')->toArray();
         $pilots = User::whereIn('id', $tour_pilots)->orderBy('pilot_id', 'asc')->get();
 
         if (filled($pilots)) {
             foreach ($pilots as $pilot) {
+                $user_pireps = Pirep::where(['user_id' => $pilot->id, 'state' => 2, 'route_code' => $code])->whereNotNull('route_leg')->orderBy('submitted_at')->pluck('route_leg')->toArray();
+                $tour_order = range(1, count($user_pireps));
                 $tour_report[$pilot->id] = [];
+                $tour_report[$pilot->id]['order'] = ($tour_order == $user_pireps) ? true : false;
                 foreach ($tour->legs->sortBy('route_leg', SORT_NATURAL) as $tl) {
                     $tour_report[$pilot->id][$tl->route_leg] = DS_IsTourLegFlown($tour, $tl, $pilot->id);
                 }

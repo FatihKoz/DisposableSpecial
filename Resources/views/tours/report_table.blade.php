@@ -14,7 +14,7 @@
         @for($y = 1; $y <= $tour->legs_count; $y++)
           <td class="text-center">
             @if(isset($tour_report[$pilot->id][$y]) && $tour_report[$pilot->id][$y] === true)
-              <i class="fas fa-check-circle text-success" title="Leg {{$y}}"></i>
+              <i class="fas fa-check-circle @if($tour_report[$pilot->id]['order'] === true) text-success @else text-danger @endif" title="Leg {{$y}}"></i>
             @endif
           </td>
         @endfor

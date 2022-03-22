@@ -179,9 +179,10 @@
         var NotFlown = 'darkred';
         var CheckDisabled = 'crimson';
         // Build Airports Layer
+        var mBoundary = L.featureGroup();
         var mAirports = L.layerGroup();
         @foreach ($mapAirports as $airport)
-          var APT_{{ $airport['id'] }} = L.marker([{{ $airport['loc'] }}], {icon: {{ $airport['icon'] }} , opacity: 0.8}).bindPopup({!! "'".$airport['pop']."'" !!}).addTo(mAirports);
+          var APT_{{ $airport['id'] }} = L.marker([{{ $airport['loc'] }}], {icon: {{ $airport['icon'] }} , opacity: 0.8}).bindPopup({!! "'".$airport['pop']."'" !!}).addTo(mAirports).addTo(mBoundary);
         @endforeach
         // Build Flights (Legs) Layer
         var mFlights = L.layerGroup();
@@ -198,9 +199,9 @@
         var BaseLayers = {"Dark Matter": DarkMatter, "NatGEO World": NatGeo, "OpenSM Mapnik": OpenSM, "Open Topo": OpenTopo, "World Topo": WorldTopo};
         var Overlays = {"Tour Airports": mAirports, "Tour Legs": mFlights};
         // Define Map and Add Control Box
-        var TourMap = L.map('tourmap', {center: {{ $mapCenter }}, zoom: 4, layers: [DarkMatter, mAirports, mFlights]});
+        var TourMap = L.map('tourmap', {center: {{ $mapCenter }}, layers: [DarkMatter, mAirports, mFlights]}).fitBounds(mBoundary.getBounds().pad(0.2));
         L.control.layers(BaseLayers, Overlays).addTo(TourMap);
-        setTimeout(function(){ TourMap.invalidateSize()}, 300);
+        setTimeout(function(){ TourMap.invalidateSize().fitBounds(mBoundary.getBounds().pad(0.2))}, 300);
       }
     </script>
   @endif
