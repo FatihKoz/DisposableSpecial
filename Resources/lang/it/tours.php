@@ -13,7 +13,7 @@ return [
     'tlegs'     => 'Numero Leg',
     'tmap'      => 'Mappa Tour',
     'treport'   => 'Tour Report',
-    'tawards'   => 'Tour Award Winners',
+    'tawards'   => 'Vincitori del Award Tour',
     'legs'      => 'Tour Leg',
     'current'   => 'Tour Attivi',
     'future'    => 'Tour Futuri',
