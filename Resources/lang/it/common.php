@@ -4,7 +4,7 @@ return [
     // Common
     'block_time' => 'Tempo Ai Blocchi',
     'dist'       => 'Distanza',
-    'duty_time'  => 'Duty Time',
+    'duty_time'  => 'Orario di lavoro',
     'completed'  => 'Completato',
     'flight_no'  => 'Volo Num.',
     'fuelob'     => 'Carburante a Bordo',
@@ -30,7 +30,7 @@ return [
     'rem_time'    => 'Tempo Rimanente',
     'under_maint' => 'Aereo in Manutenzione',
     // Notams
-    'no_notams' => 'No effective NOTAMs present...',
+    'no_notams' => 'Nessuna NOTAMs presente ...',
     // Others (may be used to replace Dep/Arr)
     'orig' => 'Origine',
     'dest' => 'Destinazione',
