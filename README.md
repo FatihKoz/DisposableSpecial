@@ -270,7 +270,7 @@ Even though the forms and routes are tested with possible scenarios, there is no
 
 06.APR.22
 
-* Added ability support for module admin features
+* Added role/ability support for module backend features
 * Improved Tour Reports
 * Improved Tour Maps
 * Improved Italian translation (Thanks to @Fabietto996)
