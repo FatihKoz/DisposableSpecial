@@ -79,7 +79,7 @@ class DS_ServiceProvider extends ServiceProvider
         Route::group([
             'as'         => 'DSpecial.',
             'prefix'     => 'admin',
-            'middleware' => ['web', 'auth', 'role:admin'],
+            'middleware' => ['web', 'auth', 'ability:admin, modules'],
             'namespace'  => 'Modules\DisposableSpecial\Http\Controllers',
         ], function () {
             Route::get('dspecial', 'DS_AdminController@index')->name('admin');
