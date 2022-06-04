@@ -240,9 +240,9 @@ Most critical part is assigning subfleets to flights, if you have a flexible/rel
 
 The worst scenario is, having some leftover data in some database tables and also trying to have a mixed setup (like %50 of the flights have subfleets, rest free etc). In this scenario some users may have assignments, some not! Will try to find a way to overcome this without reducing capabilities and keeping the performance level same.
 
-Also if you plan to use `Average Flight Times` option, then setting a logical margin is important. Setting a margin of for example 120 mins (2 hours) will work of course but it will simply disable the logic behind using avg flight times of a pilot. Imagine a user, with an avg flight time of 2 hours, this means that personally he/she is not prefering to fly longer flights. With a margin of 120 minutes, you will be kindly forcing that user to have an assigment flight with for example 3 hours and 50 minutes! Or maybe a quick hop with 30 minutes only. I personally prefer having the margin set to maximum 60 minutes, best is 30 minutes in my opinion. If a flight is not found within user's flight time range (avg +/- margin) then code doubles the margin and re-checks (avg +/- 2x margin).
+Also if you plan to use `Average Flight Times` option, then setting a logical margin is important. Setting a margin of for example 120 mins (2 hours) will work of course but it will simply disable the logic behind using avg flight times of a pilot. Imagine a user, with an avg flight time of 2 hours, this means that personally he/she is not prefering to fly longer flights. With a margin of 120 minutes, you will be kindly forcing that user to have an assigment flight with for example 3 hours and 50 minutes! Or maybe a quick hop with 30 minutes only. I personally prefer having the margin set to maximum 45 minutes or 30 minutes. If a flight is not found within user's flight time range (avg +/- margin) then code doubles the margin and re-checks (avg +/- 2x margin).
 
-If you have multiple airlines in your setup, code tries to use the same airline between city pairs and only attempts to change the airline in hubs.
+If you have multiple airlines in your setup, code tries to use the same airline between city pairs and only attempts to change the airline in hubs. Also it is possible to force assignments to a pilot's company. In case you have multiple airlines in your setup and want to display all your flights to pilots (phpvsm restrict to airline setting disabled) but assign flights only from his/her company you can enable module's "Use Pilot Company" setting.
 
 Admins can delete and re-assing monthy flights of users, there is a button for this at user profile (of Disposable Theme). You can check the code and use the same route/button in your own theme too.
 
@@ -267,6 +267,10 @@ Personally I am using an SSL certificate and it is working fine, even with the r
 Even though the forms and routes are tested with possible scenarios, there is no much here I can offer you to solve hosting/redirection/certificate related issues. Sorry about that.
 
 ## Release / Update Notes
+
+04.JUN.22
+
+* Added a new setting for Monthly Assignments (Use Pilot Company)
 
 06.APR.22
 

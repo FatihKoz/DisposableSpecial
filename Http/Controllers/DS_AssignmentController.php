@@ -198,7 +198,7 @@ class DS_AssignmentController extends Controller
         }
 
         // Suitable flights
-        $force_airline = setting('pilots.restrict_to_company', false);
+        $force_airline = (setting('pilots.restrict_to_company', false) || DS_Setting('turksim.assignments_usecompany', false)) ? true : false;
         $force_hubs = DS_Setting('turksim.assignments_usehubs', false);
         $force_rank = setting('pireps.restrict_aircraft_to_rank', true);
         $force_rate = setting('pireps.restrict_aircraft_to_typerating', false);
