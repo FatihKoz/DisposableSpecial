@@ -29,7 +29,7 @@ class DSpecial_Tour extends Award
                 Log::debug('Disposable Special | ' . $tour_code . ' is ended or not started yet, award check should be disabled');
                 return false;
             }
-            if (filled($tour->tour_airline)) {
+            if (filled($tour->tour_airline) && $tour->tour_airline > 0) {
                 // Airline defined but award is being checked as Open Tour
                 Log::error('Disposable Special | Open Tour Award class is being used but ' . $tour->tour_code . ' Tour has an airline defined');
                 return false;
