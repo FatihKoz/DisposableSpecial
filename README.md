@@ -260,13 +260,14 @@ If you have duplicated blades and encounter problems after updating the module o
 
 ## Known Bugs / Problems
 
-If you are using an SSL certificate and your hosting's http > https redirection logic is somehow different, or not done properly you may loose valueable data specially when submitting forms. And when this happens, you will either get an error saying *"GET" method is not supported by the route and it should be "POST" instead* or at best the changes you want to make with that form will not be saved at all.
-
-Personally I am using an SSL certificate and it is working fine, even with the redirection defined by me at CPanel it works fine. What you can do maybe is, using url's starting with https:// in your links/favorites to avoid on-the-fly redirections being applied, or you can request support from your hosting company to re-define them etc.
-
-Even though the forms and routes are tested with possible scenarios, there is no much here I can offer you to solve hosting/redirection/certificate related issues. Sorry about that.
+Nothing as of last update
 
 ## Release / Update Notes
+
+08.JUN.22
+
+* Updated Free Flights logic (if SimBrief is not enabled redirect to Bids page)
+* Added a failsafe to Open Tours Award class (Airline check)
 
 04.JUN.22
 
