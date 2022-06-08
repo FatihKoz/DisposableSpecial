@@ -158,11 +158,18 @@ class DS_FreeFlightController extends Controller
         );
 
         flash()->success('Personal Flight Updated & Bid Inserted');
-        $sblink = '?flight_id=' . $request->ff_id;
-        if ($request->ff_aircraft != '0') {
-            $sblink .= '&aircraft_id=' . $request->ff_aircraft;
-        }
 
-        return redirect(route('frontend.simbrief.generate') . $sblink);
+        // Check if SimBrief is enabled and redirect to planning form or to bids page
+        if (!empty(setting('simbrief.api_key'))) {
+            $sblink = '?flight_id=' . $request->ff_id;
+            if ($request->ff_aircraft != '0') {
+                $sblink .= '&aircraft_id=' . $request->ff_aircraft;
+            }
+
+            return redirect(route('frontend.simbrief.generate') . $sblink);
+        } else {
+
+            return redirect(route('frontend.flights.bids'));
+        }
     }
 }
