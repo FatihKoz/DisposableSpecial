@@ -40,7 +40,11 @@
                     @endif
                   </td>
                   <td>{{ $maint->last_note }}</td>
-                  <td>{{ $maint->last_time->format('d.M.Y H:i') }}</td>
+                  <td>
+                    @if(filled($maint->last_time))
+                      {{ $maint->last_time->format('d.M.Y H:i') }}
+                    @endif
+                  </td>
                   <td>
                     {{ ($maint->limits->cycle_a - $maint->cycle_a).' Cycles, '.DS_ConvertMinutes(($maint->limits->time_a -$maint->time_a), '%2dh %2dm') }}
                   </td>
