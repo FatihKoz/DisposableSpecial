@@ -264,6 +264,11 @@ Nothing as of last update
 
 ## Release / Update Notes
 
+23.OCT.22
+
+* Added a failsafe for Airport Expenses (rare case, flight time 0 mins)
+* Updated Tour Progress Widget (to support closed then re-opened tours with new dates/flights)
+
 08.JUN.22
 
 * Updated Free Flights logic (if SimBrief is not enabled redirect to Bids page)
