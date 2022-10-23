@@ -36,18 +36,28 @@ class TourProgress extends Widget
         foreach ($tours as $tour) {
             foreach ($pireps as $pirep) {
                 if ($pirep->tour_code === $tour->tour_code) {
-                    // Get the progress ratio with failsafe
+                    // Get User Pireps which are flown between tour start-end dates
+                    $user_pireps = Pirep::where($pirep_where)->where('route_code', $tour->tour_code)
+                        ->whereBetween('submitted_at', [$tour->start_date, $tour->end_date])
+                        ->whereNotNull('route_leg')
+                        ->orderBy('submitted_at')
+                        ->pluck('route_leg')
+                        ->toArray();
+
+                    // Calculate the ratio for Progress Bar
+                    $pirep_count = count(array_unique($user_pireps));
                     $leg_count = ($tour->legs_count > 0) ? $tour->legs_count : 100;
-                    $ratio = ceil((100 * $pirep->flown_legs) / $leg_count);
+                    $ratio = ceil((100 * $pirep_count) / $leg_count);
+
                     // Check order of flown legs
-                    $tour_order = range(1, $pirep->flown_legs);
-                    $user_pireps = Pirep::where($pirep_where)->where('route_code', $tour->tour_code)->whereNotNull('route_leg')->orderBy('submitted_at')->pluck('route_leg')->toArray();
+                    $tour_order = range(1, $pirep_count);
                     $order_check = ($tour_order == $user_pireps) ? true : false;
                     if ($order_check === false) {
                         $bar_color = 'bg-danger text-black';
                     } else {
                         $bar_color = ($ratio < 100) ? 'bg-warning text-black' : 'bg-success text-black';
                     }
+
                     // Change the progress bar style and add reminder for closure
                     $diff = $tour->end_date->diffInDays($now);
                     if ($diff < $warn_days) {
@@ -57,12 +67,13 @@ class TourProgress extends Widget
                         $reminder_text = null;
                         $warning_style = null;
                     }
+
                     // Prepare the final array
                     $progress[$tour->tour_code] = [
                         'name' => $tour->tour_name,
                         'code' => $tour->tour_code,
                         'legs' => $tour->legs_count,
-                        'comp' => $pirep->flown_legs,
+                        'comp' => $pirep_count,
                         'prog' => $ratio,
                         'barc' => $bar_color,
                         'remd' => $reminder_text,
