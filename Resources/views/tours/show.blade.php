@@ -101,7 +101,10 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>
-                          <a href="{{ route('frontend.profile.show', [$ta->user->id]) }}">{{ $ta->user->ident.' - '.$ta->user->name_private }}</a>
+                          <a href="{{ route('frontend.profile.show', [$ta->user->id]) }}">
+                            @if(Theme::getSetting('roster_ident')) {{ $ta->user->ident.' - ' }} @endif
+                            {{ $ta->user->name_private }}
+                          </a>
                         </td>
                         <td class="text-end">{{ $ta->created_at->format('d F Y H:i') }}</td>
                       </tr>

@@ -9,7 +9,10 @@
     @foreach($pilots as $pilot)
       <tr>
         <th class="text-nowrap">
-          <a href="{{ route('frontend.profile.show', [$pilot->id]) }}">{{ $pilot->ident.' - '.$pilot->name_private }}</a>
+          <a href="{{ route('frontend.profile.show', [$pilot->id]) }}">
+            @if(Theme::getSetting('roster_ident')) {{ $pilot->ident.' - ' }} @endif
+            {{ $pilot->name_private }}
+          </a>
         </th>
         @for($y = 1; $y <= $tour->legs_count; $y++)
           <td class="text-center">
