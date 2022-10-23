@@ -393,7 +393,7 @@ class Expense_Airport
             }
             // Time Factor
             $flight_time = $pirep->flight_time;
-            if ($flight_time > 0 && $flight_time <= 30) {
+            if ($flight_time >= 0 && $flight_time <= 30) {
                 $time_factor = 0.50;
                 $cat_time = 'Ultra Short Haul';
             } elseif ($flight_time > 30 && $flight_time <= 180) {
