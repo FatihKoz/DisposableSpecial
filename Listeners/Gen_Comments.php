@@ -3,6 +3,7 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\PirepFiled;
+use App\Models\Enums\PirepSource;
 use App\Models\Enums\PirepState;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -12,6 +13,11 @@ class Gen_Comments
     public function handle(PirepFiled $event)
     {
         $comments = DS_Setting('turksim.auto_comment', false);
+
+        $margin_score = DS_Setting('turksim.eval_marginscore', 0);
+        $margin_lrate = DS_Setting('turksim.eval_marginlrate', 0);
+        $margin_ftime = DS_Setting('turksim.eval_marginftime', 5);
+        $margin_fburn = DS_Setting('turksim.eval_marginfburn', 5);
 
         if ($comments === false) {
             return;
@@ -46,13 +52,23 @@ class Gen_Comments
             $act_lfuel = optional($pirep->fields->where('slug', 'landing-fuel')->first())->value;
         }
 
-        if ($pirep->fuel_used->internal(2) < 5) {
+        if ($margin_fburn > 0 && $pirep->fuel_used->internal(2) < $margin_fburn) {
             $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Non Reliable or Missing Fuel Information']);
             $pirep_state = PirepState::REJECTED;
         }
 
-        if ($pirep->flight_time < 5) {
+        if ($margin_ftime > 0 && $pirep->flight_time < $margin_ftime) {
             $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Non Reliable or Missing Block Time Information']);
+            $pirep_state = PirepState::REJECTED;
+        }
+
+        if ($margin_score > 0 && $pirep->score < $margin_score) {
+            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Pirep Score Below VA Approval Criteria']);
+            $pirep_state = PirepState::REJECTED;
+        }
+
+        if ($margin_lrate > 0 && $pirep->landing_rate > $margin_lrate) {
+            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Landing Rate Below VA Approval Criteria']);
             $pirep_state = PirepState::REJECTED;
         }
 
