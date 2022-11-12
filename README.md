@@ -264,6 +264,11 @@ Nothing as of last update
 
 ## Release / Update Notes
 
+13.NOV.22
+
+* Added country flags to Assignments page (it will follow theme "*flights_flags*" setting)
+* Added Map Widget support for Assignments page (*needs Disposable Basic with 13NOV Update or newer*)
+
 23.OCT.22
 
 * Added a failsafe for Airport Expenses (rare case, flight time 0 mins)

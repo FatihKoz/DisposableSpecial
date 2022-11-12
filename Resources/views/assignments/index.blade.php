@@ -38,6 +38,10 @@
                 </td>
                 <td>
                   @if($as->flight)
+                    @if(Theme::getSetting('flights_flags'))
+                      <img class="img-mh25 mx-1" title="{{ strtoupper(optional($as->flight->dpt_airport)->country) }}"
+                        src="{{ public_asset('/image/flags_new/'.strtolower(optional($as->flight->dpt_airport)->country).'.png') }}" alt=""/>
+                    @endif
                     <a href="{{ route('frontend.airports.show', [$as->flight->dpt_airport_id]) }}" target="_blank">
                       {{ optional($as->flight->dpt_airport)->full_name ?? $as->flight->dpt_airport_id}}
                       @if(filled(optional($as->flight->dpt_airport)->iata)){{ ' ('.$as->flight->dpt_airport->iata.')'}}@endif
@@ -46,6 +50,10 @@
                 </td>
                 <td>
                   @if($as->flight)
+                    @if(Theme::getSetting('flights_flags'))
+                      <img class="img-mh25 mx-1" title="{{ strtoupper(optional($as->flight->arr_airport)->country) }}"
+                        src="{{ public_asset('/image/flags_new/'.strtolower(optional($as->flight->arr_airport)->country).'.png') }}" alt=""/>
+                    @endif
                     <a href="{{ route('frontend.airports.show', [$as->flight->arr_airport_id]) }}" target="_blank">
                       {{ optional($as->flight->arr_airport)->full_name ?? $as->flight->arr_airport_id}}
                       @if(filled(optional($as->flight->arr_airport)->iata)){{ ' ('.$as->flight->arr_airport->iata.')'}}@endif
@@ -77,6 +85,13 @@
     </div>
     {{-- Right Column --}}
     <div class="col-lg-4">
+      @if(count($assignments) > 0 && $dbasic === true)
+        <div class="row mb-1">
+          <div class="col">
+            @widget('DBasic::Map', ['source' => 'assignment'])
+          </div>
+        </div>
+      @endif
       @if($stats)
         <div class="card mb-2">
           <div class="card-header p-1">
