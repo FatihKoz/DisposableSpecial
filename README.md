@@ -266,6 +266,7 @@ Nothing as of last update
 
 13.NOV.22
 
+* License Updated (more non-authorized virtual airlines added !)
 * Added country flags to Assignments page (it will follow theme "*flights_flags*" setting)
 * Added Map Widget support for Assignments page (*needs Disposable Basic with 13NOV Update or newer*)
 
