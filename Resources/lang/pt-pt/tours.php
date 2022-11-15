@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'tour'      => 'Tour',
+    'tours'     => 'Tours',
+    'ttype'     => 'Tipo Tour',
+    'topen'     => 'Tour Genérico',
+    'tairline'  => 'Tour Companhia',
+    'tcode'     => 'Código do Tour',
+    'tdesc'     => 'Descrição',
+    'tdates'    => 'Válido entre',
+    'tlegs'     => 'Total Etapas',
+    'legs'      => 'Etapas do Tour',
+    'trules'    => 'Regras do Tour',
+    'treport'   => 'Relatório do Tour',
+    'tawards'   => 'Vencedores dos Galardões do Tour',
+    'tmap'      => 'Mapa do Tour',
+    'current'   => 'Tours Ativos',
+    'future'    => 'Tours Futuros',
+    'past'      => 'Tours Terminados',
+    'showhide'  => 'Mostrar / Ocultar',
+    'icontrue'  => 'Relatório Aceite e Válido',
+    'iconfalse' => 'Relatório não Encontrado ou Não Válido',
+    'iconend'   => 'Tour Terminado',
+    'iconnoty'  => 'Tour Ainda não Começou',
+    // Tour Progress Widget Body
+    'tptitle'   => 'Progresso do Tour',
+    'tpyour'    => 'Seus Tours:',
+    'tpactive'  => 'Tours Ativos:',
+    'tpnotour'  => 'Não tem Tours Ativos... ',
+    'tpclick'   => 'Clique para Tours',
+];
