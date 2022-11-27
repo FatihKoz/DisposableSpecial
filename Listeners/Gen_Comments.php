@@ -18,6 +18,7 @@ class Gen_Comments
         $margin_lrate = DS_Setting('turksim.eval_marginlrate', 0);
         $margin_ftime = DS_Setting('turksim.eval_marginftime', 5);
         $margin_fburn = DS_Setting('turksim.eval_marginfburn', 5);
+        $margin_presence = DS_Setting('dbasic.networkcheck_margin', 75);
 
         if ($comments === false) {
             return;
@@ -43,13 +44,33 @@ class Gen_Comments
         $default_fields = ['pirep_id' => $pirep->id, 'user_id' => $poster, 'created_at' => $now, 'updated_at' => $now];
 
         if ($use_direct_db === true) {
+            // $act_rw = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'ramp-weight'])->value('value');
             $act_tow = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-weight'])->value('value');
             $act_ldw = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-weight'])->value('value');
+            // $act_lcent = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'arrival-centerline-deviation'])->value('value');
+            // $act_ldist = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'arrival-threshold-distance'])->value('value');
             $act_lfuel = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-fuel'])->value('value');
+            // $act_lpitch = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-pitch'])->value('value');
+            // $act_lroll = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-roll'])->value('value');
+            // $act_lspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-speed'])->value('value');
+            // $act_tspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-speed'])->value('value');
+            // $act_aircraft = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'aircraft'])->value('value');
+            // $act_light_rules = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'ignore-light-rules'])->value('value');
+            $network_presence = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'network-presence'])->value('value');
         } else {
+            // $act_rw = optional($pirep->fields->where('slug', 'ramp-weight')->first())->value;
             $act_tow = optional($pirep->fields->where('slug', 'takeoff-weight')->first())->value;
             $act_ldw = optional($pirep->fields->where('slug', 'landing-weight')->first())->value;
+            // $act_lcent = optional($pirep->fields->where('slug', 'arrival-centerline-deviation')->first())->value;
+            // $act_ldist = optional($pirep->fields->where('slug', 'arrival-threshold-distance')->first())->value;
             $act_lfuel = optional($pirep->fields->where('slug', 'landing-fuel')->first())->value;
+            // $act_lpitch = optional($pirep->fields->where('slug', 'landing-pitch')->first())->value;
+            // $act_lroll = optional($pirep->fields->where('slug', 'landing-roll')->first())->value;
+            // $act_lspeed = optional($pirep->fields->where('slug', 'landing-speed')->first())->value;
+            // $act_tspeed = optional($pirep->fields->where('slug', 'takeoff-speed')->first())->value;
+            // $act_aircraft = optional($pirep->fields->where('slug', 'aircraft')->first())->value;
+            // $act_light_rules = optional($pirep->fields->where('slug', 'ignore-light-rules')->first())->value;
+            $network_presence = optional($pirep->fields->where('slug', 'network-presence')->first())->value;
         }
 
         if ($margin_fburn > 0 && $pirep->fuel_used->internal(2) < $margin_fburn) {
@@ -72,6 +93,12 @@ class Gen_Comments
             $pirep_state = PirepState::REJECTED;
         }
 
+        if (isset($network_presence) && $network_presence < $margin_presence) {
+            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Flights must be operated online! Network Presence below required minimums']);
+            $pirep_state = PirepState::REJECTED;
+            Log::debug('Disposable Special | Pirep:' . $pirep->id . ' Rejected automatically... Check Result:' . $network_presence . '% Requirement:' . $margin_presence . '%');
+        }
+
         if (!$aircraft) {
             $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: No Aircraft Registration Provided']);
             $pirep_state = PirepState::REJECTED;
@@ -86,12 +113,14 @@ class Gen_Comments
                 $landing_fuel = is_numeric($act_lfuel) ? round($act_lfuel / 2.20462262185, 2) : round($block_fuel - $fuel_used, 2);
                 $act_tow = is_numeric($act_tow) ? round($act_tow / 2.20462262185) : null;
                 $act_ldw = is_numeric($act_ldw) ? round($act_ldw / 2.20462262185) : null;
+                $weight_margin = 1500;
             } else {
                 $block_fuel = $pirep->block_fuel->internal(2);
                 $fuel_used = $pirep->fuel_used->internal(2);
                 $landing_fuel = is_numeric($act_lfuel) ? round($act_lfuel, 2) : round($block_fuel - $fuel_used, 2);
                 $act_tow = is_numeric($act_tow) ? round($act_tow) : null;
                 $act_ldw = is_numeric($act_ldw) ? round($act_ldw) : null;
+                $weight_margin = 3300;
             }
 
             if ($check_times === true) {
@@ -130,20 +159,32 @@ class Gen_Comments
                 }
             }
 
+            if ($act_tow && $act_tow < ($simbrief->xml->weights->est_tow - $weight_margin)) {
+                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Aircraft Not Loaded Properly (Check Payload)']);
+            }
+
+            if ($act_tow && $act_tow > ($simbrief->xml->weights->est_tow + $weight_margin)) {
+                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Flight Plan Not Reflecting Current Load (Re-Calculation Advised)']);
+            }
+
             if ($act_tow && $act_tow > $simbrief->xml->weights->max_tow_struct) {
-                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Overweight TakeOff']);
+                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Overweight TakeOff (Structure)']);
             }
 
             if ($act_tow && $act_tow > $simbrief->xml->weights->max_tow) {
-                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Overweight TakeOff (Performance Limited)']);
+                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Overweight TakeOff (Performance)']);
             }
 
             if ($act_ldw && $act_ldw > $simbrief->xml->weights->max_ldw) {
-                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Overweight Landing']);
+                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Overweight Landing (Structure)']);
             }
 
             if ($aircraft->registration != $simbrief->xml->aircraft->reg) {
                 $pirep_comments[] = array_merge($default_fields, ['comment' => 'Wrong Aircraft (Registration Mismatch)']);
+            }
+
+            if ($aircraft->icao != $simbrief->xml->aircraft->icaocode) {
+                $pirep_comments[] = array_merge($default_fields, ['comment' => 'Wrong Aircraft (ICAO Type Mismatch)']);
             }
 
             if ($block_fuel > ($simbrief->xml->fuel->plan_ramp + $simbrief->xml->fuel->avg_fuel_flow)) {
