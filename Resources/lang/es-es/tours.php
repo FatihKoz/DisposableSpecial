@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'tour'      => 'Tour',
+    'tours'     => 'Tours',
+    'ttype'     => 'Tipo de Tour',
+    'topen'     => 'Tour Genérico',
+    'tairline'  => 'Tour Aerolínea',
+    'tcode'     => 'Código de Tour',
+    'tdesc'     => 'Descripción',
+    'tdates'    => 'Valido entre',
+    'tlegs'     => 'Cantidad de etapas',
+    'legs'      => 'Etapas del Tour',
+    'trules'    => 'Normas del Tour',
+    'treport'   => 'Progreso del Tour',
+    'tawards'   => 'Galardonados del Tour',
+    'tmap'      => 'Mapa del Tour',
+    'current'   => 'Tours activos',
+    'future'    => 'Próximos Tours',
+    'past'      => 'Tours cerrados',
+    'showhide'  => 'Mostrar / Ocultar',
+    'icontrue'  => 'Pirep aceptado y válido',
+    'iconfalse' => 'Pirep no encontrado o válido',
+    'iconend'   => 'Tour Finalizado',
+    'iconnoty'  => 'Tour No ha comenzado',
+    // Tour Progress Widget Body
+    'tptitle'   => 'Progreso del Tour',
+    'tpyour'    => 'Tus Tours:',
+    'tpactive'  => 'Tours activos:',
+    'tpnotour'  => 'No tienes Tours activos... ',
+    'tpclick'   => 'Clic para Tours',
+];
