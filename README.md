@@ -6,7 +6,7 @@ phpVMS v7 module for Extended VA features
 
 Compatible with phpVMS v7 builds as described below;
 
-* Module versions starting with v3.1.xx supports only php8 and laravel9
+* Module versions starting with v3.1.xx and up supports only php8 and laravel9
 * Minimum required phpVMS v7 version is phpVms `7.0.0-dev+220314.128480` for v3.1.xx
 * Module version v3.0.19 is the latest version with php7.4 and laravel8 support
 * Latest available phpVMS v7 version is phpVms `7.0.0-dev+220307.00bf18` (07.MAR.22) for v3.0.19
@@ -263,6 +263,11 @@ If you have duplicated blades and encounter problems after updating the module o
 Nothing as of last update
 
 ## Release / Update Notes
+
+17.DEC.22
+
+* ES-ES Translation (Thanks to @arv187)
+* License Update (Removal of access to updates and no support conditions explained briefly)
 
 15.NOV.22
 
