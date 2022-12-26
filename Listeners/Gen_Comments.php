@@ -3,9 +3,8 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\PirepFiled;
-use App\Models\Enums\PirepSource;
-use App\Models\Enums\PirepState;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class Gen_Comments
@@ -14,17 +13,10 @@ class Gen_Comments
     {
         $comments = DS_Setting('turksim.auto_comment', false);
 
-        $margin_score = DS_Setting('turksim.eval_marginscore', 0);
-        $margin_lrate = DS_Setting('turksim.eval_marginlrate', 0);
-        $margin_ftime = DS_Setting('turksim.eval_marginftime', 5);
-        $margin_fburn = DS_Setting('turksim.eval_marginfburn', 5);
-        $margin_presence = DS_Setting('dbasic.networkcheck_margin', 75);
-
         if ($comments === false) {
             return;
         }
 
-        $use_direct_db = true;
         $check_times = DS_Setting('turksim.auto_comment_times', true);
         $poster = DS_Setting('turksim.auto_comment_user', false);
 
@@ -43,6 +35,8 @@ class Gen_Comments
         $now = Carbon::now()->toDateTimeString();
         $default_fields = ['pirep_id' => $pirep->id, 'user_id' => $poster, 'created_at' => $now, 'updated_at' => $now];
 
+        $use_direct_db = true; // Set to false if you want to use php/memory & model loop for values
+
         if ($use_direct_db === true) {
             // $act_rw = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'ramp-weight'])->value('value');
             $act_tow = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-weight'])->value('value');
@@ -56,7 +50,6 @@ class Gen_Comments
             // $act_tspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-speed'])->value('value');
             // $act_aircraft = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'aircraft'])->value('value');
             // $act_light_rules = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'ignore-light-rules'])->value('value');
-            $network_presence = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'network-presence'])->value('value');
         } else {
             // $act_rw = optional($pirep->fields->where('slug', 'ramp-weight')->first())->value;
             $act_tow = optional($pirep->fields->where('slug', 'takeoff-weight')->first())->value;
@@ -70,38 +63,6 @@ class Gen_Comments
             // $act_tspeed = optional($pirep->fields->where('slug', 'takeoff-speed')->first())->value;
             // $act_aircraft = optional($pirep->fields->where('slug', 'aircraft')->first())->value;
             // $act_light_rules = optional($pirep->fields->where('slug', 'ignore-light-rules')->first())->value;
-            $network_presence = optional($pirep->fields->where('slug', 'network-presence')->first())->value;
-        }
-
-        if ($margin_fburn > 0 && $pirep->fuel_used->internal(2) < $margin_fburn) {
-            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Non Reliable or Missing Fuel Information']);
-            $pirep_state = PirepState::REJECTED;
-        }
-
-        if ($margin_ftime > 0 && $pirep->flight_time < $margin_ftime) {
-            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Non Reliable or Missing Block Time Information']);
-            $pirep_state = PirepState::REJECTED;
-        }
-
-        if ($margin_score > 0 && $pirep->score < $margin_score) {
-            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Pirep Score Below VA Approval Criteria']);
-            $pirep_state = PirepState::REJECTED;
-        }
-
-        if ($margin_lrate > 0 && $pirep->landing_rate > $margin_lrate) {
-            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Landing Rate Below VA Approval Criteria']);
-            $pirep_state = PirepState::REJECTED;
-        }
-
-        if (isset($network_presence) && $network_presence < $margin_presence) {
-            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: Flights must be operated online! Network Presence below required minimums']);
-            $pirep_state = PirepState::REJECTED;
-            Log::debug('Disposable Special | Pirep:' . $pirep->id . ' Rejected automatically... Check Result:' . $network_presence . '% Requirement:' . $margin_presence . '%');
-        }
-
-        if (!$aircraft) {
-            $pirep_comments[] = array_merge($default_fields, ['comment' => 'Reject Reason: No Aircraft Registration Provided']);
-            $pirep_state = PirepState::REJECTED;
         }
 
         // SimBrief based checks
