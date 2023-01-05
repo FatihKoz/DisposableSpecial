@@ -104,39 +104,41 @@ class DS_CronServices
     {
         $today = Carbon::now();
         $tomorrow = Carbon::now()->addDays(1);
-        // Activate
-        $tours = DS_Tour::whereDate('start_date', $tomorrow)->pluck('tour_code')->toArray();
 
-        if (empty($tours)) {
-            return;
-        }
+        // Get Tour Codes
+        $activate = DS_Tour::whereDate('start_date', $tomorrow)->pluck('tour_code')->toArray();
+        $deactivate = DS_Tour::whereDate('end_date', '<', $today)->orWhereDate('start_date', '>', $tomorrow)->pluck('tour_code')->toArray();
 
-        $flights = Flight::whereIn('route_code', $tours)->whereNull('start_date')->whereNull('end_date')->where('active', 0)->get();
+        if (filled($activate) && count($activate) > 0) {
 
-        if (filled($flights) && $flights->count() > 0) {
-            foreach ($flights as $flight) {
-                $flight->active = 1;
-                $flight->visible = 1;
-                $flight->save();
+            $flights = Flight::whereIn('route_code', $activate)->whereNull('start_date')->whereNull('end_date')->get();
+
+            if (filled($flights) && $flights->count() > 0) {
+                foreach ($flights as $flight) {
+                    $flight->active = 1;
+                    $flight->visible = 1;
+                    $flight->save();
+                }
+                Log::info('Disposable Special | Processed ' . count($activate) . ' Tours and activated ' . $flights->count() . ' flights');
+            } else {
+                Log::info('Disposable Special | No Tours Flights Found for Activation');
             }
-            Log::info('Disposable Special | Processed ' . count($tours) . ' Tours and activated ' . $flights->count() . ' flights');
-        }
-        // Deactivate
-        $tours = DS_Tour::whereDate('end_date', '<', $today)->orWhereDate('start_date', '>', $tomorrow)->pluck('tour_code')->toArray();
-
-        if (empty($tours)) {
-            return;
         }
 
-        $flights = Flight::whereIn('route_code', $tours)->whereNull('start_date')->whereNull('end_date')->where('active', 1)->get();
+        if (filled($deactivate) && count($deactivate) > 0) {
 
-        if (filled($flights) && $flights->count() > 0) {
-            foreach ($flights as $flight) {
-                $flight->active = 0;
-                $flight->visible = 0;
-                $flight->save();
+            $flights = Flight::whereIn('route_code', $deactivate)->whereNull('start_date')->whereNull('end_date')->get();
+
+            if (filled($flights) && $flights->count() > 0) {
+                foreach ($flights as $flight) {
+                    $flight->active = 0;
+                    $flight->visible = 0;
+                    $flight->save();
+                }
+                Log::info('Disposable Special | Processed ' . count($deactivate) . ' Tours and deactivated ' . $flights->count() . ' flights');
+            } else {
+                Log::info('Disposable Special | No Tours Flights Found for De-Activation');
             }
-            Log::info('Disposable Special | Processed ' . count($tours) . ' Tours and deactivated ' . $flights->count() . ' flights');
         }
     }
 
