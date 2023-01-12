@@ -264,6 +264,11 @@ Nothing as of last update
 
 ## Release / Update Notes
 
+12.JAN.23
+
+* DE Translation ([Cyber Air](http://www.cyber-air.org/))
+* Tour legs auto activation/de-activation fix and improvements
+
 17.DEC.22
 
 * ES-ES Translation (Thanks to @arv187)
