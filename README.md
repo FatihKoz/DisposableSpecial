@@ -37,7 +37,8 @@ Using this module along with *Disposable Basic* and *Disposable Theme* is advise
 * Please do read the License, it is really short but holds important information.
 * This is a **PRIVATE** module, do **NOT** share it with someone else without my written approval.
 * Some other developers do charge nice amounts for single capabilities like only Tours, I do not.
-* Module is technically **"DonationWare"**, where you donate (for good) and how much you donate is up to you.
+* Module is technically **"DonationWare"**, where you donate (for good) and how much you donate is up to you.  
+  _(Minimum donation amount is 50 USD/EUR.)_
 
 ### DonationWare Explained
 
@@ -48,11 +49,8 @@ Yes, the module is not FREE but it does not have fixed price tag too. So you wil
 * Military Staff Community (like helping wounded soldiers of your country, those men risked their lives for us amd deserve some support from us too)
 * Animal shelters nearby (yes, their lives are important too and much more important than most of crowd around us)
 * Any other humanitarian/animal charity for saving lives and helping the ones in need (like donating vaccines, or fighting with hunger at Africa etc)
+* Worldwide non-profit organizations (like UNICEF etc.)
 * Author of this module (if you really want to and can not find somewhere else for donation)
-
-How you can donate to me ? As this is the last choice, there are no pre-defined ways. You may gift something from simulation software shops (like gift cards/vouchers etc) or just send me an email about it so we can find a way.
-
-And just a friendly reminder, by doing a donation you will not "own" the code or will have priority support etc. As long as I am around, I will keep updating the module 'cause development never ends. But this does not mean that I will add everything to this module or when you request it :) If your request is reasonable and not va/company specific I may work on it. If not you may need to come up with our own solution, preferably as a separate module for yourself (so you can easily update this module when needed)
 
 ## Installation and Updates
 
