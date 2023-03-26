@@ -11,6 +11,7 @@ use App\Models\Subfleet;
 use App\Models\User;
 use App\Models\Enums\AircraftState;
 use App\Models\Enums\AircraftStatus;
+use App\Models\Enums\FlightType;
 use App\Services\AirportService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -84,28 +85,33 @@ class DS_FreeFlightController extends Controller
             ->get();
 
         $fflight = Flight::firstOrCreate([
-            'flight_type' => 'E',
-            'route_code'  => 'PF' . $user->id
+            'route_code'  => 'PF',
+            'user_id'     => $user->id,
         ], [
             'airline_id'     => $user->airline_id,
             'flight_number'  => $user->id,
             'flight_type'    => 'E',
-            'route_code'     => 'PF' . $user->id,
+            'route_code'     => 'PF',
+            'user_id'        => $user->id,
+            'notes'          => $user->ident . ' - ' . $user->name_private,
             'dpt_airport_id' => $user_loc ?? 'ZZZZ',
             'arr_airport_id' => $user->home_airport_id ?? 'ZZZZ',
             'level'          => null,
             'distance'       => null,
+            'route'          => null,
+            'days'           => null,
             'active'         => 0,
             'visible'        => 0
         ]);
 
         return view('DSpecial::freeflights.index', [
-            'fflight'   => $fflight,
-            'aircraft'  => $aircraft,
-            'airlines'  => $airlines,
-            'settings'  => $settings,
-            'user'      => $user,
-            'units'     => ['fuel' => setting('units.fuel')],
+            'fflight'      => $fflight,
+            'aircraft'     => $aircraft,
+            'airlines'     => $airlines,
+            'settings'     => $settings,
+            'user'         => $user,
+            'flight_types' => FlightType::select(true),
+            'units'        => ['fuel' => setting('units.fuel')],
         ]);
     }
 
@@ -143,18 +149,39 @@ class DS_FreeFlightController extends Controller
         $freeflight->airline_id = $request->ff_airlineid;
         $freeflight->flight_number = trim($request->ff_number);
         $freeflight->callsign = !empty($request->ff_callsign) ? trim($request->ff_callsign) : null;
-        $freeflight->route_code = 'PF' . $request->user_id;
+        $freeflight->route_code = 'PF';
         $freeflight->dpt_airport_id = $orig->icao;
         $freeflight->arr_airport_id = $dest->icao;
         $freeflight->distance = $dist;
         $freeflight->flight_time = DS_CalculateBlockTime($dist);
+        $freeflight->days = null;
+        $freeflight->route = null;
+        $freeflight->flight_type = !empty($request->ff_iatatype) ? trim($request->ff_iatatype) : 'E';
+        $freeflight->notes = !empty($request->ff_owner) ? $request->ff_owner : null;
+        $freeflight->user_id = $request->user_id;
         $freeflight->active = 0;
         $freeflight->visible = 0;
+
+        // Check Flight Type and adjust load factor & variance
+        if (in_array($freeflight->flight_type, ['I', 'K', 'P', 'T'])) {
+            $freeflight->load_factor = 0;
+            $freeflight->load_factor_variance = 0;
+        } else {
+            $freeflight->load_factor = null;
+            $freeflight->load_factor_variance = null;
+        }
+
         $freeflight->save();
 
         Bid::firstorCreate(
-            ['user_id' => $request->user_id, 'flight_id' => $request->ff_id],
-            ['user_id' => $request->user_id, 'flight_id' => $request->ff_id]
+            [
+                'user_id'   => $request->user_id,
+                'flight_id' => $request->ff_id
+            ],
+            [
+                'user_id'   => $request->user_id,
+                'flight_id' => $request->ff_id
+            ]
         );
 
         flash()->success('Personal Flight Updated & Bid Inserted');
