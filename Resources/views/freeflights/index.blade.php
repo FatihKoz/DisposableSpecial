@@ -82,17 +82,7 @@
                     <span class="input-group-text" title="@lang('common.aircraft') @lang('DSpecial::common.optional')">
                       <i class="fas fa-plane"></i>
                     </span>
-                    <select id="aircraft_selection" name="ff_aircraft" class="form-control select2">
-                      <option value="0">@lang('DSpecial::common.selectac') @lang('DSpecial::common.optional')</option>
-                      @foreach($aircraft as $ac)
-                        <option value="{{ $ac->id }}">
-                          {{ $ac->ident }}
-                          @if($ac->fuel_onboard[$units['fuel']] > 0)
-                            {{ ' | '.__('DSpecial::common.fuelob').': '.DS_ConvertWeight($ac->fuel_onboard, $units['fuel']) }}
-                          @endif
-                        </option>
-                      @endforeach
-                    </select>
+                    <select id="aircraft_selection" name="ff_aircraft" class="form-control select2" onchange="CheckAircraftSelection()"></select>
                   </div>
                 </div>
               @endif
@@ -102,7 +92,7 @@
             <input type="hidden" name="ff_id" value="{{ $fflight->id }}">
             <input type="hidden" name="user_id" value="{{ $user->id }}">
             <input type="hidden" name="ff_owner" value="@if(Theme::getSetting('roster_ident')) {{ $user->ident.' - ' }} @endif {{ $user->name_private }}">
-            <button class="btn btn-sm btn-primary p-0 px-1" type="submit">@lang('DSpecial::common.ff_button')</button>
+            <button id="form_proceed" class="btn btn-sm btn-primary p-0 px-1" type="submit">@lang('DSpecial::common.ff_button')</button>
           </div>
         </div>
       {{ Form::close() }}
@@ -137,14 +127,48 @@
 @section('scripts')
   @parent
   <script type="text/javascript">
-    // Change Callsign ICAO According To User's Airline Selection
-    var ICAO = new Array();
-    @foreach($airlines as $airline)
-      ICAO[{{ $airline->id }}] = '{{ $airline->icao }}';
-    @endforeach
+    // Define data for Select2 dropdowns
+    var ICAO = {!! $icao !!};
+    var FLEET = {!! $fleet_full !!};
+
+    @if($settings['airline_fleet'])
+      @foreach ($fleet_comp as $key => $value)
+        var FLEET_{{ $key }} = {!! json_encode($value) !!};
+      @endforeach
+
+      // Fill in Aircraft Dropdown (Select2)
+      var airline_selected = document.getElementById('airline_selection').value;
+      var airline_fleet = 'FLEET_'.concat(ICAO[airline_selected]);
+
+      $('#aircraft_selection').select2({ data: window[airline_fleet],});
+    @else
+      $('#aircraft_selection').select2({ data: FLEET,});
+    @endif
+
+    // Update ATC Callsign and Aircraft Dropdown upon Airline change
     function ChangeCallsignICAO() {
-      let selected_airline = document.getElementById('airline_selection').value;
-      document.getElementById('callsign_icao').innerHTML = ICAO[selected_airline];
+      let airline_selected = document.getElementById('airline_selection').value;
+      let airline_fleet = 'FLEET_'.concat(ICAO[airline_selected]);
+      document.getElementById('callsign_icao').innerHTML = ICAO[airline_selected];
+
+      @if($settings['airline_fleet'])
+        $("#aircraft_selection").empty().select2({ data: window[airline_fleet],});
+      @endif
+    }
+
+    let selected_aircraft = document.getElementById('aircraft_selection').value;
+    if (selected_aircraft == 0) {
+      document.getElementById('form_proceed').classList.add('disabled');
+    }
+
+    // Check Aircraft Selection
+    function CheckAircraftSelection() {
+      let selected_aircraft = document.getElementById('aircraft_selection').value;
+      if (selected_aircraft == 0) {
+        document.getElementById('form_proceed').classList.add('disabled');
+      } else {
+        document.getElementById('form_proceed').classList.remove('disabled');
+      }
     }
   </script>
 @endsection

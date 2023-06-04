@@ -33,7 +33,10 @@ class DS_FreeFlightController extends Controller
         $settings['sb_callsign'] = setting('simbrief.callsign', false);
         $settings['pilot_company'] = setting('pilots.restrict_to_company', false);
         $settings['pilot_location'] = setting('pilots.only_flights_from_current', false);
+        $settings['airline_fleet'] = DS_Setting('dspecial.freeflights_companyfleet', false);
+        $units = ['fuel' => setting('units.fuel')];
 
+        // Get User and Allowed Subfleets
         $eager_user = ['airline', 'last_pirep', 'rank'];
 
         $user = User::with($eager_user)->find(Auth::id());
@@ -59,10 +62,17 @@ class DS_FreeFlightController extends Controller
             $allowed_sf = filled($allowed_sf) ? array_intersect($allowed_sf, $airline_sf) : $airline_sf;
         }
 
-        // Get airlines
+        // Get Airlines
         $airlines = Airline::where($al_where)->orderby('name')->get();
 
-        // Get available Aircraft
+        // Prepare Airline ICAO Codes array (for JavaScript / Select2)
+        $icao_list = [];
+        foreach ($airlines as $airline) {
+            $icao_list[$airline->id] = $airline->icao;
+            $fleet_list[$airline->id] = Subfleet::where('airline_id', $airline->id)->pluck('id')->toArray();
+        }
+
+        // Get Available Aircraft
         $ac_where = [];
         $ac_where['state'] = AircraftState::PARKED;
         $ac_where['status'] = AircraftStatus::ACTIVE;
@@ -74,7 +84,8 @@ class DS_FreeFlightController extends Controller
         $withCount = ['simbriefs' => function ($query) {
             $query->whereNull('pirep_id');
         }];
-        $aircraft = Aircraft::withCount($withCount)
+
+        $aircraft = Aircraft::withCount($withCount)->with('airline')
             ->where($ac_where)
             ->when(($settings['ac_rank'] || $settings['ac_rating'] || $settings['pilot_company']), function ($query) use ($allowed_sf) {
                 return $query->whereIn('subfleet_id', $allowed_sf);
@@ -84,30 +95,68 @@ class DS_FreeFlightController extends Controller
             })->orderby('icao')->orderby('registration')
             ->get();
 
-        $fflight = Flight::firstOrCreate([
-            'route_code'  => 'PF',
-            'user_id'     => $user->id,
-        ], [
-            'airline_id'     => $user->airline_id,
-            'flight_number'  => $user->id,
-            'flight_type'    => 'E',
-            'route_code'     => 'PF',
-            'user_id'        => $user->id,
-            'notes'          => $user->ident . ' - ' . $user->name_private,
-            'dpt_airport_id' => $user_loc ?? 'ZZZZ',
-            'arr_airport_id' => $user->home_airport_id ?? 'ZZZZ',
-            'level'          => null,
-            'distance'       => null,
-            'route'          => null,
-            'days'           => null,
-            'active'         => 0,
-            'visible'        => 0
-        ]);
+        // Prepare Main Aircraft array (for JavaScript / Select2 Dropdown)
+        if ($aircraft) {
+            $select2data = [];
+            $select2data[] = ['id' => 0, 'text' => __('DSpecial::common.selectac')];
+            foreach ($aircraft as $ac) {
+                $text = $ac->airline->icao . ' | ' . $ac->ident;
+
+                if ($ac->fuel_onboard[$units['fuel']] > 0) {
+                    $text = $text . ' | ' . __('DSpecial::common.fuelob') . ': ' . DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
+                }
+
+                $select2data[] = ['id' => $ac->id, 'text' => $text];
+            }
+        }
+
+        // Prepare Airline > Aircraft arrays (for JavaScript / Select2 Dropdown)
+        if ($settings['airline_fleet']) {
+            foreach ($airlines as $airline) {
+                $list_aircraft = $aircraft->whereIn('subfleet_id', $fleet_list[$airline->id]);
+                $airline_fleet[$airline->icao][] = ['id' => 0, 'text' => __('DSpecial::common.selectac')];
+                foreach ($list_aircraft as $ac) {
+                    $text = $ac->airline->icao . ' | ' . $ac->ident;
+
+                    if ($ac->fuel_onboard[$units['fuel']] > 0) {
+                        $text = $text . ' | ' . __('DSpecial::common.fuelob') . ': ' . DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
+                    }
+
+                    $airline_fleet[$airline->icao][] = ['id' => $ac->id, 'text' => $text];
+                }
+            }
+        }
+
+        $fflight = Flight::firstOrCreate(
+            [
+                'route_code'  => 'PF',
+                'user_id'     => $user->id,
+            ],
+            [
+                'airline_id'     => $user->airline_id,
+                'flight_number'  => $user->id,
+                'flight_type'    => 'E',
+                'route_code'     => 'PF',
+                'user_id'        => $user->id,
+                'notes'          => $user->ident . ' - ' . $user->name_private,
+                'dpt_airport_id' => $user_loc ?? 'ZZZZ',
+                'arr_airport_id' => $user->home_airport_id ?? 'ZZZZ',
+                'level'          => null,
+                'distance'       => null,
+                'route'          => null,
+                'days'           => null,
+                'active'         => 0,
+                'visible'        => 0
+            ]
+        );
 
         return view('DSpecial::freeflights.index', [
             'fflight'      => $fflight,
             'aircraft'     => $aircraft,
             'airlines'     => $airlines,
+            'icao'         => isset($icao_list) ? json_encode($icao_list) : null,
+            'fleet_full'   => isset($select2data) ? json_encode($select2data) : null,
+            'fleet_comp'   => isset($airline_fleet) ? $airline_fleet : null,
             'settings'     => $settings,
             'user'         => $user,
             'flight_types' => FlightType::select(true),

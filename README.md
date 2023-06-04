@@ -262,6 +262,12 @@ Nothing as of last update
 
 ## Release / Update Notes
 
+04.JUN.23
+
+* Updated Free Flights (Now it is mandatory to select an aircraft to proceed on planning)
+  There is a new setting which forces pilots to use matching aircraft according to their airline selections  
+  When enabled; it will not be possible to select airline A and then selecting an aircraft of airline B for free flights
+
 26.MAR.23
 
 * Updated Free Flights (Core compatibility and Load Factor adjustment according to selected flight type)
