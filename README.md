@@ -262,6 +262,11 @@ Nothing as of last update
 
 ## Release / Update Notes
 
+06.JUN.23
+
+* Updated FreeFlight page (Thanks to @Tayrael for his support)  
+  There was an error related to SimBrief callsign setting, when enabled it was blocking the dropdowns to act as designed
+
 04.JUN.23
 
 * Updated Free Flights (Now it is mandatory to select an aircraft to proceed on planning)
