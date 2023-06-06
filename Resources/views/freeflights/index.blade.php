@@ -149,7 +149,9 @@
     function ChangeCallsignICAO() {
       let airline_selected = document.getElementById('airline_selection').value;
       let airline_fleet = 'FLEET_'.concat(ICAO[airline_selected]);
-      document.getElementById('callsign_icao').innerHTML = ICAO[airline_selected];
+      @if(!$settings['sb_callsign'])
+        document.getElementById('callsign_icao').innerHTML = ICAO[airline_selected];
+      @endif
 
       @if($settings['airline_fleet'])
         $("#aircraft_selection").empty().select2({ data: window[airline_fleet],});
