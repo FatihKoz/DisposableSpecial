@@ -5,7 +5,7 @@ phpVMS v7 module for Extended VA features
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 * Module supports **only** php8 and laravel9 (php8.1.x is preferred)
-* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230515.3828b8`  
+* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230616.75d6e2`  
   _(If you are somehow stuck with php7.4 and laravel8 check releases and use v3.0.19)_
 
 Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
@@ -263,6 +263,11 @@ Beta testers of SmartCars v3 reported problems with some of the widgets of Dispo
 So it is highly probable that some features of this module may fail when SC3 Beta is in use too.
 
 ## Release / Update Notes
+
+16.JUN.23
+
+* Updated custom income/expense listeners to follow new fare logic of v7 core
+* Updated auto fare price calculator to work with new and copied fares
 
 11.JUN.23
 

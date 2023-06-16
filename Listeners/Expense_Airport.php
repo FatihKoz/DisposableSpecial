@@ -137,10 +137,10 @@ class Expense_Airport
             $act_pax = 0;
             $act_cgo = 0;
             foreach ($pirep->fares as $fare) {
-                if ($fare->fare->type === FareType::PASSENGER) {
+                if ($fare->type === FareType::PASSENGER) {
                     $act_pax = $act_pax + $fare->count;
                 }
-                if ($fare->fare->type === FareType::CARGO) {
+                if ($fare->type === FareType::CARGO) {
                     $act_cgo = $act_cgo + $fare->count;
                 }
             }

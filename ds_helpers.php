@@ -54,13 +54,29 @@ if (!function_exists('DS_AutoPrice')) {
                 $per_nm = 0.00024;
             }
         }
-        // VIP Fare Class Adjustments
-        if ($fare->code === 'V' || $fare->code === 'CGV') {
+
+        // Multiplier and corrections according to fare type
+        $class_business = ['J', 'CGJ'];
+        $class_first = ['F', 'CGF'];
+        $class_special = ['V', 'CGV'];
+
+        if (in_array($fare->code, $class_special)) {
             $base_price = $base_price * 5;
             $per_nm = $per_nm * 5;
         }
 
-        $multiplier = is_numeric($fare->notes) ? $fare->notes : 1;
+        if (is_numeric($fare->notes)) {
+            $multiplier = $fare->notes;
+        } elseif (in_array($fare->code, $class_business)) {
+            $multiplier = 3;
+        } elseif (in_array($fare->code, $class_first)) {
+            $multiplier = 5;
+        } elseif (in_array($fare->code, $class_special)) {
+            $multiplier = 7;
+        } else {
+            $multiplier = 1;
+        }
+
         Log::debug('Disposable Special, APC F=' . $pirep->airline->icao . $pirep->flight_number . ' B=' . $base_price . ' D=' . $distance . ' Pd=' . $per_nm . ' M=' . $multiplier);
 
         return round($base_price + ($distance * $per_nm) * $multiplier, 2);

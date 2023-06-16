@@ -37,7 +37,7 @@ class Fare_InFlight
         if ($pirep->fares->count() > 0) {
             $act_pax = 0;
             foreach ($pirep->fares as $fare) {
-                if ($fare->fare->type === FareType::PASSENGER) {
+                if ($fare->type === FareType::PASSENGER) {
                     $act_pax = $act_pax + $fare->count;
                 }
             }
