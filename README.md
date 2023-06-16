@@ -290,7 +290,7 @@ So it is highly probable that some features of this module may fail when SC3 Bet
 
 12.JAN.23
 
-* DE Translation ([Cyber Air](http://www.cyber-air.org/))
+* DE Translation (Thanks to [Cyber Air](https://www.cyber-air.org/))
 * Tour legs auto activation/de-activation fix and improvements
 
 17.DEC.22
