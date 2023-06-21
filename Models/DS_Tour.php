@@ -35,11 +35,11 @@ class DS_Tour extends Model
     ];
 
     // Carbon Coverted Dates
-    public $dates = [
-        'start_date',
-        'end_date',
-        'created_at',
-        'updated_at',
+    public $casts = [
+        'start_date' => 'datetime',
+        'end_date'   => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // Attributes

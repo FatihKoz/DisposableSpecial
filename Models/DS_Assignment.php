@@ -21,12 +21,6 @@ class DS_Assignment extends Model
         'pirep_date',
     ];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'pirep_date',
-    ];
-
     // Validation rules
     public static $rules = [
         'user_id'          => 'required',
@@ -36,6 +30,12 @@ class DS_Assignment extends Model
         'flight_id'        => 'required',
         'pirep_id'         => 'nullable',
         'pirep_date'       => 'nullable',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'pirep_date' => 'datetime',
     ];
 
     // Relationship to Flight

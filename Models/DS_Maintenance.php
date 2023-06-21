@@ -31,18 +31,6 @@ class DS_Maintenance extends Model
         'op_type',
     ];
 
-    protected $dates = [
-        'act_start',
-        'act_end',
-        'last_time',
-        'created_at',
-        'updated_at',
-    ];
-
-    protected $attributes = [
-        'curr_state' => 100,
-    ];
-
     // Validation
     public static $rules = [
         'aircraft_id' => 'required',
@@ -62,6 +50,18 @@ class DS_Maintenance extends Model
         'last_note'   => 'nullable',
         'last_time'   => 'nullable',
         'op_type'     => 'nullable',
+    ];
+
+    protected $casts = [
+        'act_start'  => 'datetime',
+        'act_end'    => 'datetime',
+        'last_time'  => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    protected $attributes = [
+        'curr_state' => 100,
     ];
 
     // Limits Attribute
