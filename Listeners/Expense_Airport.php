@@ -81,8 +81,8 @@ class Expense_Airport
         $hp_dest = (in_array($pirep->arr_airport_id, $ap_group_1)) ? true : false;
         $hp_orig = (in_array($pirep->dpt_airport_id, $ap_group_1)) ? true : false;
         // Need Max or Actual
-        $needmax = ($lf_method === 'mtow' || $pf_method === 'mtow' || $aa_method === 'cap' || $tf_method === 'cap') ? true : false;
-        $needact = ($lf_method === 'lw' || $pf_method === 'lw' || $aa_method === 'load' || $tf_method === 'load') ? true : false;
+        $needmax = ($lf_method === 'mtow' || $pf_method === 'mtow' || $aa_method === 'cap' || $tf_method === 'cap' || $gh_method === 'cap') ? true : false;
+        $needact = ($lf_method === 'lw' || $pf_method === 'lw' || $aa_method === 'load' || $tf_method === 'load' || $gh_method === 'load') ? true : false;
         // Domestic Check
         $int = ($orig && $dest && $orig->country === $dest->country) ? false : true;
 
@@ -95,11 +95,12 @@ class Expense_Airport
             $pax_cap = 0;
             $cgo_cap = 0;
             foreach ($aircraft->subfleet->fares as $fare) {
+                // Log::debug(json_encode($fare));
                 if ($fare->type === FareType::PASSENGER) {
-                    $pax_cap = $pax_cap + $fare->capacity;
+                    $pax_cap = $pax_cap + $fare->pivot->capacity;
                 }
                 if ($fare->type === FareType::CARGO) {
-                    $cgo_cap = $cgo_cap + $fare->capacity;
+                    $cgo_cap = $cgo_cap + $fare->pivot->capacity;
                 }
             }
 
@@ -368,6 +369,7 @@ class Expense_Airport
             $dep_hub = ($orig && $orig->hub == 1) ? true : false;
             $arr_hub = ($dest && $dest->hub == 1) ? true : false;
 
+            // Log::debug('Disposable Special, Ground Handling Fee A:' . $amount .' B:' . $base_price .' S:'. $srv_type);
             if ($amount > 0) {
                 $expenses[] = $this->GroundHandlingFee($amount, $base_price, $dep_hub, $srv_type, 'Departure', $units);
                 $expenses[] = $this->GroundHandlingFee($amount, $base_price, $arr_hub, $srv_type, 'Arrival', $units);
