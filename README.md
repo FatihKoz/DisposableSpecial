@@ -4,9 +4,11 @@ phpVMS v7 module for Extended VA features
 
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
-* Module supports **only** php8 and laravel9 (php8.1.x is preferred)
-* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230616.75d6e2`  
-  _(If you are somehow stuck with php7.4 and laravel8 check releases and use v3.0.19)_
+* Module supports **only** php8.1+ and laravel10
+* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230621.16a31d`  
+
+* _php8.0 and laravel9 compatible latest version: v3.3.1_
+* _php7.4 and laravel8 compatible latest version: v3.0.19_  
 
 Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
 
@@ -264,7 +266,14 @@ So it is highly probable that some features of this module may fail when SC3 Bet
 
 ## Release / Update Notes
 
+23.JUN.23
+
+* Updated models to be compatible with Laravel10
+* Fixed a bug with Ground Handling expenses (new fare logic compatibility)
+
 16.JUN.23
+
+**WARNING: THIS IS THE LAST VERSION SUPPORTING PHP 8.0.x AND LARAVEL 9**
 
 * Updated custom income/expense listeners to follow new fare logic of v7 core
 * Updated auto fare price calculator to work with new and copied fares
