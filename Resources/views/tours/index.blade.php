@@ -1,9 +1,6 @@
 @extends('app')
 @section('title', 'Tours')
-@php
-  $units = isset($units) ? $units : DS_GetUnits();
-  $carbon_now = Carbon::now();
-@endphp
+
 @section('content')
   @if(!$tours->count())
     <div class="alert alert-info p-1 fw-bold">No Tours Found!</div>

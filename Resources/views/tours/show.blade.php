@@ -1,8 +1,6 @@
 @extends('app')
 @section('title', 'Tour Details')
-@php
-  $units = isset($units) ? $units : DS_GetUnits();    
-@endphp
+
 @section('content')
   <div class="row">
     @include('DSpecial::tours.table')

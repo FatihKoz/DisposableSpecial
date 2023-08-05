@@ -27,6 +27,7 @@ class DS_TourController extends Controller
         return view('DSpecial::tours.index', [
             'tours'      => $tours,
             'carbon_now' => Carbon::now(),
+            'units'      => DS_GetUnits(),
         ]);
     }
 
@@ -164,6 +165,7 @@ class DS_TourController extends Controller
             'tour_awards' => $tour_awards,
             'tour_report' => $tour_report,
             'user'        => isset($user) ? $user : null,
+            'units'       => DS_GetUnits(),
         ]);
     }
 

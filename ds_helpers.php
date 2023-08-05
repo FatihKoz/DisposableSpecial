@@ -4,6 +4,7 @@ use App\Models\Airport;
 use App\Models\Pirep;
 use App\Models\User;
 use App\Models\Enums\FareType;
+use App\Models\Enums\FlightType;
 use App\Models\Enums\PirepState;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +28,7 @@ if (!function_exists('DS_AutoPrice')) {
         $flag_carriers = ['THY', 'TKC', 'SVA'];
         $flag_check = in_array($pirep->airline->icao, $flag_carriers);
         // Cargo Flights Types Check
-        $cargo_types = ['A', 'H', 'F', 'M'];
+        $cargo_types = [FlightType::ADDITIONAL_CARGO, FlightType::CHARTER_CARGO_MAIL, FlightType::SCHED_CARGO, FlightType::MAIL_SERVICE];
         $cargo_check = in_array($pirep->flight_type, $cargo_types);
         // Flag Carrier Adjustments
         if ($flag_check) {
@@ -77,7 +78,7 @@ if (!function_exists('DS_AutoPrice')) {
             $multiplier = 1;
         }
 
-        Log::debug('Disposable Special, APC F=' . $pirep->airline->icao . $pirep->flight_number . ' B=' . $base_price . ' D=' . $distance . ' Pd=' . $per_nm . ' M=' . $multiplier);
+        Log::debug('Disposable Special | APC F=' . $pirep->airline->icao . $pirep->flight_number . ' B=' . $base_price . ' D=' . $distance . ' Pd=' . $per_nm . ' M=' . $multiplier);
 
         return round($base_price + ($distance * $per_nm) * $multiplier, 2);
     }
@@ -106,8 +107,8 @@ if (!function_exists('DS_CalculateBlockTime')) {
 if (!function_exists('DS_CalculateDistance')) {
     function DS_CalculateDistance($orig_icao, $dest_icao, $unit = 'nmi')
     {
-        $orig = DB::table('airports')->where('id', $orig_icao)->first();
-        $dest = DB::table('airports')->where('id', $dest_icao)->first();
+        $orig = Airport::where('id', $orig_icao)->first();
+        $dest = Airport::where('id', $dest_icao)->first();
 
         if (!$orig || !$dest) {
             return null;

@@ -267,7 +267,7 @@ So it is highly probable that some features of this module may fail when SC3 Bet
 
 05.AUG.23
 
-* Compatability update for core v7 changes (Softdelete support and PirepState changes)
+* Compatibility update for core v7 changes (Softdelete support and PirepState changes)
 
 23.JUN.23
 
