@@ -6,8 +6,10 @@ use App\Events\Expenses;
 use App\Models\Expense;
 use App\Models\JournalTransaction;
 use App\Models\Pirep;
+use App\Models\Enums\AircraftStatus;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FuelType;
+use App\Models\Enums\PirepState;
 use App\Services\FinanceService;
 use App\Support\Money;
 use Carbon\Carbon;
@@ -155,12 +157,12 @@ class Expense_Maintenance
     public function MaintenanceExpense($group, $amount, $memo, $multiplier = false, $charge_user = false)
     {
         return new Expense([
-            'type' => ExpenseType::FLIGHT,
-            'amount' => $amount,
+            'type'              => ExpenseType::FLIGHT,
+            'amount'            => $amount,
             'transaction_group' => $group,
-            'name' => $memo,
-            'multiplier' => $multiplier,
-            'charge_to_user' => $charge_user
+            'name'              => $memo,
+            'multiplier'        => $multiplier,
+            'charge_to_user'    => $charge_user
         ]);
     }
 
@@ -204,7 +206,7 @@ class Expense_Maintenance
 
         if (!is_numeric($mtow)) {
             // Try to get at last TOW
-            $last_pirep = Pirep::where(['aircraft_id' => $aircraft->id, 'state' => 2])->orderby('submitted_at', 'desc')->first();
+            $last_pirep = Pirep::where(['aircraft_id' => $aircraft->id, 'state' => PirepState::ACCEPTED])->orderby('submitted_at', 'desc')->first();
             $last_tow = optional($last_pirep->fields->where('slug', 'takeoff-weight')->first())->value;
             $mtow = is_numeric($last_tow) ? round($last_tow, 2) : null;
 
@@ -241,7 +243,7 @@ class Expense_Maintenance
                 }
 
                 // Set Aircraft Status
-                $ds_maint->aircraft->status = 'M';
+                $ds_maint->aircraft->status = AircraftStatus::MAINTENANCE;
                 $ds_maint->aircraft->save();
                 // Write Current Operation
                 $ds_maint->act_note = $check;

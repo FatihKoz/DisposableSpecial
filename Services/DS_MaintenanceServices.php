@@ -2,6 +2,7 @@
 
 namespace Modules\DisposableSpecial\Services;
 
+use App\Models\Enums\AircraftStatus;
 use Carbon\Carbon;
 use Modules\DisposableSpecial\Models\DS_Maintenance;
 use Illuminate\Support\Facades\Log;
@@ -21,8 +22,8 @@ class DS_MaintenanceServices
             $active->act_start = null;
             $active->act_end = null;
 
-            if ($active->aircraft->status === 'M') {
-                $active->aircraft->status = 'A';
+            if ($active->aircraft->status === AircraftStatus::MAINTENANCE) {
+                $active->aircraft->status = AircraftStatus::ACTIVE;
                 $active->aircraft->save();
             }
 

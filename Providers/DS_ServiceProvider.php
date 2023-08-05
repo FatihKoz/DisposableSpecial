@@ -59,6 +59,9 @@ class DS_ServiceProvider extends ServiceProvider
             // Page Controller Routes
             Route::get('dopsmanual', 'DS_PageController@ops_manual')->name('ops_manual');
             Route::get('dlandingrates', 'DS_PageController@landing_rates')->name('landing_rates');
+            // Mission Controller Roujtes
+            Route::get('dmissions', 'DS_MissionController@index')->name('missions');
+            Route::post('dmissions/store', 'DS_MissionController@store')->name('missions.store');
             // Tour Controller Routes
             Route::get('dtours', 'DS_TourController@index')->name('tours');
             Route::get('dtours/{code}', 'DS_TourController@show')->name('tour');

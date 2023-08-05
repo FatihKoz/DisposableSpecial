@@ -3,8 +3,13 @@
 namespace Modules\DisposableSpecial\Http\Controllers;
 
 use App\Contracts\Controller;
+use App\Models\Aircraft;
 use App\Models\Flight;
+use App\Models\Pirep;
+use App\Models\Subfleet;
 use App\Models\User;
+use App\Models\Enums\PirepState;
+use App\Models\Enums\PirepStatus;
 use App\Services\UserService;
 use App\Support\Money;
 use Carbon\Carbon;
@@ -13,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableSpecial\Models\DS_Assignment;
+use Modules\DisposableSpecial\Models\DS_Tour;
 
 class DS_AssignmentController extends Controller
 {
@@ -167,7 +173,7 @@ class DS_AssignmentController extends Controller
 
         $where_pirep = [];
         $where_pirep['user_id'] = $user->id;
-        $where_pirep['state'] = 2;
+        $where_pirep['state'] = PirepState::ACCEPTED;
 
         // Avoided Flights
         $avoid_flown = DS_Setting('turksim.assignments_flown', false);
@@ -175,12 +181,12 @@ class DS_AssignmentController extends Controller
         $avoid_array = [];
 
         if ($avoid_flown) {
-            $avoid_array = DB::table('pireps')->where($where_pirep)->whereNotNull('flight_id')->groupby('flight_id')->pluck('flight_id')->toArray();
+            $avoid_array = Pirep::where($where_pirep)->whereNotNull('flight_id')->groupby('flight_id')->pluck('flight_id')->toArray();
         }
 
         if ($avoid_tours) {
-            $tour_codes = DB::table('disposable_tours')->groupby('tour_code')->pluck('tour_code')->toArray();
-            $tour_flights = DB::table('flights')->whereIn('route_code', $tour_codes)->pluck('id')->toArray();
+            $tour_codes = DS_Tour::groupby('tour_code')->pluck('tour_code')->toArray();
+            $tour_flights = Flight::whereIn('route_code', $tour_codes)->pluck('id')->toArray();
             $avoid_array = array_merge($avoid_array, $tour_flights);
             $avoid_array = array_unique($avoid_array, SORT_STRING);
         }
@@ -193,7 +199,7 @@ class DS_AssignmentController extends Controller
 
         if ($use_avgtime) {
             // Min-Max flight time (detirmined by avg pirep flight time and margin)
-            $avg_ftime = DB::table('pireps')->where($where_pirep)->whereNotNull('flight_time')->avg('flight_time');
+            $avg_ftime = Pirep::where($where_pirep)->whereNotNull('flight_time')->avg('flight_time');
             $min_ftime = is_numeric($avg_ftime) ? round($avg_ftime - $margin) : 60;
             $max_ftime = is_numeric($avg_ftime) ? round($avg_ftime + $margin) : 120;
         }
@@ -207,6 +213,7 @@ class DS_AssignmentController extends Controller
 
         $where_flight = [];
         $where_flight['active'] = 1;
+        $where_flight['visible'] = 1;
 
         if ($force_airline) {
             $where_flight['airline_id'] = $user->airline_id;
@@ -228,15 +235,15 @@ class DS_AssignmentController extends Controller
 
         if ($prefer_icao) {
             // Preferred ICAO types (determined by accepted pireps also gets through allowed subfleets)
-            $used_aircraft = DB::table('pireps')->where($where_pirep)->whereNotNull('aircraft_id')->groupby('aircraft_id')->pluck('aircraft_id')->toArray();
-            $used_types = DB::table('aircraft')->whereIn('id', $used_aircraft)->groupby('icao')->pluck('icao')->toArray();
-            $subfleets = DB::table('aircraft')->whereIn('icao', $used_types)
+            $used_aircraft = Pirep::where($where_pirep)->whereNotNull('aircraft_id')->groupby('aircraft_id')->pluck('aircraft_id')->toArray();
+            $used_types = Aircraft::whereIn('id', $used_aircraft)->groupby('icao')->pluck('icao')->toArray();
+            $subfleets = Aircraft::whereIn('icao', $used_types)
                 ->when(($force_rank || $force_rate), function ($query) use ($allowed_subfleets) {
                     return $query->whereIn('subfleet_id', $allowed_subfleets);
                 })->groupby('subfleet_id')->pluck('subfleet_id')->toArray();
         } else {
             // Allowed subfleets by rank/type rating or all
-            $subfleets = ($force_rank || $force_rate) ? $allowed_subfleets : DB::table('subfleets')->pluck('id')->toArray();
+            $subfleets = ($force_rank || $force_rate) ? $allowed_subfleets : Subfleet::pluck('id')->toArray();
         }
 
         $suitable_flights = [];

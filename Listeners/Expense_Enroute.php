@@ -5,7 +5,6 @@ namespace Modules\DisposableSpecial\Listeners;
 use App\Events\Expenses;
 use App\Models\Expense;
 use App\Models\Enums\ExpenseType;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class Expense_Enroute
@@ -65,12 +64,12 @@ class Expense_Enroute
             $atc_fee = round($distance_factor * $weight_factor * $unit_rate, 2);
             // Log::debug('Disposable Special, ATC Services details Distance Factor=' . $distance_factor . ' Weight Factor=' . $weight_factor . ' for ' . $base_weight . ' ' . $units['weight']);
             $expenses[] = new Expense([
-                'type' => ExpenseType::FLIGHT,
-                'amount' => $atc_fee,
+                'type'              => ExpenseType::FLIGHT,
+                'amount'            => $atc_fee,
                 'transaction_group' => $group,
-                'name' => 'Air Traffic Services',
-                'multiplier' => false,
-                'charge_to_user' => false
+                'name'              => 'Air Traffic Services',
+                'multiplier'        => false,
+                'charge_to_user'    => false
             ]);
         }
 

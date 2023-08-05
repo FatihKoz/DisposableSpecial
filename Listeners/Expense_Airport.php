@@ -8,8 +8,6 @@ use App\Models\Pirep;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FareType;
 use App\Models\Enums\PirepState;
-use App\Models\Enums\PirepStatus;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class Expense_Airport
@@ -189,12 +187,12 @@ class Expense_Airport
                 $landing_fee = round($base_weight * $base_fee, 2);
                 // Log::debug('Disposable Special, Landing Fee details Base Fee=' . $base_fee . ' Weight Factor=' . $base_weight . ' ' . $units['weight']);
                 $expenses[] = new Expense([
-                    'type' => ExpenseType::FLIGHT,
-                    'amount' => $landing_fee,
+                    'type'              => ExpenseType::FLIGHT,
+                    'amount'            => $landing_fee,
                     'transaction_group' => $group,
-                    'name' => 'Landing Fee',
-                    'multiplier' => false,
-                    'charge_to_user' => false
+                    'name'              => 'Landing Fee',
+                    'multiplier'        => false,
+                    'charge_to_user'    => false
                 ]);
             }
         }
@@ -256,12 +254,12 @@ class Expense_Airport
                 if (isset($parking_fee) && $parking_fee > 0) {
                     // Log::debug('Disposable Special, Parking Fee details Time=' . $parking_note . ' Base Fee=' . $pf_base . ' Weight Factor=' . $base_weight . ' ' . $units['weight'] . $max_note);
                     $expenses[] = new Expense([
-                        'type' => ExpenseType::FLIGHT,
-                        'amount' => round($parking_fee + 84, 2),
+                        'type'              => ExpenseType::FLIGHT,
+                        'amount'            => round($parking_fee + 84, 2),
                         'transaction_group' => $group,
-                        'name' => 'Parking Fee (' . $parking_note . ')',
-                        'multiplier' => false,
-                        'charge_to_user' => false
+                        'name'              => 'Parking Fee (' . $parking_note . ')',
+                        'multiplier'        => false,
+                        'charge_to_user'    => false
                     ]);
                 }
             }
@@ -303,12 +301,12 @@ class Expense_Airport
                 if ($terminal_fee > 0) {
                     // Log::debug('Disposable Special, Terminal Fee details' . $pax_note . $cgo_note);
                     $expenses[] = new Expense([
-                        'type' => ExpenseType::FLIGHT,
-                        'amount' => $terminal_fee,
+                        'type'              => ExpenseType::FLIGHT,
+                        'amount'            => $terminal_fee,
                         'transaction_group' => $group,
-                        'name' => 'Terminal Services',
-                        'multiplier' => false,
-                        'charge_to_user' => false
+                        'name'              => 'Terminal Services',
+                        'multiplier'        => false,
+                        'charge_to_user'    => false
                     ]);
                 }
             }
@@ -444,12 +442,12 @@ class Expense_Airport
             if ($catering_fee > 0) {
                 // Log::debug('Disposable Special, Catering Fee details Type=' . $cat_note . ' (' . $intdom . $cat_time . ') Load=' . $base_pax . ' Service=' . $catering_srv . ' Items=' . $catering_items);
                 $expenses[] = new Expense([
-                    'type' => ExpenseType::FLIGHT,
-                    'amount' => $catering_fee,
+                    'type'              => ExpenseType::FLIGHT,
+                    'amount'            => $catering_fee,
                     'transaction_group' => $group,
-                    'name' => $cat_note . ' Catering (' . $intdom . $cat_time . ')',
-                    'multiplier' => false,
-                    'charge_to_user' => false
+                    'name'              => $cat_note . ' Catering (' . $intdom . $cat_time . ')',
+                    'multiplier'        => false,
+                    'charge_to_user'    => false
                 ]);
             }
         }
@@ -520,12 +518,12 @@ class Expense_Airport
 
         // Log::debug('Disposable Special, ' . $apt_type . ' Airport Authority Fee calculated for ' . $log_note . ' Base=' . $base_price . ' ' . $units['currency']);
         return new Expense([
-            'type' => ExpenseType::FLIGHT,
-            'amount' => $price,
+            'type'              => ExpenseType::FLIGHT,
+            'amount'            => $price,
             'transaction_group' => 'Airport Fees',
-            'name' => $nat . 'Airport Authority Fee (' . $apt_type . ')',
-            'multiplier' => false,
-            'charge_to_user' => false
+            'name'              => $nat . 'Airport Authority Fee (' . $apt_type . ')',
+            'multiplier'        => false,
+            'charge_to_user'    => false
         ]);
     }
 
@@ -589,12 +587,12 @@ class Expense_Airport
         }
         // Log::debug('Disposable Special, ' . $apt_type . ' Ground Handling Fee calculated for ' . $log_note . ' Base=' . $base_price . ' ' . $units['currency']);
         return new Expense([
-            'type' => ExpenseType::FLIGHT,
-            'amount' => $price,
+            'type'              => ExpenseType::FLIGHT,
+            'amount'            => $price,
             'transaction_group' => 'Airport Fees',
-            'name' => 'Ground Handling Fee (' . $apt_type . ')',
-            'multiplier' => false,
-            'charge_to_user' => false
+            'name'              => 'Ground Handling Fee (' . $apt_type . ')',
+            'multiplier'        => false,
+            'charge_to_user'    => false
         ]);
     }
 }

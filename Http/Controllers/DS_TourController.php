@@ -4,11 +4,14 @@ namespace Modules\DisposableSpecial\Http\Controllers;
 
 use App\Contracts\Controller;
 use App\Models\Airline;
+use App\Models\Award;
 use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\Subfleet;
 use App\Models\User;
 use App\Models\UserAward;
+use App\Models\Enums\PirepState;
+use App\Models\Enums\PirepStatus;
 use Carbon\Carbon;
 use Modules\DisposableSpecial\Models\DS_Tour;
 use Illuminate\Support\Facades\Auth;
@@ -50,17 +53,17 @@ class DS_TourController extends Controller
         }
 
         // Tour Award Winners
-        $tour_award = DB::table('awards')->where('ref_model_params', $code)->first();
+        $tour_award = Award::where('ref_model_params', $code)->first();
         $tour_awards = UserAward::with('user')->where('award_id', optional($tour_award)->id)->orderBy('created_at', 'asc')->take(10)->get();
 
         // Tour Report
         $tour_report = [];
-        $tour_pilots = Pirep::where(['route_code' => $code, 'state' => 2])->groupBy('user_id')->pluck('user_id')->toArray();
+        $tour_pilots = Pirep::where(['route_code' => $code, 'state' => PirepState::ACCEPTED])->groupBy('user_id')->pluck('user_id')->toArray();
         $pilots = User::whereIn('id', $tour_pilots)->orderBy('pilot_id', 'asc')->get();
 
         if (filled($pilots)) {
             foreach ($pilots as $pilot) {
-                $user_pireps = Pirep::where(['user_id' => $pilot->id, 'state' => 2, 'route_code' => $code])->whereNotNull('route_leg')->orderBy('submitted_at')->pluck('route_leg')->toArray();
+                $user_pireps = Pirep::where(['user_id' => $pilot->id, 'state' => PirepState::ACCEPTED, 'route_code' => $code])->whereNotNull('route_leg')->orderBy('submitted_at')->pluck('route_leg')->toArray();
                 $tour_order = range(1, count($user_pireps));
                 $tour_report[$pilot->id] = [];
                 $tour_report[$pilot->id]['order'] = ($tour_order == $user_pireps) ? true : false;

@@ -8,7 +8,6 @@ use App\Models\Pirep;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FuelType;
 use App\Models\Enums\PirepState;
-use App\Models\Enums\PirepStatus;
 use Illuminate\Support\Facades\Log;
 
 class Expense_Fuel
@@ -92,12 +91,12 @@ class Expense_Fuel
             $drain_cost = round($drain_amount * $drain_service_cost, 2);
             // Log::debug('Disposable Special, De-Fuelling Charge applied for ' . $drain_amount . ' lbs Pirep=' . $pirep->id);
             $expenses[] = new Expense([
-                'type' => ExpenseType::FLIGHT,
-                'amount' => $drain_cost,
+                'type'              => ExpenseType::FLIGHT,
+                'amount'            => $drain_cost,
                 'transaction_group' => $group,
-                'name' => 'De-Fuelling Service',
-                'multiplier' => true,
-                'charge_to_user' => false
+                'name'              => 'De-Fuelling Service',
+                'multiplier'        => true,
+                'charge_to_user'    => false
             ]);
         }
 
@@ -106,12 +105,12 @@ class Expense_Fuel
             $service_cost = round($fuel_amount * $fuel_service_cost, 2);
             // Log::debug('Disposable Special, Fuel Service Cost applied Pirep=' . $pirep->id);
             $expenses[] = new Expense([
-                'type' => ExpenseType::FLIGHT,
-                'amount' => $service_cost,
+                'type'              => ExpenseType::FLIGHT,
+                'amount'            => $service_cost,
                 'transaction_group' => $group,
-                'name' => 'Fuel Service',
-                'multiplier' => true,
-                'charge_to_user' => false
+                'name'              => 'Fuel Service',
+                'multiplier'        => true,
+                'charge_to_user'    => false
             ]);
         }
 
@@ -120,12 +119,12 @@ class Expense_Fuel
             $extra_service_cost = $fuel_lowuplift_cost;
             // Log::debug('Disposable Special, Fuel Service (Low Uplift Charge) applied Pirep=' . $pirep->id);
             $expenses[] = new Expense([
-                'type' => ExpenseType::FLIGHT,
-                'amount' => $extra_service_cost,
+                'type'              => ExpenseType::FLIGHT,
+                'amount'            => $extra_service_cost,
                 'transaction_group' => $group,
-                'name' => 'Fuel Service (Low Uplift Charge)',
-                'multiplier' => false,
-                'charge_to_user' => false
+                'name'              => 'Fuel Service (Low Uplift Charge)',
+                'multiplier'        => false,
+                'charge_to_user'    => false
             ]);
         }
 
@@ -135,12 +134,12 @@ class Expense_Fuel
             $tax_cost = round($fuel_amount * ($fuel_cost * $fuel_tax), 2);
             // Log::debug('Disposable Special, Fuel Tax (Domestic Flight) Applied T=' . $fuel_tax . ' Fc=' . $fuel_cost . ' A=' . $fuel_amount . ' C=' . $tax_cost . ' Pirep=' . $pirep->id);
             $expenses[] = new Expense([
-                'type' => ExpenseType::FLIGHT,
-                'amount' => $tax_cost,
+                'type'              => ExpenseType::FLIGHT,
+                'amount'            => $tax_cost,
                 'transaction_group' => $group,
-                'name' => 'Fuel Tax (Domestic Flight)',
-                'multiplier' => false,
-                'charge_to_user' => false
+                'name'              => 'Fuel Tax (Domestic Flight)',
+                'multiplier'        => false,
+                'charge_to_user'    => false
             ]);
         }
 

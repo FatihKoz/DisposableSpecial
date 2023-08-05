@@ -10,6 +10,7 @@ use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\SimBrief;
 use App\Models\Enums\PirepState;
+use App\Models\Enums\PirepStatus;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +28,7 @@ class DS_AdminController extends Controller
 
         $settings = DB::table('disposable_settings')->where('key', 'LIKE', 'turksim.%')->orWhere('key', 'LIKE', 'phpvms.%')->orWhere('key', 'LIKE', 'dspecial.%')->get();
 
-        $diversions = Pirep::withCount('alt_airport')->where('state', 2)->where('notes', 'LIKE', '%DIVERTED%')
+        $diversions = Pirep::withCount('alt_airport')->where('state', PirepState::ACCEPTED)->where('notes', 'LIKE', '%DIVERTED%')
             ->whereNotNull('alt_airport_id')
             ->whereColumn('arr_airport_id', '!=', 'alt_airport_id')
             ->whereDate('submitted_at', '>=', Carbon::today()->subDays(7))
@@ -54,7 +55,7 @@ class DS_AdminController extends Controller
             if (!$setting) {
                 continue;
             }
-            Log::debug('Disposable Special, ' . $setting->group . ' setting for ' . $setting->name . ' changed to ' . $value);
+            Log::debug('Disposable Special | ' . $setting->group . ' setting for ' . $setting->name . ' changed to ' . $value);
             DB::table('disposable_settings')->where(['id' => $setting->id])->update(['value' => $value]);
         }
 
@@ -145,7 +146,7 @@ class DS_AdminController extends Controller
             flash()->success('ALL Unused SimBrief packs deleted');
         } elseif ($action === 'fixpsb') {
             // Clean "active" looking but not properly handled SimBrief Packs
-            $active_pireps = DB::table('pireps')->where('state', PirepState::IN_PROGRESS)->orWhere('state', PirepState::PAUSED)->pluck('id')->toArray();
+            $active_pireps = Pirep::whereIn('state', [PirepState::IN_PROGRESS, PirepState::PAUSED])->pluck('id')->toArray();
             $sb_packs = SimBrief::whereNotNull('flight_id')->whereNotNull('pirep_id')->whereNotIn('pirep_id', $active_pireps)->get();
             if (filled($sb_packs)) {
                 foreach ($sb_packs as $sb) {

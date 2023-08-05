@@ -3,6 +3,7 @@
 namespace Modules\DisposableSpecial\Http\Controllers;
 
 use App\Contracts\Controller;
+use App\Models\Enums\AircraftStatus;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -82,7 +83,7 @@ class DS_MaintenanceController extends Controller
             $maint->last_a = $now;
         }
 
-        $aircraft->status = 'A';
+        $aircraft->status = AircraftStatus::ACTIVE;
 
         if ($request->ops === 'manual') {
             $maint_expense = app(Expense_Maintenance::class);

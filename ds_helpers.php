@@ -315,3 +315,20 @@ if (!function_exists('DS_IsTourLegFlown')) {
         return ($aircraft_check && $airline_check && $date_check) ? true : false;
     }
 }
+
+// Format Flight STA and STD Times (from 1200 to 12:30)
+// Return string
+if (!function_exists('DS_FormatScheduleTime')) {
+    function DS_FormatScheduleTime($time = null)
+    {
+        if (is_null($time) || !is_numeric($time) || strlen($time) === 5) {
+            return $time;
+        }
+
+        if (!str_contains($time, ':') && strlen($time) === 4) {
+            $time = substr($time, 0, 2) . ':' . substr($time, 2, 2);
+        }
+
+        return $time;
+    }
+}
