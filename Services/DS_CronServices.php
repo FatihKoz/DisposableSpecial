@@ -11,6 +11,7 @@ use App\Models\Rank;
 use App\Models\SimBrief;
 use App\Models\Subfleet;
 use App\Models\User;
+use App\Models\Enums\AcarsType;
 use App\Models\Enums\AircraftState;
 use App\Models\Enums\PirepState;
 use Carbon\Carbon;
@@ -148,11 +149,11 @@ class DS_CronServices
     // This method is designed to avoid/fix such rare cases
     public function CheckAcarsLogs()
     {
-        $acars_logs = DB::table('acars')->selectRaw('pirep_id, count(*) as log_counts')->where('type', 2)
+        $acars_logs = Acars::selectRaw('pirep_id, count(*) as log_counts')->where('type', AcarsType::LOG)
             ->groupBy('pirep_id')->orderBy('log_counts', 'DESC')->having('log_counts', '>', 500)->get();
 
         foreach ($acars_logs as $acars_log) {
-            DB::table('acars')->where(['pirep_id' => $acars_log->pirep_id, 'type' => 2])->delete();
+            Acars::where(['pirep_id' => $acars_log->pirep_id, 'type' => AcarsType::LOG])->delete();
             Log::info('Disposable Special | Deleted ' . $acars_log->log_counts . ' log entries for PIREP ' . $acars_log->pirep_id . ' | acars');
         }
     }
@@ -162,7 +163,7 @@ class DS_CronServices
     public function DeleteOldAcars($days = 0)
     {
         if ($days > 0) {
-            $acars = DB::table('acars')->where('type', 0)->where('created_at', '<', Carbon::now()->subDays($days))->delete();
+            $acars = Acars::where('type', AcarsType::FLIGHT_PATH)->where('created_at', '<', Carbon::now()->subDays($days))->delete();
             if ($acars > 0) {
                 Log::info('Disposable Special | Deleted ' . $acars . ' position report records | acars');
             }
@@ -173,7 +174,7 @@ class DS_CronServices
     public function DeleteOldSimBrief($days = 0)
     {
         if ($days > 0) {
-            $simbrief = DB::table('simbrief')->where('created_at', '<', Carbon::now()->subDays($days))->delete();
+            $simbrief = SimBrief::where('created_at', '<', Carbon::now()->subDays($days))->delete();
             if ($simbrief > 0) {
                 Log::info('Disposable Special | Deleted ' . $simbrief . ' OFP packs | simbrief');
             }
@@ -186,11 +187,11 @@ class DS_CronServices
     {
         if ($days > 0) {
             // Get members with pireps and staff
-            $users_with_pireps = DB::table('pireps')->select('user_id')->groupBy('user_id')->pluck('user_id')->toArray();
+            $users_with_pireps = Pirep::select('user_id')->groupBy('user_id')->pluck('user_id')->toArray();
             $users_with_roles = DB::table('role_user')->select('user_id')->groupBy('user_id')->pluck('user_id')->toArray();
             $safe_users = array_unique(array_merge($users_with_pireps, $users_with_roles));
             // Delete the rest
-            $deleted_users = DB::table('users')->where('created_at', '<', Carbon::now()->subDays($days))->whereNotIn('id', $safe_users)->delete();
+            $deleted_users = User::where('created_at', '<', Carbon::now()->subDays($days))->whereNotIn('id', $safe_users)->delete();
             if ($deleted_users > 0) {
                 Log::info('Disposable Special | Deleted ' . $deleted_users . ' non-flown members | users');
             }
@@ -202,7 +203,7 @@ class DS_CronServices
     {
         $records = Acars::withCount(['pirep'])->having('pirep_count', 0)->pluck('id')->toArray();
 
-        $acars = DB::table('acars')->whereIn('id', $records)->delete();
+        $acars = Acars::whereIn('id', $records)->delete();
         if ($acars > 0) {
             Log::info('Disposable Special | Deleted ' . $acars . ' redundant records with no matching PIREP | acars');
         }

@@ -5,7 +5,7 @@ phpVMS v7 module for Extended VA features
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 * Module supports **only** php8.1+ and laravel10
-* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230621.16a31d`
+* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230801.e24df8`
 * _php8.0 and laravel9 compatible latest version: v3.3.1_
 * _php7.4 and laravel8 compatible latest version: v3.0.19_
 
@@ -264,6 +264,10 @@ Beta testers of SmartCars v3 reported problems with some of the widgets of Dispo
 So it is highly probable that some features of this module may fail when SC3 Beta is in use too.
 
 ## Release / Update Notes
+
+05.AUG.23
+
+* Compatibility update for core v7 changes (Softdelete support and PirepState changes)
 
 23.JUN.23
 

@@ -6,6 +6,7 @@ use App\Contracts\Model;
 use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\User;
+use App\Models\Enums\PirepState;
 
 class DS_Assignment extends Model
 {
@@ -62,7 +63,7 @@ class DS_Assignment extends Model
         $pirep = Pirep::where([
             'user_id'   => $this->user_id,
             'flight_id' => $this->flight_id,
-            'state'     => 2,
+            'state'     => PirepState::ACCEPTED,
         ])->whereMonth('created_at', $this->assignment_month)->whereYear('submitted_at', $this->assignment_year)->first();
 
         return isset($pirep) ? true : false;

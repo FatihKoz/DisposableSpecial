@@ -6,6 +6,7 @@ use App\Contracts\Listener;
 use App\Events\PirepFiled;
 use App\Events\PirepAccepted;
 use App\Events\PirepRejected;
+use App\Models\Enums\AircraftStatus;
 use App\Models\Enums\PirepSource;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableSpecial\Models\DS_Maintenance;
@@ -156,8 +157,8 @@ class Gen_Maintenance extends Listener
         $maint->act_end = null;
         $maint->op_type = 'REJECTED';
         // Check and Fix Aircraft Status
-        if ($aircraft->status === 'M') {
-            $aircraft->status = 'A';
+        if ($aircraft->status === AircraftStatus::MAINTENANCE) {
+            $aircraft->status = AircraftStatus::ACTIVE;
             $aircraft->save();
         }
 

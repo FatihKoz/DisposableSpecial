@@ -6,7 +6,6 @@ use App\Contracts\Model;
 use App\Models\Airline;
 use App\Models\Airport;
 use Carbon\Carbon;
-use stdClass;
 
 class DS_Notam extends Model
 {

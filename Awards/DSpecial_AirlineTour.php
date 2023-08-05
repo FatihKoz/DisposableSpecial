@@ -95,7 +95,7 @@ class DSpecial_AirlineTour extends Award
                     'route_leg'      => $fl->route_leg,
                     'dpt_airport_id' => $fl->dpt_airport_id,
                     'arr_airport_id' => $fl->arr_airport_id,
-                    'state' => PirepState::ACCEPTED,
+                    'state'          => PirepState::ACCEPTED,
                     ['submitted_at', '>=', $start_date],
                     ['submitted_at', '<=', $end_date]
                 ];
