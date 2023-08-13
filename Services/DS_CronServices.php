@@ -117,7 +117,7 @@ class DS_CronServices
             if (filled($flights) && $flights->count() > 0) {
                 foreach ($flights as $flight) {
                     $flight->active = 1;
-                    $flight->visible = 1;
+                    $flight->visible = (DS_Setting('dspecial.keep_tf_invisible', false)) ? 0 : 1;
                     $flight->save();
                 }
                 Log::info('Disposable Special | Processed ' . count($activate) . ' Tours and activated ' . $flights->count() . ' flights');
