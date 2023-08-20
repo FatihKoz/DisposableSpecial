@@ -63,17 +63,10 @@
                 <input name="eff_etime" type="text" class="form-control" maxlenght="4" placeholder="2330"  value="{{ $notam->eff_etime ?? '' }}">
               </div>
             </div>
-            @if($airports)
-              <div class="form-group">
-                <label class="pl-1 mb-1" for="ref_airport">Effective for Airport</label>
-                <select name="ref_airport" class="form-control select2">
-                  <option value="">Select An Airport (Optional)</option>
-                  @foreach($airports as $airport)
-                    <option value="{{ $airport->id }}" @if($notam && $notam->ref_airport === $airport->id) selected @endif>{{ $airport->id.' | '.$airport->name }}</option>
-                  @endforeach
-                </select>
-              </div>
-            @endif
+            <div class="form-group">
+              <label class="pl-1 mb-1" for="ref_airport">Effective for Airport</label>
+              {{ Form::select('ref_airport', [], null , ['id' => 'ref_airport', 'class' => 'form-control airport_search']) }}
+            </div>
             @if($airlines)
               <div class="form-group">
                 <label class="pl-1 mb-1" for="ref_airline">Effective for Airline</label>
@@ -142,6 +135,10 @@
       document.getElementById("delete_link").href = $oldlink.concat(deletelink);
     }
   </script>
+
   <script src="{{ public_asset('assets/vendor/ckeditor4/ckeditor.js') }}"></script>
+
   <script>$(document).ready(function () { CKEDITOR.replace('editor'); });</script>
+  
+  @include('admin.scripts.airport_search')
 @endsection

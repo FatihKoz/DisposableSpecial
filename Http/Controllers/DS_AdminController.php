@@ -10,7 +10,6 @@ use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\SimBrief;
 use App\Models\Enums\PirepState;
-use App\Models\Enums\PirepStatus;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

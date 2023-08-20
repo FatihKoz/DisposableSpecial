@@ -59,7 +59,6 @@ class DS_NotamController extends Controller
 
         $notams = DS_Notam::get();
         $airlines = Airline::select('id', 'name', 'icao', 'iata')->orderby('name')->get();
-        $airports = Airport::select('id', 'name')->orderby('id')->get();
 
         if ($request->input('editntm')) {
             $notam = DS_Notam::where('id', $request->input('editntm'))->first();
@@ -72,7 +71,6 @@ class DS_NotamController extends Controller
 
         return view('DSpecial::admin.notams', [
             'airlines'  => isset($airlines) ? $airlines : null,
-            'airports'  => isset($airports) ? $airports : null,
             'notams'    => $notams,
             'notam'     => isset($notam) ? $notam : null,
         ]);

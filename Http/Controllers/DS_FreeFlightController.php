@@ -13,9 +13,13 @@ use App\Models\Enums\AircraftState;
 use App\Models\Enums\AircraftStatus;
 use App\Models\Enums\FlightType;
 use App\Services\AirportService;
+use App\Services\FinanceService;
 use App\Services\UserService;
+use App\Support\Money;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class DS_FreeFlightController extends Controller
 {
@@ -24,6 +28,14 @@ class DS_FreeFlightController extends Controller
         if (DS_Setting('dspecial.freeflights_main', false) === false) {
             flash()->error('Web based Free Flights are disabled... Please select a flight from schedule');
             return redirect('/flights');
+        }
+
+        if (DS_Setting('dspecial.freeflights_reqbalance', 0) > 0) {
+            $ff_finance = true;
+            $ff_balance = Money::createFromAmount(DS_Setting('dspecial.freeflights_reqbalance', 0));
+            $ff_cost = Money::createFromAmount(DS_Setting('dspecial.freeflights_costperedit', 0));
+        } else {
+            $ff_finance = false;
         }
 
         $settings = [];
@@ -37,9 +49,16 @@ class DS_FreeFlightController extends Controller
         $units = ['fuel' => setting('units.fuel')];
 
         // Get User and Allowed Subfleets
-        $eager_user = ['airline', 'last_pirep', 'rank'];
+        $eager_user = ['airline', 'last_pirep', 'rank', 'journal'];
 
         $user = User::with($eager_user)->find(Auth::id());
+
+        // Check settings for financial settings (requirement, balance)
+        if ($ff_finance && $user->journal->balance < $ff_balance) {
+            flash()->error('Not enough balance to perform a free flight. ' . $ff_balance . ' is required to proceed! Please select a flight from schedule...');
+            return redirect('/flights');
+        }
+
         $user_loc = optional($user)->curr_airport_id ?? optional($user)->home_airport_id;
 
         $al_where = [];
@@ -151,16 +170,18 @@ class DS_FreeFlightController extends Controller
         );
 
         return view('DSpecial::freeflights.index', [
-            'fflight'      => $fflight,
             'aircraft'     => $aircraft,
             'airlines'     => $airlines,
             'icao'         => isset($icao_list) ? json_encode($icao_list) : null,
+            'ff_balance'   => isset($ff_balance) ? $ff_balance : null,
+            'ff_cost'      => isset($ff_cost) ? $ff_cost : null,
+            'fflight'      => $fflight,
             'fleet_full'   => isset($select2data) ? json_encode($select2data) : null,
             'fleet_comp'   => isset($airline_fleet) ? $airline_fleet : null,
-            'settings'     => $settings,
-            'user'         => $user,
             'flight_types' => FlightType::select(true),
+            'settings'     => $settings,
             'units'        => ['fuel' => setting('units.fuel')],
+            'user'         => $user,
         ]);
     }
 
@@ -177,6 +198,14 @@ class DS_FreeFlightController extends Controller
             flash()->error('Check Flight Number !');
 
             return redirect(route('DSpecial.freeflight'));
+        }
+
+        // Check settings for financial settings (cost, charge)
+        if (DS_Setting('dspecial.freeflights_costperedit', 0) > 0) {
+            $ff_finance = true;
+            $ff_cost = Money::createFromAmount(DS_Setting('dspecial.freeflights_costperedit', 0));
+        } else {
+            $ff_finance = false;
         }
 
         // Lookup for airports, add if necessary, return back if not found
@@ -233,7 +262,14 @@ class DS_FreeFlightController extends Controller
             ]
         );
 
-        flash()->success('Personal Flight Updated & Bid Inserted');
+        if ($ff_finance) {
+            $user = User::with('airline', 'journal')->find(Auth::id());
+            $memo = 'FreeFlight ' . $freeflight->dpt_airport_id . '-' . $freeflight->arr_airport_id . ' ' . Carbon::now()->format('ymdHi');
+            $this->ChargeForFreeFlight($user, $ff_cost, $memo);
+            flash()->success('Transaction Completed... Personal Flight Updated & Bid Inserted');
+        } else {
+            flash()->success('Personal Flight Updated & Bid Inserted');
+        }
 
         // Check if SimBrief is enabled and redirect to planning form or to bids page
         if (!empty(setting('simbrief.api_key'))) {
@@ -247,5 +283,35 @@ class DS_FreeFlightController extends Controller
 
             return redirect(route('frontend.flights.bids'));
         }
+    }
+
+    public function ChargeForFreeFlight($user, $amount, $memo)
+    {
+        $financeSvc = app(FinanceService::class);
+
+        // Charge User
+        $financeSvc->debitFromJournal(
+            $user->journal,
+            $amount,
+            $user,
+            $memo,
+            'FreeFlight Fees',
+            'freeflight',
+            Carbon::now()->format('Y-m-d')
+        );
+
+        // Credit Airline
+        $financeSvc->creditToJournal(
+            $user->airline->journal,
+            $amount,
+            $user,
+            $memo . ' UserID:' . $user->id,
+            'FreeFlight Fees',
+            'freeflight',
+            Carbon::now()->format('Y-m-d')
+        );
+
+        // Note Transaction
+        Log::debug('Disposable Special | UserID:' . $user->id . ' Name:' . $user->name_private . ' charged for FreeFlight ' . $memo);
     }
 }
