@@ -59,6 +59,7 @@ class DS_NotamController extends Controller
 
         $notams = DS_Notam::get();
         $airlines = Airline::select('id', 'name', 'icao', 'iata')->orderby('name')->get();
+        $airports = Airport::select('id', 'name')->orderby('id')->get();
 
         if ($request->input('editntm')) {
             $notam = DS_Notam::where('id', $request->input('editntm'))->first();
@@ -70,9 +71,10 @@ class DS_NotamController extends Controller
         }
 
         return view('DSpecial::admin.notams', [
-            'airlines'  => isset($airlines) ? $airlines : null,
-            'notams'    => $notams,
-            'notam'     => isset($notam) ? $notam : null,
+            'airlines' => isset($airlines) ? $airlines : null,
+            'airports' => isset($airports) ? $airports : null,
+            'notams'   => $notams,
+            'notam'    => isset($notam) ? $notam : null,
         ]);
     }
 
@@ -88,17 +90,18 @@ class DS_NotamController extends Controller
         DS_Notam::updateOrCreate(
             [
                 'id' => $request->notam_id,
-            ],[
-                'title'        => $request->notam_title,
-                'body'         => $request->notam_body,
-                'eff_start'    => $request->eff_start,
-                'eff_stime'    => $request->eff_stime,
-                'eff_end'      => $request->eff_end,
-                'eff_etime'    => $request->eff_etime,
-                'ref_airport'  => $request->ref_airport,
-                'ref_airline'  => $request->ref_airline,
-                'ref_notamid'  => $request->ref_notamid,
-                'active'       => $request->active,
+            ],
+            [
+                'title'       => $request->notam_title,
+                'body'        => $request->notam_body,
+                'eff_start'   => $request->eff_start,
+                'eff_stime'   => $request->eff_stime,
+                'eff_end'     => $request->eff_end,
+                'eff_etime'   => $request->eff_etime,
+                'ref_airport' => $request->ref_airport,
+                'ref_airline' => $request->ref_airline,
+                'ref_notamid' => $request->ref_notamid,
+                'active'      => $request->active,
             ]
         );
 

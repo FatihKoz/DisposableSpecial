@@ -65,7 +65,15 @@
             </div>
             <div class="form-group">
               <label class="pl-1 mb-1" for="ref_airport">Effective for Airport</label>
-              {{ Form::select('ref_airport', [], null , ['id' => 'ref_airport', 'class' => 'form-control airport_search']) }}
+              {{-- Form::select('ref_airport', [], null , ['id' => 'ref_airport', 'class' => 'form-control airport_search']) --}}
+              @if($airports)
+                <select name="ref_airport" class="form-control select2">
+                  <option value="">Select An Airport (Optional)</option>
+                  @foreach($airports as $airport)
+                    <option value="{{ $airport->id }}" @if($notam && $notam->ref_airport === $airport->id) selected @endif>{{ $airport->id.' | '.$airport->name }}</option>
+                  @endforeach
+                </select>
+              @endif
             </div>
             @if($airlines)
               <div class="form-group">

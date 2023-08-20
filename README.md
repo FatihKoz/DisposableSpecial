@@ -5,7 +5,7 @@ phpVMS v7 module for Extended VA features
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 * Module supports **only** php8.1+ and laravel10
-* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230801.e24df8`
+* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230818.7f346a`
 * _php8.0 and laravel9 compatible latest version: v3.3.1_
 * _php7.4 and laravel8 compatible latest version: v3.0.19_
 
@@ -263,7 +263,14 @@ If you have duplicated blades and encounter problems after updating the module o
 Beta testers of SmartCars v3 reported problems with some of the widgets of Disposable Basic, root cause is SC3 being not fully phpVMS v7 compatible yet and not sending proper data.  
 So it is highly probable that some features of this module may fail when SC3 Beta is in use too.
 
+Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
+
 ## Release / Update Notes
+
+20.AUG.23
+
+* Added a cron setting for keeping Tour Flights invisible (so they will not show up on flight search)
+* Added financial features to FreeFlights, for checking required balance and charging user.  
 
 05.AUG.23
 
