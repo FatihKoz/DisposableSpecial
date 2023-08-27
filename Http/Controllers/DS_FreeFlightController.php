@@ -257,8 +257,9 @@ class DS_FreeFlightController extends Controller
                 'flight_id' => $request->ff_id
             ],
             [
-                'user_id'   => $request->user_id,
-                'flight_id' => $request->ff_id
+                'user_id'     => $request->user_id,
+                'flight_id'   => $request->ff_id,
+                'aircraft_id' => !empty($request->ff_aircraft) ? $request->ff_aircraft : null,
             ]
         );
 
