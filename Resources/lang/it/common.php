@@ -23,6 +23,9 @@ return [
     // Free Flights
     'ff_button' => 'Aggiorna & Procedi alla Pianificazione Volo ',
     'myflight'  => 'Miei Voli',
+    // Market
+    'buy'      => 'Acquistare',
+    'no_items' => 'Nessun articolo disponibile per lo shopping...',
     // Maintenance
     'current_op'  => 'Operazioni Correnti',
     'current_st'  => 'Stato Corrente',

@@ -6,6 +6,7 @@ use App\Contracts\Model;
 use App\Models\Airline;
 use App\Models\Airport;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DS_Notam extends Model
 {
@@ -24,7 +25,6 @@ class DS_Notam extends Model
         'active',
     ];
 
-    // Validation
     public static $rules = [
         'title'        => 'required|max:250',
         'body'         => 'required',
@@ -91,13 +91,13 @@ class DS_Notam extends Model
     }
 
     // Relationship to airline
-    public function airline()
+    public function airline(): HasOne
     {
         return $this->hasOne(Airline::class, 'id', 'ref_airline');
     }
 
     // Relationship to airport
-    public function airport()
+    public function airport(): HasOne
     {
         return $this->hasOne(Airport::class, 'id', 'ref_airport');
     }
