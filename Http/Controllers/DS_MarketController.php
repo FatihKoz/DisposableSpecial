@@ -21,7 +21,7 @@ class DS_MarketController extends Controller
     public function index()
     {
         $myitems = DB::table('disposable_marketitem_owner')->where('user_id', Auth::id())->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
-        $items = DS_Marketitem::where('active', 1)->sortable('name', 'price')->paginate(15);
+        $items = DS_Marketitem::where('active', 1)->sortable('name', 'price')->paginate(18);
         $users = User::get();
 
         return view('DSpecial::market.index', [
@@ -32,13 +32,20 @@ class DS_MarketController extends Controller
         ]);
     }
 
-    public function owned()
+    public function show($id)
     {
-        $myitems = DB::table('disposable_marketitem_owner')->where('user_id', Auth::id())->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
-        $items = DS_Marketitem::whereIn('id', $myitems)->sortable('name', 'price')->paginate(15);
+        if (!$id) {
+            flash()->error('Provide a user ID to proceed!');
+            return back();
+        }
 
-        return view('DSpecial::market.owned', [
+        $myitems = DB::table('disposable_marketitem_owner')->where('user_id', $id)->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
+        $items = DS_Marketitem::whereIn('id', $myitems)->sortable('name', 'price')->paginate(18);
+
+        return view('DSpecial::market.show', [
             'items' => $items,
+            'owner' => isset($id) ? $id : null,
+            'units' => DS_GetUnits(),
         ]);
     }
 

@@ -17,7 +17,7 @@
             </div>
             <div class="card-body p-1 text-center">
               @if(filled($item->image_url))
-                <img class="card-image img-mh150" src="{{ $item->image_url }}" alt="{{ $item->name }}" title="{{ $item->name }}">
+                <img class="card-image mw-100 mb-1" src="{{ $item->image_url }}" alt="{{ $item->name }}" title="{{ $item->name }}">
               @endif
                 {!! $item->description !!}
             </div>
@@ -64,4 +64,4 @@
   @endif
 
   {{ $items->links('pagination.default') }}
-  @endsection
+@endsection

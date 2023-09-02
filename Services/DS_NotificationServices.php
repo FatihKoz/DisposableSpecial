@@ -5,6 +5,7 @@ namespace Modules\DisposableSpecial\Services;
 use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Modules\DisposableSpecial\Models\Enums\DS_ItemCategory;
 
 class DS_NotificationServices
 {
@@ -45,6 +46,9 @@ class DS_NotificationServices
         $user = isset($gifted) ? $gifted : $buyer;
         $user_avatar = !empty($user->avatar) ? $user->avatar->url : $user->gravatar(256);
 
+        $amount = number_format($item->price, 0) . ' ' . setting('units.currency');
+        $category = DS_ItemCategory::label($item->category);
+
         $json_data = json_encode([
             "content" => "Market Item Bought !",
             "username" => $msgposter,
@@ -57,12 +61,12 @@ class DS_NotificationServices
                     "image"     => !empty($item->image_url) ? ['url' => public_asset($item->image_url)] : null,
                     "color"     => hexdec("FF0000"),
                     "thumbnail" => ['url' => $user_avatar],
-                    "author"    => ['name' => $user->ident.' | '.$user->name_private, 'url' => route('frontend.profile.show', [$user->id])],
+                    "author"    => ['name' => $user->ident . ' | ' . $user->name_private, 'url' => route('frontend.profile.show', [$user->id])],
                     "fields" =>
                     [
                         ["name" => "__Item__", "value" => $item->name, "inline" => true],
-                        ["name" => "__Price__", "value" => $item->price, "inline" => true],
-                        ["name" => "__Category__", "value" => $item->category, "inline" => true],
+                        ["name" => "__Price__", "value" => $amount, "inline" => true],
+                        ["name" => "__Category__", "value" => $category, "inline" => true],
                     ],
                 ],
             ]

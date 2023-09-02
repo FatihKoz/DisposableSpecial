@@ -5,7 +5,7 @@ phpVMS v7 module for Extended VA features
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 * Module supports **only** php8.1+ and laravel10
-* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+230818.7f346a`
+* Minimum required phpVMS v7 version is `phpVms 7.0.0-beta.5`
 * _php8.0 and laravel9 compatible latest version: v3.3.1_
 * _php7.4 and laravel8 compatible latest version: v3.0.19_
 
@@ -16,6 +16,7 @@ Using this module along with *Disposable Basic* and *Disposable Theme* is advise
 * Tours (with Awards and a tracking Widget)
 * Free Flights (with full SimBrief integration)
 * Maintenance System (can be extended by Disposable Basic module)
+* Market
 * Monthy Flight Assignments
 * NOTAMs
 * Configurable per flight dynamic expenses (Catering, Parking, Landing, Terminal Services Fees etc)
@@ -102,6 +103,8 @@ DSpecial.tour           /dtours/WT21       // Tour details page, needs a tour {c
 DSpecial.assignments    /dassignments      // Monthly Assignments index page
 DSpecial.freeflight     /dfreeflight       // (Personal) Free Flight index page
 DSpecial.maintenance    /dmaintenance      // Fleet Maintenance index page
+DSpecial.market         /dmarket           // Market index page
+DSpecial.market.show    /dmarket/1         // Personal items bought from market, needs a user {id} to run
 DSpecial.notams         /dnotams           // Notams index page
 
 DSpecial.ops_manual     /dopsmanual        // Operations Manual page (partly db driven, mostly static)
@@ -232,6 +235,14 @@ Even though vmsAcars is not reporting TakeOff pitch and roll, module is able to 
 
 By design, maintenance actions are checked by cron every 5 minutes. So if an aircraft is under maintenance, it will be released to service with maximum 5 minutes delay compared to published release time.
 
+### Market
+
+Allows you to list items as you wish which pilots can buy and spend their cash. When enabled per item, a discord notification is sent to admin/staff webhook (defined in Dispo Special main settings). Also each item can have a special/custom notes area which only the owners of those items can see. So in theory you can add a link, or a special info there for the owners to see/use.
+
+This is not a full scale shopping cart system, it just enables basic features like buying an item or gifting it to another pilot. How you use it is up to you after all, you can have some special liveries being sold, or training sessions can be arranged when a user buys a specific item etc.
+
+To keep the virtual money inside v7 economics, each item should have a dealer, as in our system dealers are your airlines. You can sell a training with Airline A, a livery with Airline B. Airline/Dealer of the item sold will gain money and this will be visible in financial reports. (Also transactions will be visible in pilot journals for tracking)  
+
 ### Monthly Flight Assignments
 
 This system relies heavily on your flight structure and database records. The settings are pretty basic, it also considers your phpVMS settings too. Auto assignments requires cron to be running, if somehow it fails or you wish to manually trigger the process it is possible to do so.
@@ -266,6 +277,10 @@ So it is highly probable that some features of this module may fail when SC3 Bet
 Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+02.SEP.23
+
+* Added Market feature
 
 20.AUG.23
 
