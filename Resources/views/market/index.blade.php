@@ -29,7 +29,7 @@
                 {{ Form::close() }}
               @endif
               <button type="button" class="btn btn-sm btn-primary py-0 px-2 ms-2 float-start" data-bs-toggle="modal" data-bs-target="#giftModal{{ $item->id}}">@lang('DSpecial::common.gift')</button>
-              {{ money($item->price, $units['currency']) }}
+              {{ money($item->price, $units['currency'], true) }}
             </div>
           </div>
         </div>
@@ -40,8 +40,9 @@
               <div class="modal-header p-1">
                 <h5 class="modal-title p-0" id="giftModalLabel">Gift Market Item</h5>
               </div>
-              {{ Form::open(['route' => 'DSpecial.market.gift', 'class="form-group']) }}
+              {{ Form::open(['route' => 'DSpecial.market.buy', 'class="form-group']) }}
               {{ Form::hidden('item_id', $item->id) }}
+              {{ Form::hidden('is_gift', true) }}
                 <div class="modal-body p-1">
                   <select name="gift_id" class="form-control form-select">
                     <option value="0" selected>Select a pilot to gift {{ $item->name }}</option>

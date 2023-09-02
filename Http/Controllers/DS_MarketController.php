@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Modules\DisposableSpecial\Services\DS_NotificationServices;
 
 class DS_MarketController extends Controller
 {
@@ -109,63 +110,50 @@ class DS_MarketController extends Controller
             return back();
         }
 
-        $owner = User::with('journal')->where('id', Auth::id())->first();
         $dealer = Airline::with('journal')->where('id', $item->dealer_id)->first();
+        $buyer = User::with('journal')->where('id', Auth::id())->first();
+        $gifted = ($request->is_gift) ? User::with('journal')->where('id', $request->gift_id)->first() : null;
 
-        // Check owner balance
+        if ($request->is_gift && !$gifted) {
+            flash()->error('Target user not selected for gifting the item!');
+            return back();
+        }
+
+        // Check buyer balance
         $amount = Money::createFromAmount($item->price);
-        if ($owner->journal->balance < $amount) {
+        if ($buyer->journal->balance < $amount) {
             flash()->error('Not enough funds!');
             return back();
         }
 
-        // Update ownership and process transacitons
-        $columns = ['marketitem_id' => $item->id, 'user_id' => $owner->id];
-        $memo = 'Market payment for ' . $item->name;
+        // Prepare columns
+        if ($gifted) {
+            $columns = ['marketitem_id' => $item->id, 'user_id' => $gifted->id];
+            $memo = 'Market gift payment for ' . $item->name;
+
+            // Check and abort if target user already owns the items
+            $ownership_check = DB::table('disposable_marketitem_owner')->where($columns)->count();
+
+            if ($ownership_check > 0) {
+                flash()->info('User already owns the item!');
+                return back();
+            }
+        } else {
+            $columns = ['marketitem_id' => $item->id, 'user_id' => $buyer->id];
+            $memo = 'Market payment for ' . $item->name;
+        }
 
         DB::table('disposable_marketitem_owner')->updateOrInsert($columns, $columns);
-        $this->ProcessTransactions($owner, $dealer, $amount, $memo);
+        $this->ProcessTransactions($buyer, $dealer, $amount, $memo);
 
-        flash()->success('Successfully bought ' . $item->name . ' for ' . $amount);
+        // Send Message
+        if ($item->notifications) {
+            $DiscordSVC = app(DS_NotificationServices::class);
+            $DiscordSVC->MarketActionMessage($buyer, $item, $gifted);
+        }
+
+        flash()->success('Transaction completed for ' . $item->name . ' | ' . $amount);
         return back();
-    }
-
-    // Gift item
-    public function gift(Request $request)
-    {
-        $item = DS_Marketitem::where('id', $request->item_id)->first();
-
-        if (!$item || !$request->gift_id || $request->gift_id == 0) {
-            flash()->error('Check item or user selection for gifting!');
-            return back();
-        }
-
-        $owner = User::with('journal')->where('id', Auth::id())->first();
-        $dealer = Airline::with('journal')->where('id', $item->dealer_id)->first();
-
-        // Check owner balance
-        $amount = Money::createFromAmount($item->price);
-        if ($owner->journal->balance < $amount) {
-            flash()->error('Not enough funds!');
-            return back();
-        }
-
-        // Update ownership and process transacitons
-        $columns = ['marketitem_id' => $item->id, 'user_id' => $request->gift_id];
-        $memo = 'Market gift payment for ' . $item->name;
-
-        $ownership_check = DB::table('disposable_marketitem_owner')->where($columns)->count();
-
-        if ($ownership_check > 0) {
-            flash()->info('User already owns the item!');
-            return back();
-        } else {
-            DB::table('disposable_marketitem_owner')->updateOrInsert($columns, $columns);
-            $this->ProcessTransactions($owner, $dealer, $amount, $memo);
-
-            flash()->success('Successfully gifted ' . $item->name . ' for ' . $amount);
-            return back();
-        }
     }
 
     // Process Transactions
