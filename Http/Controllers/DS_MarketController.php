@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\FinanceService;
 use App\Support\Money;
 use Carbon\Carbon;
+use Modules\DisposableSpecial\Models\Enums\DS_ItemCategory;
 use Modules\DisposableSpecial\Models\DS_Marketitem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,11 +20,14 @@ class DS_MarketController extends Controller
     public function index()
     {
         $myitems = DB::table('disposable_marketitem_owner')->where('user_id', Auth::id())->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
-        $items = DS_Marketitem::where('active', 1)->whereNotIn('id', $myitems)->sortable('name', 'price')->paginate(15);
+        $items = DS_Marketitem::where('active', 1)->sortable('name', 'price')->paginate(15);
+        $users = User::get();
 
         return view('DSpecial::market.index', [
-            'items' => $items,
-            'units' => DS_GetUnits(),
+            'items'   => $items,
+            'myitems' => $myitems,
+            'units'   => DS_GetUnits(),
+            'users'   => $users,
         ]);
     }
 
@@ -56,11 +60,13 @@ class DS_MarketController extends Controller
 
         $airlines = Airline::select('id', 'name', 'icao', 'iata')->orderby('name')->get();
         $items = DS_Marketitem::sortable('name', 'price')->get();
+        $categories = DS_ItemCategory::select(true);
 
         return view('DSpecial::admin.market', [
-            'airlines' => isset($airlines) ? $airlines : null,
-            'item'     => isset($item) ? $item : null,
-            'items'    => $items,
+            'airlines'   => isset($airlines) ? $airlines : null,
+            'categories' => $categories,
+            'item'       => isset($item) ? $item : null,
+            'items'      => $items,
         ]);
     }
 
@@ -77,13 +83,15 @@ class DS_MarketController extends Controller
                 'id' => $request->item_id,
             ],
             [
-                'name'        => $request->item_name,
-                'description' => $request->item_description,
-                'price'       => $request->item_price,
-                'image_url'   => $request->item_image_url,
-                'group'       => $request->item_group,
-                'dealer_id'   => $request->item_dealer,
-                'active'      => $request->item_active,
+                'name'          => $request->item_name,
+                'price'         => $request->item_price,
+                'description'   => $request->item_description,
+                'notes'         => $request->item_notes,
+                'image_url'     => $request->item_image_url,
+                'category'      => $request->item_category,
+                'dealer_id'     => $request->item_dealer,
+                'active'        => $request->item_active,
+                'notifications' => $request->item_notifications,
             ]
         );
 
@@ -120,6 +128,44 @@ class DS_MarketController extends Controller
 
         flash()->success('Successfully bought ' . $item->name . ' for ' . $amount);
         return back();
+    }
+
+    // Gift item
+    public function gift(Request $request)
+    {
+        $item = DS_Marketitem::where('id', $request->item_id)->first();
+
+        if (!$item || !$request->gift_id || $request->gift_id == 0) {
+            flash()->error('Check item or user selection for gifting!');
+            return back();
+        }
+
+        $owner = User::with('journal')->where('id', Auth::id())->first();
+        $dealer = Airline::with('journal')->where('id', $item->dealer_id)->first();
+
+        // Check owner balance
+        $amount = Money::createFromAmount($item->price);
+        if ($owner->journal->balance < $amount) {
+            flash()->error('Not enough funds!');
+            return back();
+        }
+
+        // Update ownership and process transacitons
+        $columns = ['marketitem_id' => $item->id, 'user_id' => $request->gift_id];
+        $memo = 'Market gift payment for ' . $item->name;
+
+        $ownership_check = DB::table('disposable_marketitem_owner')->where($columns)->count();
+
+        if ($ownership_check > 0) {
+            flash()->info('User already owns the item!');
+            return back();
+        } else {
+            DB::table('disposable_marketitem_owner')->updateOrInsert($columns, $columns);
+            $this->ProcessTransactions($owner, $dealer, $amount, $memo);
+
+            flash()->success('Successfully gifted ' . $item->name . ' for ' . $amount);
+            return back();
+        }
     }
 
     // Process Transactions

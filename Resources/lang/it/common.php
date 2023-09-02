@@ -25,6 +25,7 @@ return [
     'myflight'  => 'Miei Voli',
     // Market
     'buy'      => 'Acquistare',
+    'gift'     => 'Regalo',
     'no_items' => 'Nessun articolo disponibile per lo shopping...',
     // Maintenance
     'current_op'  => 'Operazioni Correnti',

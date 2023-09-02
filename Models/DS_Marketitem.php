@@ -18,22 +18,26 @@ class DS_Marketitem extends Model
 
     protected $fillable = [
         'name',
-        'description',
         'price',
+        'description',
+        'notes',
         'image_url',
-        'group',
+        'category',
         'dealer_id',
         'active',
+        'notifications',
     ];
 
     public static $rules = [
-        'name'        => 'required|max:250',
-        'description' => 'nullable',
-        'price'       => 'required|numeric',
-        'image_url'   => 'nullable',
-        'group'       => 'nullable',
-        'dealer_id'   => 'required|numeric',
-        'active'      => 'required|boolean',
+        'name'          => 'required|max:250',
+        'price'         => 'required|numeric',
+        'description'   => 'nullable',
+        'notes'         => 'nullable',
+        'image_url'     => 'nullable',
+        'category'      => 'nullable',
+        'dealer_id'     => 'required|numeric',
+        'active'        => 'required|boolean',
+        'notifications' => 'nullable|boolean',
     ];
 
     public $sortable = [

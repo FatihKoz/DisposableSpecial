@@ -25,6 +25,7 @@ return [
     'myflight'  => 'Mein Flug',
     // Market
     'buy'      => 'Kaufen',
+    'gift'     => 'Geschenk',
     'no_items' => 'Es sind keine Artikel zum Einkaufen verfügbar...',
     // Maintenance
     'current_op'  => 'Aktueller Vorgang/Einsatz',

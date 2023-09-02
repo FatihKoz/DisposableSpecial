@@ -22,11 +22,39 @@
                 {!! $item->description !!}
             </div>
             <div class="card-footer p-1 text-end">
-              {{ Form::open(['route' => 'DSpecial.market.buy']) }}
+              @if(!in_array($item->id, $myitems))
+                {{ Form::open(['route' => 'DSpecial.market.buy']) }}
+                {{ Form::hidden('item_id', $item->id) }}
+                {{ Form::button(__('DSpecial::common.buy'), ['type' => 'submit', 'class' => 'btn btn-sm py-0 px-2 ms-2 btn-success float-start']) }}
+                {{ Form::close() }}
+              @endif
+              <button type="button" class="btn btn-sm btn-primary py-0 px-2 ms-2 float-start" data-bs-toggle="modal" data-bs-target="#giftModal{{ $item->id}}">@lang('DSpecial::common.gift')</button>
+              {{ money($item->price, $units['currency']) }}
+            </div>
+          </div>
+        </div>
+        <!-- Gift Modal -->
+        <div class="modal fade" id="giftModal{{ $item->id}}" tabindex="-1" aria-labelledby="giftModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header p-1">
+                <h5 class="modal-title p-0" id="giftModalLabel">Gift Market Item</h5>
+              </div>
+              {{ Form::open(['route' => 'DSpecial.market.gift', 'class="form-group']) }}
               {{ Form::hidden('item_id', $item->id) }}
-              {{ Form::button(__('DSpecial::common.buy'), ['type' => 'submit', 'class' => 'btn btn-sm py-0 px-2 btn-success float-start']) }}
+                <div class="modal-body p-1">
+                  <select name="gift_id" class="form-control form-select">
+                    <option value="0" selected>Select a pilot to gift {{ $item->name }}</option>
+                    @foreach($users as $u)
+                      <option value="{{ $u->id }}">{{ $u->ident.' | '.$u->name_private }}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="modal-footer p-1">
+                  <button type="button" class="btn btn-sm btn-secondary py-0 px-2" data-bs-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-sm btn-success py-0 px-2" data-bs-dismiss="modal">@lang('DSpecial::common.gift')</button>
+                </div>
               {{ Form::close() }}
-              {{ $item->price.' '.$units['currency'] }}
             </div>
           </div>
         </div>
@@ -35,4 +63,4 @@
   @endif
 
   {{ $items->links('pagination.default') }}
-@endsection
+  @endsection

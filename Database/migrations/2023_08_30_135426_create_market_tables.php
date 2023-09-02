@@ -12,12 +12,14 @@ return new class extends Migration
             Schema::create('disposable_marketitems', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name', 250);
-                $table->mediumtext('description')->nullable();
                 $table->unsignedInteger('price');
+                $table->mediumtext('description')->nullable();
+                $table->mediumtext('notes')->nullable();
                 $table->string('image_url', 250)->nullable();
-                $table->string('group', 10)->nullable();
+                $table->string('category', 10)->nullable();
                 $table->unsignedInteger('dealer_id');
-                $table->boolean('active');
+                $table->boolean('active')->default(1);
+                $table->boolean('notifications')->default(0);
                 $table->timestamps();
                 $table->softdeletes();
             });

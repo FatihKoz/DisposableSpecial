@@ -57,6 +57,7 @@ class DS_ServiceProvider extends ServiceProvider
             // Market Controller Routes
             Route::get('dmarket', 'DS_MarketController@index')->name('market');
             Route::post('dmarket/buy', 'DS_MarketController@buy')->name('market.buy');
+            Route::post('dmarket/gift', 'DS_MarketController@gift')->name('market.gift');
             // Mission Controller Roujtes
             Route::get('dmissions', 'DS_MissionController@index')->name('missions');
             Route::post('dmissions/store', 'DS_MissionController@store')->name('missions.store');

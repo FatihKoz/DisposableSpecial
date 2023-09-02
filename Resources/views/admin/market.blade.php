@@ -4,7 +4,7 @@
 @section('content')
   <div class="card border-blue-bottom" style="margin-left:5px; margin-right:5px; margin-bottom:5px;">
     <div class="content">
-      <p>Market items managed here</p>
+      <p>Market items managed here. Disposable Special Discord Webhook is used for notifications</p>
       <p>&nbsp;</p>
       <p><a href="https://github.com/FatihKoz" target="_blank">&copy; B.Fatih KOZ</a></p>
     </div>
@@ -36,11 +36,11 @@
           </div>
         @endif
         <div class="row" style="margin-bottom: 5px;">
-          <div class="col-sm-6">
+          <div class="col-sm-4">
             <label class="pl-1 mb-1" for="item_name">Name <span class="small" title="Mandatory">*</span></label>
             <input name="item_name" type="text" class="form-control" placeholder="Mandatory" maxlength="250" value="{{ $item->name ?? '' }}">
           </div>
-          <div class="col-sm-3">
+          <div class="col-sm-2">
             <label class="pl-1 mb-1" for="eff_start">Price <span class="small" title="Mandatory">*</span></label>
             <input name="item_price" type="number" class="form-control" value="{{ $item->price ?? '' }}">
           </div>
@@ -57,22 +57,43 @@
               </div>
             @endif
           </div>
+          <div class="col-sm-3">
+            @if($categories)
+              <div class="form-group">
+                <label class="pl-1 mb-1" for="item_category">Category (Optional)</label>
+                {{ Form::select('item_category', $categories, $item->category ?? '', ['class' => 'form-control select2']) }}
+              </div>
+            @endif
+          </div>
         </div>
         <div class="row">
           <div class="col-sm-6">
-            <label class="pl-1 mb-1" for="item_description">Item Description</label>
-            <textarea id="editor" name="item_description" class="editor">{!! $item->description ?? '' !!}</textarea>
+            <label class="pl-1 mb-1" for="item_description">Item Description (Public)</label>
+            <textarea id="editor_desc" name="item_description" class="editor">{!! $item->description ?? '' !!}</textarea>
           </div>
+          <div class="col-sm-6">
+            <label class="pl-1 mb-1" for="item_notes">Item Notes (visible to Owners)</label>
+            <textarea id="editor_notes" name="item_notes" class="editor">{!! $item->notes ?? '' !!}</textarea>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-sm-6">
             <label class="pl-1 mb-1" for="item_image_url">Image URL</label>
             <input name="item_image_url" type="text" class="form-control mb-1" placeholder="Optional" maxlength="250" value="{{ $item->image_url ?? '' }}">
-
+          </div>
+          <div class="col-sm-3">  
+            <label class="pl-1 mb-1" for="item_active">Active</label>
             <input type="hidden" name="item_active" value="0">
-            <label class="pl-1 mb-1" for="item_active">Active : <input name="item_active" type="checkbox" @if($item && $item->active == 1) checked="true" @endif class="form-control mb-1" value="1"></label>
+            <input name="item_active" type="checkbox" @if($item && $item->active == 1) checked="true" @endif class="form-control mb-1" value="1">
+          </div>
+          <div class="col-sm-3">
+            <label class="pl-1 mb-1" for="item_notifications">Notifications</label>
+            <input type="hidden" name="item_notifications" value="0">
+            <input name="item_notifications" type="checkbox" @if($item && $item->notifications == 1) checked="true" @endif class="form-control mb-1" value="1">
           </div>
         </div>
         <div class="row" style="margin-bottom: 10px;">
-          <div class="col-sm-10 text-right">
+          <div class="col-sm-12 text-right">
             <button class="btn btn-primary pl-1 mb-1" type="submit">@if($item && $item->id) Update @else Save @endif</button>
           </div>
         </div>
@@ -110,5 +131,6 @@
     }
   </script>
   <script src="{{ public_asset('assets/vendor/ckeditor4/ckeditor.js') }}"></script>
-  <script>$(document).ready(function () { CKEDITOR.replace('editor'); });</script>
+  <script>$(document).ready(function () { CKEDITOR.replace('editor_desc'); });</script>
+  <script>$(document).ready(function () { CKEDITOR.replace('editor_notes'); });</script>
 @endsection
