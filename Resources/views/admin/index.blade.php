@@ -122,21 +122,28 @@
   </div>
 
   <div class="row text-center" style="margin-left:5px; margin-bottom:5px; margin-right:5px;">
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card border-blue-bottom" style="padding:5px;">
         <a href="{{ route('DSpecial.tour_admin') }}">Tours Management</a>
         <br><br>
         <span class="text-info">Manage your tours, insert or edit here.<br>(Legs must be defined/edited via PhpVms Admin > Flights)</span>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card border-blue-bottom" style="padding:5px;">
         <a href="{{ route('DSpecial.notam_admin') }}">Notams Management</a>
         <br><br>
         <span class="text-info">Manage your notams, insert or edit here.</span>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
+      <div class="card border-blue-bottom" style="padding:5px;">
+        <a href="{{ route('DSpecial.market_admin') }}">Market Management</a>
+        <br><br>
+        <span class="text-info">Manage market items, insert or edit here.</span>
+      </div>
+    </div>
+    <div class="col-md-3">
       <div class="card border-blue-bottom" style="padding:5px;">
         <a href="{{ route('DSpecial.maint_admin') }}">Maintenance Management</a>
         <br><br>

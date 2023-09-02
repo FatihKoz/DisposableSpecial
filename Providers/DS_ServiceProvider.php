@@ -54,14 +54,18 @@ class DS_ServiceProvider extends ServiceProvider
             Route::match(['get', 'post'], 'dfreeflight_store', 'DS_FreeFlightController@store')->name('freeflight_store');
             // Maintenance Controller Routes
             Route::get('dmaintenance', 'DS_MaintenanceController@index')->name('maintenance');
+            // Market Controller Routes
+            Route::get('dmarket', 'DS_MarketController@index')->name('market');
+            Route::get('dmarket/{id}', 'DS_MarketController@show')->name('market.show');
+            Route::post('dmarket/buy', 'DS_MarketController@buy')->name('market.buy');
+            // Mission Controller Roujtes
+            Route::get('dmissions', 'DS_MissionController@index')->name('missions');
+            Route::post('dmissions/store', 'DS_MissionController@store')->name('missions.store');
             // Notam Controller Routes
             Route::get('dnotams', 'DS_NotamController@index')->name('notams');
             // Page Controller Routes
             Route::get('dopsmanual', 'DS_PageController@ops_manual')->name('ops_manual');
             Route::get('dlandingrates', 'DS_PageController@landing_rates')->name('landing_rates');
-            // Mission Controller Roujtes
-            Route::get('dmissions', 'DS_MissionController@index')->name('missions');
-            Route::post('dmissions/store', 'DS_MissionController@store')->name('missions.store');
             // Tour Controller Routes
             Route::get('dtours', 'DS_TourController@index')->name('tours');
             Route::get('dtours/{code}', 'DS_TourController@show')->name('tour');
@@ -89,6 +93,9 @@ class DS_ServiceProvider extends ServiceProvider
             Route::post('dsettings_store', 'DS_AdminController@update')->name('save_settings')->middleware('ability:admin,addons,modules');
             // Assignment Admin Routes
             Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual')->middleware('ability:admin,addons,modules');
+            // Market Admin Routes
+            Route::get('dmarket_admin', 'DS_MarketController@index_admin')->name('market_admin')->middleware('ability:admin,addons,modules');
+            Route::post('dmarket_store', 'DS_MarketController@store')->name('market_store')->middleware('ability:admin,addons,modules');
             // Maintenance Admin Routes
             Route::get('dmaint_admin', 'DS_MaintenanceController@index_admin')->name('maint_admin')->middleware('ability:admin,addons,modules');
             Route::post('dmaint_finish', 'DS_MaintenanceController@finish_maint')->name('maint_finish')->middleware('ability:admin,addons,modules');

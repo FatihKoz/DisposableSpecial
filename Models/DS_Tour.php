@@ -6,6 +6,8 @@ use App\Contracts\Model;
 use App\Models\Flight;
 use App\Models\Airline;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DS_Tour extends Model
 {
@@ -22,7 +24,6 @@ class DS_Tour extends Model
         'active',
     ];
 
-    // Validation
     public static $rules = [
         'tour_name'    => 'required|max:150',
         'tour_code'    => 'required|max:5',
@@ -34,7 +35,6 @@ class DS_Tour extends Model
         'active'       => 'nullable',
     ];
 
-    // Carbon Coverted Dates
     public $casts = [
         'start_date' => 'datetime',
         'end_date'   => 'datetime',
@@ -49,13 +49,13 @@ class DS_Tour extends Model
     }
 
     // Relationship with flights (legs)
-    public function legs()
+    public function legs(): HasMany
     {
         return $this->hasMany(Flight::class, 'route_code', 'tour_code');
     }
 
     // Relationship to airline
-    public function airline()
+    public function airline(): BelongsTo
     {
         return $this->belongsTo(Airline::class, 'tour_airline', 'id');
     }

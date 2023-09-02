@@ -7,6 +7,7 @@ use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\User;
 use App\Models\Enums\PirepState;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DS_Assignment extends Model
 {
@@ -40,19 +41,19 @@ class DS_Assignment extends Model
     ];
 
     // Relationship to Flight
-    public function flight()
+    public function flight(): HasOne
     {
         return $this->hasOne(Flight::class, 'id', 'flight_id');
     }
 
     // Relationship to User
-    public function user()
+    public function user(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     // Relationship to Pirep
-    public function pirep()
+    public function pirep(): HasOne
     {
         return $this->hasOne(Pirep::class, 'id', 'pirep_id');
     }

@@ -25,7 +25,7 @@
                       @endforeach
                     </select>
                   @else
-                    <input type="hidden" name="ff_airlineid" value="{{ $user->airline_id }}">
+                    <input type="hidden" name="ff_airlineid" id="airline_selection" value="{{ $user->airline_id }}">
                     <span class="input-group-text">{{ optional($user->airline)->icao }}</span>
                   @endif
                   <input type="number" name="ff_number" class="form-control" value="{{ $fflight->flight_number }}" min="0" max="9999">

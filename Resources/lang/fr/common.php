@@ -23,6 +23,12 @@ return [
     // Free Flights
     'ff_button' => 'Mettre à jour & Procéder à la Plannification du vol',
     'myflight'  => 'Mon vol',
+    // Market
+    'buy'      => 'Achat',
+    'gift'     => 'Cadeau',
+    'no_items' => "Aucun article disponible pour l'achat...",
+    'market'   => 'Pilot Shop',
+    'mymarket' => 'Bought Items',
     // Maintenance
     'current_op'  => 'Opération actuelle',
     'current_st'  => 'Etat actuel',

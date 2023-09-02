@@ -5,6 +5,7 @@ namespace Modules\DisposableSpecial\Models;
 use App\Contracts\Model;
 use App\Models\Aircraft;
 use Modules\DisposableBasic\Models\DB_Tech;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use stdClass;
 
 class DS_Maintenance extends Model
@@ -96,7 +97,7 @@ class DS_Maintenance extends Model
     }
 
     // Relationship to aircraft
-    public function aircraft()
+    public function aircraft(): HasOne
     {
         return $this->hasOne(Aircraft::class, 'id', 'aircraft_id');
     }

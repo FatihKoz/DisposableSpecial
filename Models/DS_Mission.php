@@ -9,6 +9,7 @@ use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\User;
 use App\Models\Enums\PirepState;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DS_Mission extends Model
 {
@@ -29,7 +30,6 @@ class DS_Mission extends Model
         'pirep_date',
     ];
 
-    // Validation rules
     public static $rules = [
         'user_id'        => 'nullable',
         'aircraft_id'    => 'nullable',
@@ -53,32 +53,32 @@ class DS_Mission extends Model
     ];
 
     // Relationships
-    public function user()
+    public function user(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function aircraft()
+    public function aircraft(): HasOne
     {
         return $this->hasOne(Aircraft::class, 'id', 'aircraft_id');
     }
 
-    public function flight()
+    public function flight(): HasOne
     {
         return $this->hasOne(Flight::class, 'id', 'flight_id');
     }
 
-    public function dpt_airport()
+    public function dpt_airport(): HasOne
     {
         return $this->hasOne(Airport::class, 'id', 'dpt_airport_id');
     }
 
-    public function arr_airport()
+    public function arr_airport(): HasOne
     {
         return $this->hasOne(Airport::class, 'id', 'arr_airport_id');
     }
 
-    public function pirep()
+    public function pirep(): HasOne
     {
         return $this->hasOne(Pirep::class, 'id', 'pirep_id');
     }
