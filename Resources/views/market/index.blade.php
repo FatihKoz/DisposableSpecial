@@ -5,6 +5,11 @@
   @if(!$items->count())
     <div class="alert alert-info p-1 fw-bold">@lang('DSpecial::common.no_items')</div>
   @else
+    <div class="row mb-1">
+      <div class="col text-end">
+        <a class="btn btn-sm btn-secondary py-0 px-2" href="{{ route('DSpecial.market.show', [Auth::id()])}}">@lang('DSpecial::common.mymarket')</a>
+      </div>
+    </div>
     <div class="row row-cols-lg-4 row-cols-xl-6">
       @foreach($items as $item)
         <div class="col-lg">
@@ -52,7 +57,7 @@
                   </select>
                 </div>
                 <div class="modal-footer p-1">
-                  <button type="button" class="btn btn-sm btn-secondary py-0 px-2" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-sm btn-warning py-0 px-2" data-bs-dismiss="modal">Cancel</button>
                   <button type="submit" class="btn btn-sm btn-success py-0 px-2" data-bs-dismiss="modal">@lang('DSpecial::common.gift')</button>
                 </div>
               {{ Form::close() }}

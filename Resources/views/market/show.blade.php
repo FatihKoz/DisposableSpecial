@@ -5,6 +5,11 @@
   @if(!$items->count())
     <div class="alert alert-info p-1 fw-bold">@lang('DSpecial::common.no_items')</div>
   @else
+    <div class="row mb-1">
+      <div class="col text-end">
+        <a class="btn btn-sm btn-secondary py-0 px-2" href="{{ route('DSpecial.market') }}">@lang('DSpecial::common.market')</a>
+      </div>
+    </div>
     <div class="row row-cols-lg-4 row-cols-xl-6">
       @foreach($items as $item)
         <div class="col-lg">

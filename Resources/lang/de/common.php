@@ -27,6 +27,8 @@ return [
     'buy'      => 'Kaufen',
     'gift'     => 'Geschenk',
     'no_items' => 'Es sind keine Artikel zum Einkaufen verfügbar...',
+    'market'   => 'Pilot Shop',
+    'mymarket' => 'Bought Items',
     // Maintenance
     'current_op'  => 'Aktueller Vorgang/Einsatz',
     'current_st'  => 'Aktueller Status',
