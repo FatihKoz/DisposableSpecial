@@ -163,7 +163,7 @@ Well, it is totaly up to you. They will be displayed close to real life NOTAM fo
 
 ### How can I use Widgets provided ?
 
-Simple, just use standard Laravel call for widgets, currently 3 widgets are available **Assignments**, **Notams** and **Tour Progress**
+Simple, just use standard Laravel call for widgets, provided widgets are available as below;
 
 ```php
 @widget('DSpecial::Assignments')
@@ -199,15 +199,11 @@ User and airport options can not be used together due to nature of the selection
 
 Widget will **always** display **effective** notams, config options can not change this behavior.
 
-**Featured Item**
+**Featured Item** widget has no settings, it will randomly pick an active market item which the user does not own. If no items are found, it will not be visible.
 
-Widget has no settings, it will randomly pick an active market item which the user does not own. If no items are found, it will not be visible.
-
-**User Items**
+**User Items** widget will return the items owned by that user ordered by item name. Blade file of the widget needs to be styled according to your theme/skin and placed properly, shipped version will display items with images in cards.
 
 * `'user'` should be a user's id (like `$user->id` or `4`)
-
-Widget will return the items owned by that user ordered by item name. Blade file of the widget needs to be styled according to your theme/skin and placed properly, shipped version will display items with images in cards.
 
 ### Dynamic Expenses
 
