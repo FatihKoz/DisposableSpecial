@@ -5,9 +5,21 @@
   @if(!$items->count())
     <div class="alert alert-info p-1 fw-bold">@lang('DSpecial::common.no_items')</div>
   @else
-    <div class="row mb-1">
+    <div class="row row-cols-2 mb-2">
+      <div class="col text-start">
+        @if($categories)
+          <a class="btn btn-sm btn-warning py-0 px-2 mx-1" href="{{ route('DSpecial.market') }}">All Items</a>
+          @foreach($categories as $key => $name)
+            <a class="btn btn-sm btn-warning py-0 px-2 mx-1" href="?cat={{ $key }}">{{ $name }}</a>
+          @endforeach
+        @endif
+      </div>
       <div class="col text-end">
-        <a class="btn btn-sm btn-secondary py-0 px-2" href="{{ route('DSpecial.market.show', [Auth::id()])}}">@lang('DSpecial::common.mymarket')</a>
+        @if($items->count() > 1)
+          @sortablelink('name', null, null, ['class' => 'btn btn-sm btn-secondary py-0 px-2 mx-1'])
+          @sortablelink('price', null, null, ['class' => 'btn btn-sm btn-secondary py-0 px-2 mx-1'])
+        @endif
+        <a class="btn btn-sm btn-secondary py-0 px-2 mx-1" href="{{ route('DSpecial.market.show', [Auth::id()])}}">@lang('DSpecial::common.mymarket')</a>
       </div>
     </div>
     <div class="row row-cols-lg-4 row-cols-xl-6">
@@ -22,7 +34,7 @@
             </div>
             <div class="card-body p-1 text-center">
               @if(filled($item->image_url))
-                <img class="card-image mw-100 mb-1" src="{{ $item->image_url }}" alt="{{ $item->name }}" title="{{ $item->name }}">
+                <img class="card-image mw-100 mb-1" src="{{ public_asset($item->image_url) }}" alt="{{ $item->name }}" title="{{ $item->name }}">
               @endif
                 {!! $item->description !!}
             </div>

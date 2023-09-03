@@ -24,11 +24,12 @@ return [
     'ff_button' => 'Mettre à jour & Procéder à la Plannification du vol',
     'myflight'  => 'Mon vol',
     // Market
-    'buy'      => 'Achat',
-    'gift'     => 'Cadeau',
-    'no_items' => "Aucun article disponible pour l'achat...",
-    'market'   => 'Pilot Shop',
-    'mymarket' => 'Bought Items',
+    'buy'      => 'Acheter',
+    'gift'     => 'Offrir',
+    'no_items' => "Il n'y a pas d'articles à acheter",
+    'market'   => 'Boutique',
+    'mymarket' => 'Articles achetés',
+    'featured' => 'Article en vedette',
     // Maintenance
     'current_op'  => 'Opération actuelle',
     'current_st'  => 'Etat actuel',

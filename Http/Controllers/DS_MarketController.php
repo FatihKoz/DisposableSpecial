@@ -10,25 +10,36 @@ use App\Support\Money;
 use Carbon\Carbon;
 use Modules\DisposableSpecial\Models\Enums\DS_ItemCategory;
 use Modules\DisposableSpecial\Models\DS_Marketitem;
+use Modules\DisposableSpecial\Models\DS_Marketowner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableSpecial\Services\DS_NotificationServices;
 
 class DS_MarketController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $myitems = DB::table('disposable_marketitem_owner')->where('user_id', Auth::id())->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
-        $items = DS_Marketitem::where('active', 1)->sortable('name', 'price')->paginate(18);
+        $selection = !empty($request->input('cat')) ? $request->input('cat') : null;
+
         $users = User::get();
 
+        $allcats = DS_ItemCategory::select(false);
+        $lstcats = DS_Marketitem::where('active', 1)->groupby('category')->pluck('category')->toArray();
+        $categories = array_intersect_key($allcats, array_flip($lstcats));
+
+        $myitems = DS_Marketowner::where('user_id', Auth::id())->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
+
+        $items = DS_Marketitem::when($selection, function ($query) use ($selection) {
+            return $query->where('category', $selection);
+        })->where('active', 1)->sortable('name', 'price')->paginate(18);
+
         return view('DSpecial::market.index', [
-            'items'   => $items,
-            'myitems' => $myitems,
-            'units'   => DS_GetUnits(),
-            'users'   => $users,
+            'items'      => $items,
+            'categories' => (!empty($categories) && count($categories) > 1) ? $categories : null,
+            'myitems'    => $myitems,
+            'units'      => DS_GetUnits(),
+            'users'      => $users,
         ]);
     }
 
@@ -39,7 +50,7 @@ class DS_MarketController extends Controller
             return back();
         }
 
-        $myitems = DB::table('disposable_marketitem_owner')->where('user_id', $id)->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
+        $myitems = DS_Marketowner::where('user_id', $id)->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
         $items = DS_Marketitem::whereIn('id', $myitems)->sortable('name', 'price')->paginate(18);
 
         return view('DSpecial::market.show', [
@@ -139,7 +150,7 @@ class DS_MarketController extends Controller
             $memo = 'Market gift payment for ' . $item->name;
 
             // Check and abort if target user already owns the items
-            $ownership_check = DB::table('disposable_marketitem_owner')->where($columns)->count();
+            $ownership_check = DS_Marketowner::where($columns)->count();
 
             if ($ownership_check > 0) {
                 flash()->info('User already owns the item!');
@@ -150,7 +161,7 @@ class DS_MarketController extends Controller
             $memo = 'Market payment for ' . $item->name;
         }
 
-        DB::table('disposable_marketitem_owner')->updateOrInsert($columns, $columns);
+        DS_Marketowner::create($columns);
         $this->ProcessTransactions($buyer, $dealer, $amount, $memo);
 
         // Send Message

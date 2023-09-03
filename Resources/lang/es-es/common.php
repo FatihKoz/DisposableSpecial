@@ -24,11 +24,12 @@ return [
     'ff_button' => 'Actualizar y proceder a planificar el vuelo',
     'myflight'  => 'Mi vuelo',
     // Market
-    'buy'      => 'Compra',
-    'gift'     => 'Regalo',
-    'no_items' => 'No hay artículos disponibles para comprar....',
-    'market'   => 'Pilot Shop',
-    'mymarket' => 'Bought Items',
+    'buy'      => 'Comprar',
+    'gift'     => 'Regalar',
+    'no_items' => 'No hay artículos para comprar',
+    'market'   => 'Mercado',
+    'mymarket' => 'Artículos comprados',
+    'featured' => 'Artículo destacado',
     // Maintenance
     'current_op'  => 'Operación actual',
     'current_st'  => 'Estado actual',

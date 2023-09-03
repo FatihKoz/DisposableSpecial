@@ -25,10 +25,11 @@ return [
     'myflight'  => 'Meu Voo',
     // Market
     'buy'      => 'Comprar',
-    'gift'     => 'Presente',
-    'no_items' => 'Nenhum item disponível para compras...',
-    'market'   => 'Pilot Shop',
-    'mymarket' => 'Bought Items',
+    'gift'     => 'Oferta',
+    'no_items' => 'Nenhum item disponível para comprar...',
+    'market'   => 'Loja Virtual',
+    'mymarket' => 'Artigos Comprados',
+    'featured' => 'Artigo em Destaque',
     // Maintenance
     'current_op'  => 'Operação Atual',
     'current_st'  => 'Estado Atual',

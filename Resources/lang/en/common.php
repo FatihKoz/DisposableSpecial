@@ -29,6 +29,7 @@ return [
     'no_items' => 'No items available for shopping...',
     'market'   => 'Pilot Shop',
     'mymarket' => 'Bought Items',
+    'featured' => 'Featured Item',
     // Maintenance
     'current_op'  => 'Current Operation',
     'current_st'  => 'Current State',

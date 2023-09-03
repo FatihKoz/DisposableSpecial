@@ -16,7 +16,7 @@ Using this module along with *Disposable Basic* and *Disposable Theme* is advise
 * Tours (with Awards and a tracking Widget)
 * Free Flights (with full SimBrief integration)
 * Maintenance System (can be extended by Disposable Basic module)
-* Market
+* Market (Pilot Shop)
 * Monthy Flight Assignments
 * NOTAMs
 * Configurable per flight dynamic expenses (Catering, Parking, Landing, Terminal Services Fees etc)
@@ -167,8 +167,10 @@ Simple, just use standard Laravel call for widgets, currently 3 widgets are avai
 
 ```php
 @widget('DSpecial::Assignments')
+@widget('DSpecial::FeaturedItem')
 @widget('DSpecial::Notams')
 @widget('DSpecial::TourProgress')
+@widget('DSpecial::UserItems')
 ```  
 
 **Assignments** widget has one config option called `'user'` which can be used to display a specific user's progres instead of current user.
@@ -196,6 +198,16 @@ User and airport options can not be used together due to nature of the selection
 * `['count' => 20, 'airline' => $airline->id, 'airport' => $hub->id]` this combination will display 20 notams of selected airline for specified airport
 
 Widget will **always** display **effective** notams, config options can not change this behavior.
+
+**Featured Item**
+
+Widget has no settings, it will randomly pick an active market item which the user does not own. If no items are found, it will not be visible.
+
+**User Items**
+
+* `'user'` should be a user's id (like `$user->id` or `4`)
+
+Widget will return the items owned by that user ordered by item name. Blade file of the widget needs to be styled according to your theme/skin and placed properly, shipped version will display items with images in cards.
 
 ### Dynamic Expenses
 
@@ -243,6 +255,8 @@ This is not a full scale shopping cart system, it just enables basic features li
 
 To keep the virtual money inside v7 economics, each item should have a dealer, as in our system dealers are your airlines. You can sell a training with Airline A, a livery with Airline B. Airline/Dealer of the item sold will gain money and this will be visible in financial reports. (Also transactions will be visible in pilot journals for tracking)  
 
+Market comes with two widgets for displaying user owned items and providing a featured item at dashboard (or any other location with login protection).  
+
 ### Monthly Flight Assignments
 
 This system relies heavily on your flight structure and database records. The settings are pretty basic, it also considers your phpVMS settings too. Auto assignments requires cron to be running, if somehow it fails or you wish to manually trigger the process it is possible to do so.
@@ -277,6 +291,12 @@ So it is highly probable that some features of this module may fail when SC3 Bet
 Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+03.SEP.23
+
+* Added FeaturedItem and UserItems widgets for Market
+* Improved market page (now allows category selection and sorting)
+* Fixed some market related translations (Thanks to valuable friends from phpVMS Discord)  
 
 02.SEP.23
 
