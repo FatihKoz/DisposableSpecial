@@ -288,6 +288,11 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
+17.SEP.23
+
+* Removed `public_asset()` function from Market index as it was causing trouble with image url's
+* License update (Another disallowed VA was added)  
+
 03.SEP.23
 
 * Added FeaturedItem and UserItems widgets for Market

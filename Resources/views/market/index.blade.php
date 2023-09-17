@@ -34,7 +34,7 @@
             </div>
             <div class="card-body p-1 text-center">
               @if(filled($item->image_url))
-                <img class="card-image mw-100 mb-1" src="{{ public_asset($item->image_url) }}" alt="{{ $item->name }}" title="{{ $item->name }}">
+                <img class="card-image mw-100 mb-1" src="{{ $item->image_url }}" alt="{{ $item->name }}" title="{{ $item->name }}">
               @endif
                 {!! $item->description !!}
             </div>
