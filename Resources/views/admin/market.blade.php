@@ -23,7 +23,7 @@
               <select id="item_selection" class="form-control select2" onchange="checkselection()">
                 <option value="0">Please Select...</option>
                 @foreach($items as $itm)
-                  <option value="{{ $itm->id }}" @if($item && $itm->id == $item->id) selected @endif>{{ $itm->id.' : '.$itm->name.' ('.$itm->price.')' }} @if($itm->active) (Active) @endif</option>
+                  <option value="{{ $itm->id }}" @if($item && $itm->id == $item->id) selected @endif>{{ $itm->id.' : '.$itm->name.' | Price: '.$itm->price.' | Owners: '.$itm->owners_count }} @if($itm->active) (Active) @endif</option>
                 @endforeach
               </select>
             </div>
@@ -78,7 +78,7 @@
         </div>
         <div class="row">
           <div class="col-sm-6">
-            <label class="pl-1 mb-1" for="item_image_url">Image URL</label>
+            <label class="pl-1 mb-1" for="item_image_url">Image URL or PATH</label>
             <input name="item_image_url" type="text" class="form-control mb-1" placeholder="Optional" maxlength="250" value="{{ $item->image_url ?? '' }}">
           </div>
           <div class="col-sm-3">  
@@ -100,6 +100,17 @@
       {{ Form::close() }}
     </div>
   </div>
+
+  @if(filled($item) && $item->owners->count() > 0)
+    <div class="row" style="margin-left:5px; margin-right:5px;">
+      <div class="card border-blue-bottom" style="padding:10px;">
+        <b>Owners</b><hr>
+        @foreach($item->owners as $owner)
+          &bull; {{ $owner->ident.' | '.$owner->name_private }}<br>
+        @endforeach
+      </div>
+    </div>
+  @endif
 
   <style>
     ::placeholder { color: indianred !important; opacity: 0.6 !important; }

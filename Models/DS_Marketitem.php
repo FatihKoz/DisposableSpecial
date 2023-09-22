@@ -49,7 +49,7 @@ class DS_Marketitem extends Model
     // Relationship with owners (Based on User model)
     public function owners(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'disposable_marketitem_owner');
+        return $this->belongsToMany(User::class, 'disposable_marketitem_owner', 'marketitem_id', 'user_id');
     }
 
     // Relationship with dealer (mostly for financial records, based on Airline model)

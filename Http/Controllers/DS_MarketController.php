@@ -69,7 +69,7 @@ class DS_MarketController extends Controller
         }
 
         if ($request->input('itemedit')) {
-            $item = DS_Marketitem::where('id', $request->input('itemedit'))->first();
+            $item = DS_Marketitem::with('owners')->where('id', $request->input('itemedit'))->first();
 
             if (!isset($item)) {
                 flash()->error('Market item not found!');
@@ -78,7 +78,7 @@ class DS_MarketController extends Controller
         }
 
         $airlines = Airline::select('id', 'name', 'icao', 'iata')->orderby('name')->get();
-        $items = DS_Marketitem::sortable('name', 'price')->get();
+        $items = DS_Marketitem::withCount('owners')->sortable('name', 'price')->get();
         $categories = DS_ItemCategory::select(true);
 
         return view('DSpecial::admin.market', [
