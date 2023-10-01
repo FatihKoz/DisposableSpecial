@@ -95,8 +95,7 @@
       <div class="row">
         <div class="col-sm-4">
           <label class="pl-1 mb-1" for="tour_id">Select Tour</label>
-          <select id="tour_subfleet" class="form-control select2" onchange="checksf()">
-            <option value="0">Please Select A Tour</option>
+          <select id="tour_subfleet" class="form-control select2" multiple onchange="checksf()">
             @foreach($alltours->sortBy('tour_name') as $toursf)
               <option value="{{ $toursf->tour_code }}">{{ $toursf->tour_name }} : {{ $toursf->tour_code }}</option>
             @endforeach
@@ -104,8 +103,7 @@
         </div>
         <div class="col-sm-4">
           <label class="pl-1 mb-1" for="tour_id">Select SubFleet</label>
-          <select id="subfleet" class="form-control select2" onchange="checksf()">
-            <option value="0">Please Select A SubFleet</option>
+          <select id="subfleet" class="form-control select2" multiple onchange="checksf()">
             @foreach($subfleets as $subfleet)
               <option value="{{ $subfleet->id }}">{{ $subfleet->airline->icao }} | {{ $subfleet->name }} : {{ $subfleet->type }}</option>
             @endforeach
@@ -151,7 +149,10 @@
     const $sfremovelink = document.getElementById("sfremove").href;
 
     function checksf() {
-      if (document.getElementById("tour_subfleet").value != "0" && document.getElementById("subfleet").value != "0")
+      const selectedTours = Array.from(document.querySelectorAll('#tour_subfleet option:checked')).map(option => option.value);
+      const selectedSubFleets = Array.from(document.querySelectorAll('#subfleet option:checked')).map(option => option.value);
+
+      if (selectedTours.length > 0 && selectedSubFleets.length > 0)
       {
         document.getElementById('sfadd').style.visibility = 'visible';
         document.getElementById('sfremove').style.visibility = 'visible';
@@ -159,8 +160,8 @@
         document.getElementById('sfadd').style.visibility = 'hidden';
         document.getElementById('sfremove').style.visibility = 'hidden';
       }
-      const tcode = document.getElementById("tour_subfleet").value;
-      const sfid = document.getElementById("subfleet").value;
+      const tcode = selectedTours.join(',');
+      const sfid = selectedSubFleets.join(',');
       const addlink = "?act=add&tcode=".concat(tcode,"&sfid=",sfid);
       const removelink = "?act=remove&tcode=".concat(tcode,"&sfid=",sfid);
 
