@@ -288,6 +288,11 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
+07.OCT.23
+
+* Market item owners display for admins
+* Tour fleet management improvements, multiple tour/subfleet selections (Thanks to @arthurpar07)
+
 17.SEP.23
 
 * Removed `public_asset()` function from Market index as it was causing trouble with image url's
