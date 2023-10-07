@@ -291,7 +291,7 @@ Notam Management airport dropdown does not select already assigned/saved airport
 07.OCT.23
 
 * Market item owners display for admins
-* Tour fleet management improvements, multiple tour/subfleet selections (Thanks to @arthurtpar06)
+* Tour fleet management improvements, multiple tour/subfleet selections (Thanks to @arthurpar06 for his support)
 
 17.SEP.23
 
