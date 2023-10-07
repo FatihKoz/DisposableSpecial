@@ -5,18 +5,17 @@ namespace Modules\DisposableSpecial\Http\Controllers;
 use App\Contracts\Controller;
 use App\Models\Airline;
 use App\Models\Award;
+use App\Models\Enums\PirepState;
 use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\Subfleet;
 use App\Models\User;
 use App\Models\UserAward;
-use App\Models\Enums\PirepState;
-use App\Models\Enums\PirepStatus;
 use Carbon\Carbon;
-use Modules\DisposableSpecial\Models\DS_Tour;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
+use Modules\DisposableSpecial\Models\DS_Tour;
 
 class DS_TourController extends Controller
 {
@@ -179,9 +178,9 @@ class DS_TourController extends Controller
 
         if ($request->input('act') && $request->input('tcode') && $request->input('sfid')) {
             $action = $request->input('act');
-            $tour_code = $request->input('tcode');
-            $subfleet_id = $request->input('sfid');
-            $this->ManageTourSubfleets($action, $tour_code, $subfleet_id);
+            $tour_codes = $request->input('tcode');
+            $subfleet_ids = $request->input('sfid');
+            $this->ManageTourSubfleets($action, explode(',', $tour_codes), explode(',', $subfleet_ids));
             return redirect(route('DSpecial.tour_admin'));
         }
 
@@ -256,46 +255,50 @@ class DS_TourController extends Controller
     }
 
     // Add-Remove SubFleets to Tour Legs
-    public function ManageTourSubfleets($action, $tour_code, $subfleet_id)
+    public function ManageTourSubfleets($action, $tour_codes, $subfleet_ids)
     {
-        if ($action === 'add' && $tour_code && $subfleet_id) {
-            $flights = Flight::where('route_code', $tour_code)->pluck('id')->toArray();
+        if ($action === 'add' && $tour_codes && $subfleet_ids) {
+            $flights = Flight::whereIn('route_code', $tour_codes)->pluck('id')->toArray();
 
             if (count($flights) === 0) {
-                flash()->error('No flights found for ' . $tour_code . ' !');
+                flash()->error('No flights found for '.implode(',', $tour_codes).' !');
                 return;
             }
 
             foreach ($flights as $flight) {
-                $duplicate = DB::table('flight_subfleet')->where(['flight_id' => $flight, 'subfleet_id' => $subfleet_id])->count();
+                foreach ($subfleet_ids as $subfleet_id) {
+                    $duplicate = DB::table('flight_subfleet')->where(['flight_id' => $flight, 'subfleet_id' => $subfleet_id])->count();
 
-                if ($duplicate == 0) {
-                    DB::table('flight_subfleet')->insert(['flight_id' => $flight, 'subfleet_id' => $subfleet_id]);
+                    if ($duplicate == 0) {
+                        DB::table('flight_subfleet')->insert(['flight_id' => $flight, 'subfleet_id' => $subfleet_id]);
+                    } else {
+                        $error = true;
+                    }
                 }
             }
 
-            if (isset($duplicate) && $duplicate == 0) {
-                flash()->success('Subfleet Assigned to ' . $tour_code . ' Tour Flights');
+            if (!isset($error)) {
+                flash()->success('Subfleets assigned successfully to ' .implode(', ', $tour_codes) . ' flights !');
             } else {
-                flash()->error('Subfleet Already Assigned to ' . $tour_code . ' Tour Flights !');
+                flash()->error('Some subfleets were already assigned to '.implode(', ', $tour_codes).' flights !');
             }
         }
 
-        if ($action === 'remove' && $tour_code && $subfleet_id) {
-            $flights = Flight::where('route_code', $tour_code)->pluck('id')->toArray();
+        if ($action === 'remove' && $tour_codes && $subfleet_ids) {
+            $flights = Flight::whereIn('route_code', $tour_codes)->pluck('id')->toArray();
 
             if (count($flights) === 0) {
-                flash()->error('No flights found for ' . $tour_code . ' !');
+                flash()->error('No flights found for '.implode(', ', $tour_codes).' !');
                 return;
             }
 
-            $sf_count = DB::table('flight_subfleet')->where('subfleet_id', $subfleet_id)->whereIn('flight_id', $flights)->count();
+            $sf_count = DB::table('flight_subfleet')->whereIn('subfleet_id', $subfleet_ids)->whereIn('flight_id', $flights)->count();
 
             if ($sf_count > 0) {
-                DB::table('flight_subfleet')->where('subfleet_id', $subfleet_id)->whereIn('flight_id', $flights)->delete();
-                flash()->success('Subfleet removed from ' . $tour_code . ' flights');
+                DB::table('flight_subfleet')->whereIn('subfleet_id', $subfleet_ids)->whereIn('flight_id', $flights)->delete();
+                flash()->success('Subfleets removed successfully to ' .implode(', ', $tour_codes) . ' flights !');
             } else {
-                flash()->error('Subfleet not assigned to ' . $tour_code . ' !');
+                flash()->error('Subfleets were not assigned to '.implode(', ', $tour_codes).' flights !');
             }
         }
     }
