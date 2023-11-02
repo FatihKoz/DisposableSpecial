@@ -201,11 +201,14 @@ if (!function_exists('DS_GetTourName')) {
 if (!function_exists('DS_GetTourCodes')) {
     function DS_GetTourCodes()
     {
-        $carbon_now = Carbon::today();
+        // Add one days to show upcoming tours before start (for better pilot awareness)
+        $carbon_start = Carbon::today()->addDays(1);
+        $carbon_end = Carbon::today();
+
         $where = [
             'active' => 1,
-            ['start_date', '<=', $carbon_now],
-            ['end_date', '>=', $carbon_now],
+            ['start_date', '<=', $carbon_start],
+            ['end_date', '>=', $carbon_end],
         ];
 
         $tours = DS_Tour::where($where)->orderBy('tour_code')->pluck('tour_code')->toArray();
