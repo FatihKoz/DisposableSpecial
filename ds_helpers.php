@@ -289,9 +289,14 @@ if (!function_exists('DS_IsTourLegFlown')) {
             'state'          => PirepState::ACCEPTED,
         ])->orderby('submitted_at', 'desc')->first();
 
-        // Get The Dates either for Flight or the Tour
-        $start_date = $flight->start_date ?? $tour->start_date;
-        $end_date = $flight->end_date ?? $tour->end_date;
+        // Get dates with times either for flight or the tour itself
+        if (filled($flight->start_date) && filled($flight->end_date)) {
+            $start_date = $flight->start_date->startOfDay();
+            $end_date = $flight->end_date->endOfDay();
+        } else {
+            $start_date = $tour->start_date->startOfDay();
+            $end_date = $tour->end_date->endOfDay();            
+        }
 
         // Define Default Check Results
         $aircraft_check = false;
