@@ -288,6 +288,11 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
+03.NOV.23
+
+* Updated tour leg check helper (to properly identify legs flown on one specific date)
+* Updated license (Another disallowed VA was added)
+
 07.OCT.23
 
 * Market item owners display for admins
