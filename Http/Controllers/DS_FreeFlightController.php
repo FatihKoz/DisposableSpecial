@@ -41,6 +41,7 @@ class DS_FreeFlightController extends Controller
         $settings = [];
         $settings['ac_rank'] = setting('pireps.restrict_aircraft_to_rank', true);
         $settings['ac_rating'] = setting('pireps.restrict_aircraft_to_typerating', false);
+        $settings['bid_block'] = setting('bids.block_aircraft', false);
         $settings['sb_block'] = setting('simbrief.block_aircraft', false);
         $settings['sb_callsign'] = setting('simbrief.callsign', false);
         $settings['pilot_company'] = setting('pilots.restrict_to_company', false);
@@ -100,9 +101,10 @@ class DS_FreeFlightController extends Controller
             $ac_where['airport_id'] = $user_loc;
         }
 
-        $withCount = ['simbriefs' => function ($query) {
-            $query->whereNull('pirep_id');
-        }];
+        $withCount = [
+            'bid',
+            'simbriefs' => function ($query) { $query->whereNull('pirep_id'); },
+        ];
 
         $aircraft = Aircraft::withCount($withCount)->with('airline')
             ->where($ac_where)
@@ -111,6 +113,9 @@ class DS_FreeFlightController extends Controller
             })
             ->when($settings['sb_block'], function ($query) {
                 return $query->having('simbriefs_count', 0);
+            })
+            ->when($settings['bid_block'], function ($query) {
+                return $query->having('bid_count', 0);
             })->orderby('icao')->orderby('registration')
             ->get();
 
