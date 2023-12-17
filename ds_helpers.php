@@ -57,8 +57,9 @@ if (!function_exists('DS_AutoPrice')) {
         }
 
         // Multiplier and corrections according to fare type
-        $class_business = ['J', 'CGJ'];
-        $class_first = ['F', 'CGF'];
+        $class_premium = ['W', 'CGW', 'Prem'];
+        $class_business = ['J', 'CGJ', 'Bus'];
+        $class_first = ['F', 'CGF', 'First'];
         $class_special = ['V', 'CGV'];
 
         if (in_array($fare->code, $class_special)) {
@@ -68,6 +69,8 @@ if (!function_exists('DS_AutoPrice')) {
 
         if (is_numeric($fare->notes)) {
             $multiplier = $fare->notes;
+        } elseif (in_array($fare->code, $class_premium)) {
+            $multiplier = 2;
         } elseif (in_array($fare->code, $class_business)) {
             $multiplier = 3;
         } elseif (in_array($fare->code, $class_first)) {
