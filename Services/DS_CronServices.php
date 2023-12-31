@@ -2,6 +2,7 @@
 
 namespace Modules\DisposableSpecial\Services;
 
+use App\Events\PirepCancelled;
 use App\Models\Acars;
 use App\Models\Aircraft;
 use App\Models\Fare;
@@ -198,12 +199,35 @@ class DS_CronServices
         }
     }
 
+    // Delete Long Term Paused Pireps
+    // Sometimes some people don't understand the usage of short term pause
+    public function DeletePausedPireps($hours = 0)
+    {
+        if ($hours > 0) {
+
+            $date = Carbon::now('UTC')->subHours($hours);
+
+            $where = [];
+            $where['state'] = PirepState::IN_PROGRESS;
+            $where['status'] = PirepStatus::PAUSED;
+
+            $pireps = Pirep::where('updated_at', '<', $date)->where($where)->get();
+
+            foreach ($pireps as $pirep) {
+                event(new PirepCancelled($pirep));
+                Log::info('Disposable Special | Cancelled Pirep id=' . $pirep->id . ', state=' . PirepState::label($pirep->state));
+                $pirep->delete();
+            }
+        }
+    }
+
     // Clean out Acars Table
     public function CleanAcarsRecords()
     {
         $records = Acars::withCount(['pirep'])->having('pirep_count', 0)->pluck('id')->toArray();
 
         $acars = Acars::whereIn('id', $records)->delete();
+
         if ($acars > 0) {
             Log::info('Disposable Special | Deleted ' . $acars . ' redundant records with no matching PIREP | acars');
         }

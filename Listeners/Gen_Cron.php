@@ -53,6 +53,7 @@ class Gen_Cron extends Listener
     {
         $CronSVC = app(DS_CronServices::class);
         $CronSVC->ProcessFreeFlights();
+        $CronSVC->DeletePausedPireps(DS_Setting('dspecial.delete_paused_pireps', 0));
         // $this->DS_WriteToLog('30 mins test');
     }
 
