@@ -288,6 +288,10 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
+31.DEC.23
+
+* Added auto cancel/delete feature for paused pireps (needs working cron)
+
 18.NOV.23
 
 * Added bid checks for Free Flight aircraft suitability
