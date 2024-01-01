@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\Enums\AcarsType;
 use App\Models\Enums\AircraftState;
 use App\Models\Enums\PirepState;
+use App\Models\Enums\PirepStatus;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
