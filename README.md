@@ -291,7 +291,7 @@ Notam Management airport dropdown does not select already assigned/saved airport
 05.JAN.24
 
 * Fixed Cron Services (regarding automated deletion of paused pireps)
-* License update (Two new dissalowed VA's are added)
+* License update (Two new disallowed VA's are added)
 
 31.DEC.23
 
