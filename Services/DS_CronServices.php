@@ -5,17 +5,20 @@ namespace Modules\DisposableSpecial\Services;
 use App\Events\PirepCancelled;
 use App\Models\Acars;
 use App\Models\Aircraft;
-use App\Models\Fare;
-use App\Models\Flight;
-use App\Models\Pirep;
-use App\Models\Rank;
-use App\Models\SimBrief;
-use App\Models\Subfleet;
-use App\Models\User;
+use App\Models\Bid;
 use App\Models\Enums\AcarsType;
 use App\Models\Enums\AircraftState;
 use App\Models\Enums\PirepState;
 use App\Models\Enums\PirepStatus;
+use App\Models\Fare;
+use App\Models\Flight;
+use App\Models\Pirep;
+use App\Models\Rank;
+use App\Models\Role;
+use App\Models\SimBrief;
+use App\Models\Subfleet;
+use App\Models\User;
+use App\Models\UserFieldValue;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -192,10 +195,24 @@ class DS_CronServices
             $users_with_pireps = Pirep::select('user_id')->groupBy('user_id')->pluck('user_id')->toArray();
             $users_with_roles = DB::table('role_user')->select('user_id')->groupBy('user_id')->pluck('user_id')->toArray();
             $safe_users = array_unique(array_merge($users_with_pireps, $users_with_roles));
-            // Delete the rest
-            $deleted_users = User::where('created_at', '<', Carbon::now()->subDays($days))->whereNotIn('id', $safe_users)->delete();
-            if ($deleted_users > 0) {
-                Log::info('Disposable Special | Deleted ' . $deleted_users . ' non-flown members | users');
+            $picked_users = User::where('created_at', '<', Carbon::now()->subDays($days))->whereNotIn('id', $safe_users)->get();
+
+            // Delete each user, remove their bids and user field entries
+            if ($picked_users) {
+                Log::info('Disposable Special | Deleting ' . $picked_users->count() . ' non-flown members | users');
+                foreach ($picked_users as $user) {
+                    Log::info('Disposable Special | Deleted user, roles, bids, custom field values for id:' . $user->id . ' > ' . $user->name_private . ' identified as non-flown user');
+                    // Detach all roles from the user
+                    $user->removeRoles($user->roles->toArray());
+                    // Delete any custom profile fields
+                    UserFieldValue::where('user_id', $user->id)->delete();
+                    // Remove any bids
+                    Bid::where('user_id', $user->id)->delete();
+                    // Remove the user
+                    $user->forceDelete();
+                }
+            } else {
+                Log::info('Disposable Special | No non-flown members found | users');
             }
         }
     }
@@ -238,11 +255,12 @@ class DS_CronServices
     // If one of the foreing keys is missing record becomes redundant
     public function CleanRelationships()
     {
-        $users = User::pluck('id')->toArray();
         $fares = Fare::pluck('id')->toArray();
         $flights = Flight::pluck('id')->toArray();
         $ranks = Rank::pluck('id')->toArray();
+        $roles = Role::pluck('id')->toArray();
         $subfleets = Subfleet::pluck('id')->toArray();
+        $users = User::pluck('id')->toArray();
 
         $ff_no_flight = DB::table('flight_fare')->whereNotIn('flight_id', $flights)->delete();
         if ($ff_no_flight > 0) {
@@ -292,6 +310,16 @@ class DS_CronServices
         $journals = DB::table('journals')->where('morphed_type', 'LIKE', '%User')->whereNotIn('morphed_id', $users)->delete();
         if ($journals > 0) {
             Log::info('Disposable Special | Deleted ' . $journals . ' redundant records with no matching USER | journals');
+        }
+
+        $ur_users = DB::table('role_user')->whereNotIn('user_id', $users)->delete();
+        if ($journals > 0) {
+            Log::info('Disposable Special | Deleted ' . $ur_users . ' redundant records with no matching USER | role_user');
+        }
+
+        $ur_roles = DB::table('role_user')->whereNotIn('role_id', $roles)->delete();
+        if ($journals > 0) {
+            Log::info('Disposable Special | Deleted ' . $ur_roles . ' redundant records with no matching ROLE | role_user');
         }
     }
 }
