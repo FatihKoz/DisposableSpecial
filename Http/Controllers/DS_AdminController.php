@@ -25,7 +25,7 @@ class DS_AdminController extends Controller
             return redirect()->route('DSpecial.admin');
         }
 
-        $settings = DB::table('disposable_settings')->where('key', 'LIKE', 'turksim.%')->orWhere('key', 'LIKE', 'phpvms.%')->orWhere('key', 'LIKE', 'dspecial.%')->get();
+        $settings = DB::table('disposable_settings')->where('key', 'LIKE', 'turksim.%')->orWhere('key', 'LIKE', 'phpvms.%')->orWhere('key', 'LIKE', 'dspecial.%')->orWhere('key', 'LIKE', '%.srvkey')->get();
 
         $diversions = Pirep::withCount('alt_airport')->where('state', PirepState::ACCEPTED)->where('notes', 'LIKE', '%DIVERTED%')
             ->whereNotNull('alt_airport_id')

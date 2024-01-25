@@ -82,6 +82,19 @@ class DS_ServiceProvider extends ServiceProvider
             Route::get('drulesandregs', 'DS_PageController@rules_regs')->name('rules_regs');
         });
 
+        // API Public
+        Route::group([
+            'as'         => 'DSpecial.',
+            'prefix'     => '',
+            'middleware' => ['api'],
+            'namespace'  => 'Modules\DisposableSpecial\Http\Controllers',
+        ], function () {
+            // Service Key Protected Routes
+            Route::get('dsapi/assignments', 'DS_ApiController@assignments');
+            Route::get('dsapi/modules', 'DS_ApiController@modules');
+            Route::get('dsapi/tours', 'DS_ApiController@tours');
+        });
+
         // Admin
         Route::group([
             'as'         => 'DSpecial.',

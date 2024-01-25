@@ -278,6 +278,13 @@
         <br><br>
         @include('DSpecial::admin.settings_table', ['group' => 'Assignments'])
       </div>
+      {{-- API Service Key Group --}}
+      <div class="card border-blue-bottom" style="padding:5px;">
+        <b>API Services</b>
+        <br>
+        @include('DSpecial::admin.settings_table', ['group' => 'API Service'])
+        <span class="text-info">Service Key is needed to authorize API requests for DispoSpecial Features (assignments and tours)<br>Same service key is shared between Disposable Modules</span>
+      </div>
     </div>
   </div>
 

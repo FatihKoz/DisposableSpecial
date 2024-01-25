@@ -24,6 +24,7 @@ Using this module along with *Disposable Basic* and *Disposable Theme* is advise
 * Some static pages (About Us, Rules & Regulations, Ops Manual, Landing Rates)
 * Handy administrative functions
 * CRON based automated database cleanup features
+* API endpoints to support data display at landing pages (for monthly assignments and tours)
 
 ## Compatibility with other addons
 
@@ -136,6 +137,78 @@ Usage examples;
   <i class="fas fa-link mx-1"></i>
 </a>
 ```
+## API Endpoints
+
+Module offers below endpoints for API Access with authorization, so data can be placed on landing pages easily. Check module admin page to define your service key, which is needed for authorization.
+
+### Endpoints
+
+```php
+/dsapi/assignments  // Monthly Assignments
+/dsapi/tours // Tours
+```
+### Header Options and Example Request
+
+```php
+Content-Type:application/json
+x-service-key:{your service key}
+x-a-year:2023 // by default api return current year, only use if you need to get other years
+x-a-month:5 // by default api returns current month, only use if you need to get other months
+```
+
+```php
+$service_key = "YOUR SERVICE KEY";
+$url = "https://your-phpvms-v7-site.com/dsapi/assignments";
+// This will give you current months assignments
+$headers = [
+    'Content-Type:application/json',
+    'x-service-key:' . $service_key,
+];
+
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL,$url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+$json = curl_exec($ch);
+if (!$json) {
+    echo curl_error($ch);
+}
+
+curl_close($ch);
+$assignments = json_decode($json, true);
+
+echo $assignments;
+```
+
+```php
+$service_key = "YOUR SERVICE KEY";
+$url = "https://your-phpvms-v7-site.com/dsapi/tours";
+// This will give you current and upcoming active tours with participant and leg counts, also leg/airport details are available
+$headers = [
+    'Content-Type:application/json',
+    'x-service-key:' . $service_key,
+];
+
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL,$url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+$json = curl_exec($ch);
+if (!$json) {
+    echo curl_error($ch);
+}
+
+curl_close($ch);
+$tours = json_decode($json, true);
+
+echo $tours;
+```
+
+You can use Postman or Apidog (or a similar tool) to test api access easily and see returned data for landing page development.  
 
 ## Operational Usage and Provided Features
 
@@ -287,6 +360,12 @@ So it is highly probable that some features of this module may fail when SC3 Bet
 Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+25.JAN.24
+
+* Added API endpoints for Tours and Monthly Assignments
+* Improved non-flown member deletion feature
+* Improved database cleanup features
 
 05.JAN.24
 
