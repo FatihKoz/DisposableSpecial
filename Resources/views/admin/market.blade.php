@@ -42,7 +42,7 @@
           </div>
           <div class="col-sm-2">
             <label class="pl-1 mb-1" for="eff_start">Price <span class="small" title="Mandatory">*</span></label>
-            <input name="item_price" type="number" class="form-control" value="{{ $item->price ?? '' }}">
+            <input name="item_price" type="number" step="0.01" class="form-control" value="{{ $item->price ?? '' }}">
           </div>
           <div class="col-sm-3">
             @if($airlines)
