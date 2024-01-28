@@ -5,6 +5,7 @@ namespace Modules\DisposableSpecial\Http\Controllers;
 use App\Contracts\Controller;
 use App\Models\Airline;
 use App\Models\User;
+use App\Models\Enums\UserState;
 use App\Services\FinanceService;
 use App\Support\Money;
 use Carbon\Carbon;
@@ -22,7 +23,7 @@ class DS_MarketController extends Controller
     {
         $selection = !empty($request->input('cat')) ? $request->input('cat') : null;
 
-        $users = User::get();
+        $users = User::whereIn('state', [UserState::ACTIVE, UserState::ON_LEAVE])->get();
 
         $allcats = DS_ItemCategory::select(false);
         $lstcats = DS_Marketitem::where('active', 1)->groupby('category')->pluck('category')->toArray();
