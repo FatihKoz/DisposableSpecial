@@ -361,6 +361,11 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
+28.JAN.24
+
+* Market prices now allow two decimal digits for precision
+* Gifting through market frontend will only show active and on leave users
+
 25.JAN.24
 
 * Added API endpoints for Tours and Monthly Assignments
