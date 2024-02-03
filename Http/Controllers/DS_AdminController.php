@@ -12,6 +12,7 @@ use App\Models\SimBrief;
 use App\Models\Enums\PirepState;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request as Req;
@@ -219,6 +220,30 @@ class DS_AdminController extends Controller
                 }
             }
             flash()->success('Fleet members returned to their hubs.');
+        } elseif ($action === 'backupdata') {
+            // Backup Database Only
+            Artisan::call('backup:run --only-db');
+
+            $output = trim(Artisan::output());
+            if (!empty($output)) {
+                Log::info($output);
+            }
+        } elseif ($action === 'backupfile') {
+            // Backup Files Only
+            Artisan::call('backup:run --only-files');
+
+            $output = trim(Artisan::output());
+            if (!empty($output)) {
+                Log::info($output);
+            }
+        } elseif ($action === 'backupfull') {
+            // Backup Both
+            Artisan::call('backup:run');
+
+            $output = trim(Artisan::output());
+            if (!empty($output)) {
+                Log::info($output);
+            }
         }
     }
 }

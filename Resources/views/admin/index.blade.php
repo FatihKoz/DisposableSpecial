@@ -83,6 +83,15 @@
       {{-- Right --}}
       <div class="col-md-4">
         <div class="card border-blue-bottom" style="padding:5px;">
+          <b>Manual Backups</b>
+          <br><br>
+          <a href="{{ route('DSpecial.admin') }}?action=backupdata">Database Only</a> | 
+          <a href="{{ route('DSpecial.admin') }}?action=backupfile">Files Only</a> | 
+          <a href="{{ route('DSpecial.admin') }}?action=backupfull">Full Backup</a>
+          <br><br>
+          <span class="text-info">Use only if cron fails or when an urgent backup is needed.</span>
+        </div>
+        <div class="card border-blue-bottom" style="padding:5px;">
           <b>SimBrief Packs:</b> 
           <a href="{{ route('DSpecial.admin') }}?action=cleansb"> Clean Old</a> | 
           <a href="{{ route('DSpecial.admin') }}?action=cleansball"> Clean ALL</a> | 
