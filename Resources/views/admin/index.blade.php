@@ -87,7 +87,8 @@
           <br><br>
           <a href="{{ route('DSpecial.admin') }}?action=backupdata">Database Only</a> | 
           <a href="{{ route('DSpecial.admin') }}?action=backupfile">Files Only</a> | 
-          <a href="{{ route('DSpecial.admin') }}?action=backupfull">Full Backup</a>
+          <a href="{{ route('DSpecial.admin') }}?action=backupfull">Full Backup</a> | 
+          <a href="{{ route('DSpecial.admin') }}?action=backupclean">Clean Backups</a>
           <br><br>
           <span class="text-info">Use only if cron fails or when an urgent backup is needed.</span>
         </div>

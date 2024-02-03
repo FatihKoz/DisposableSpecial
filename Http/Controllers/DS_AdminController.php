@@ -223,27 +223,27 @@ class DS_AdminController extends Controller
         } elseif ($action === 'backupdata') {
             // Backup Database Only
             Artisan::call('backup:run --only-db');
-
-            $output = trim(Artisan::output());
-            if (!empty($output)) {
-                Log::info($output);
-            }
+            $this->ArtisanOutput(trim(Artisan::output()));
         } elseif ($action === 'backupfile') {
             // Backup Files Only
             Artisan::call('backup:run --only-files');
-
-            $output = trim(Artisan::output());
-            if (!empty($output)) {
-                Log::info($output);
-            }
+            $this->ArtisanOutput(trim(Artisan::output()));
         } elseif ($action === 'backupfull') {
             // Backup Both
             Artisan::call('backup:run');
+            $this->ArtisanOutput(trim(Artisan::output()));
+        } elseif ($action === 'backupclean') {
+            // Clean Old Backup
+            Artisan::call('backup:clean');
+            $this->ArtisanOutput(trim(Artisan::output()));
+        }
+    }
 
-            $output = trim(Artisan::output());
-            if (!empty($output)) {
-                Log::info($output);
-            }
+    // If there is something in the output, just write it to log
+    public function ArtisanOutput($output = null)
+    {
+        if (!empty($output)) {
+            Log::info($output);
         }
     }
 }
