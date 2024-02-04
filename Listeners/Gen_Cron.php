@@ -11,6 +11,7 @@ use App\Events\CronNightly;
 use App\Events\CronWeekly;
 use App\Events\CronMonthly;
 use App\Events\UserRegistered;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableSpecial\Http\Controllers\DS_AssignmentController;
 use Modules\DisposableSpecial\Services\DS_CronServices;
@@ -61,6 +62,14 @@ class Gen_Cron extends Listener
     public function handle_hourly()
     {
         // $this->DS_WriteToLog('60 mins or Hourly test');
+        if (DS_Setting('dspecial.database_backup', false) === true) {
+            Log::info('Disposable Special | Running Hourly Database Backup to Local Disk Only');
+            Artisan::call('backup:run --only-db --only-to-disk=local');
+            $output = trim(Artisan::output());
+            if (!empty($output)) {
+                Log::info($output);
+            }
+        }
     }
 
     // Cron Nightly
