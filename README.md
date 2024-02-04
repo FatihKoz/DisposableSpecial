@@ -361,10 +361,13 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
-28.JAN.24
+04.FEB.24
 
 * Market prices now allow two decimal digits for precision
 * Gifting through market frontend will only show active and on leave users
+* Added manual backup feature (should be used in cases where cron fails or an urgent backup is needed)
+* Added hourly local database backups via cron (disabled by default)
+* Slightly altered module admin page
 
 25.JAN.24
 
