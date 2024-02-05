@@ -13,6 +13,10 @@ class DS_ItemCategory extends Enum
     public const TOOL = 5;
     public const TRAINING = 6;
     public const TYPERATING = 7;
+    public const PROPERTY = 8;
+    public const VEHICLES = 9;
+    public const APPAREL = 10;
+    public const ELECTRONICS = 11;
 
     public static array $labels = [
         self::GENERIC => 'Generic Item',
@@ -22,5 +26,9 @@ class DS_ItemCategory extends Enum
         self::TOOL => 'Tool | Addon',
         self::TYPERATING => 'Type Rating',
         self::TRAINING => 'Training',
+        self::PROPERTY => 'Property',
+        self::VEHICLES => 'Vehicles',
+        self::APPAREL => 'Apparel',
+        self::ELECTRONICS => 'Electronics',
     ];
 }
