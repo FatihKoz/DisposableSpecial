@@ -9,12 +9,11 @@
       <p><a href="https://github.com/FatihKoz" target="_blank">&copy; B.Fatih KOZ</a></p>
     </div>
   </div>
-
   <div class="row text-center" style="margin:10px;"><h4 style="margin: 5px; padding:0px;"><b>Disposable Notams</b></h4></div>
-
   <div class="row" style="margin-left:5px; margin-right:5px;">
     <div class="card border-blue-bottom" style="padding:10px;">
-      {{ Form::open(['route' => 'DSpecial.notam_store', 'method' => 'post']) }}
+      <form class="form" method="post" action="{{ route('DSpecial.notam_store') }}">
+        @csrf
         <input type="hidden" name="notam_id" value="{{ $notam->id ?? '' }}">
         @if($notams->count())
           <div class="row" style="margin-bottom: 10px;">
@@ -35,14 +34,12 @@
             </div>
           </div>
         @endif
-
         <div class="row" style="margin-bottom: 5px;">
           <div class="col-sm-8">
             <label class="pl-1 mb-1" for="notam_title">Notam Title</label>
             <input name="notam_title" type="text" class="form-control" placeholder="Mandatory" maxlength="150" value="{{ $notam->title ?? '' }}">
           </div>
         </div>
-
         <div class="row">
           <div class="col-sm-8">
             <label class="pl-1 mb-1" for="notam_body">Notam Body</label>
@@ -65,7 +62,6 @@
             </div>
             <div class="form-group">
               <label class="pl-1 mb-1" for="ref_airport">Effective for Airport</label>
-              {{-- Form::select('ref_airport', [], null , ['id' => 'ref_airport', 'class' => 'form-control airport_search']) --}}
               @if($airports)
                 <select name="ref_airport" class="form-control select2">
                   <option value="">Select An Airport (Optional)</option>
@@ -98,9 +94,7 @@
             </div>
           @endif
           </div>
-
         </div>
-
         <div class="row" style="margin-bottom: 10px;">
           <div class="col-sm-2 text-left">
             <input type="hidden" name="active" value="0">
@@ -110,16 +104,16 @@
             <button class="btn btn-primary pl-1 mb-1" type="submit">@if($notam && $notam->id) Update @else Save @endif</button>
           </div>
         </div>
-      {{ Form::close() }}
+      </form>
     </div>
   </div>
-
   <style>
     ::placeholder { color: indianred !important; opacity: 0.6 !important; }
     :-ms-input-placeholder { color: indianred !important; }
     ::-ms-input-placeholder { color: indianred !important; }
   </style>
 @endsection
+
 @section('scripts')
   @parent
   <script type="text/javascript">
@@ -143,10 +137,7 @@
       document.getElementById("delete_link").href = $oldlink.concat(deletelink);
     }
   </script>
-
   <script src="{{ public_asset('assets/vendor/ckeditor4/ckeditor.js') }}"></script>
-
   <script>$(document).ready(function () { CKEDITOR.replace('editor'); });</script>
-  
   @include('admin.scripts.airport_search')
 @endsection

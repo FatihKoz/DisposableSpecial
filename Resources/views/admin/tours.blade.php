@@ -11,14 +11,13 @@
       <p><a href="https://github.com/FatihKoz" target="_blank">&copy; B.Fatih KOZ</a></p>
     </div>
   </div>
-
   <div class="row text-center" style="margin: 5px;">
     <h4 style="margin: 5px; padding:0px;"><b>Tour Management</b></h4>
   </div>
-
   <div class="row" style="margin-left:5px; margin-right:5px;">
     <div class="card border-blue-bottom" style="padding:10px;">
-      {{ Form::open(array('route' => 'DSpecial.tour_store', 'method' => 'post')) }}
+      <form class="form" method="post" action="{{ route('DSpecial.tour_store') }}">
+        @csrf
         <input type="hidden" name="id" value="{{ $tour->id ?? '' }}">
         <div class="row" style="margin-bottom: 10px;">
           <div class="col-sm-6">
@@ -34,7 +33,6 @@
             <a id="edit_link" style="visibility: hidden" href="{{ route('DSpecial.tour_admin') }}" class="btn btn-primary pl-1 mb-1">Load Selected Tour For Edit</a>
           </div>
         </div>
-
         <div class="row" style="margin-bottom: 10px;">
           <div class="col-sm-6">
             <label class="pl-1 mb-1" for="tour_name">Tour Name *</label>
@@ -53,7 +51,6 @@
             <input name="end_date" type="text" class="form-control" placeholder="2021-06-30" value="{{ optional(optional($tour)->end_date)->format('Y-m-d') ?? '' }}">
           </div>
         </div>
-
         <div class="row" style="margin-bottom: 10px;">
           <div class="col-sm-8">
             <label class="pl-1 mb-1" for="tour_desc">Tour Description (Optional)</label>
@@ -72,7 +69,6 @@
             </select>
           </div>
         </div>
-
         <div class="row" style="margin-bottom: 10px;">
           <div class="col-sm-2 text-left">
             <input type="hidden" name="active" value="0">
@@ -82,14 +78,12 @@
             <button class="btn btn-primary pl-1 mb-1" type="submit">@if($tour && $tour->id) Update @else Save @endif</button>
           </div>
         </div>
-      {{ Form::close() }}
+      </form>
     </div>
   </div>
-
   <div class="row text-center" style="margin: 5px;">
     <h4 style="margin: 5px; padding:0px;"><b>Tour Subfleet Management</b></h4>
   </div>
-
   <div class="row" style="margin-left:5px; margin-right:5px; margin-bottom: 10px;">
     <div class="card border-blue-bottom" style="padding:10px;">
       <div class="row">
@@ -116,13 +110,13 @@
       </div>
     </div>
   </div>
-
   <style>
     ::placeholder { color: darkblue !important; opacity: 0.6 !important; }
     :-ms-input-placeholder { color: darkblue !important; }
     ::-ms-input-placeholder { color: darkblue !important; }
   </style>
 @endsection
+
 @section('scripts')
   @parent
   <script type="text/javascript">

@@ -9,13 +9,12 @@
       <p><a href="https://github.com/FatihKoz" target="_blank">&copy; B.Fatih KOZ</a></p>
     </div>
   </div>
-
   <div class="row text-center" style="margin:10px;"><h4 style="margin: 5px; padding:0px;"><b>Disposable Market</b></h4></div>
-
   <div class="row" style="margin-left:5px; margin-right:5px;">
     <div class="card border-blue-bottom" style="padding:10px;">
-      {{ Form::open(['route' => 'DSpecial.market_store', 'method' => 'post']) }}
-        <input type="hidden" name="item_id" value="{{ $item->id ?? '' }}">
+      <form class="form" method="post" action="{{ route('DSpecial.market_store') }}">
+        @csrf
+        <input type="hidden" name="item_id" value="{{ $item->id ?? '' }}" />
         @if($items->count())
           <div class="row" style="margin-bottom: 10px;">
             <div class="col-sm-5">
@@ -61,7 +60,11 @@
             @if($categories)
               <div class="form-group">
                 <label class="pl-1 mb-1" for="item_category">Category (Optional)</label>
-                {{ Form::select('item_category', $categories, $item->category ?? '', ['class' => 'form-control select2']) }}
+                <select class="form-control select2" name="item_category">
+                  @foreach($categories as $key => $value)
+                    <option value="{{ $key }}" @if(optional($item)->category == $key) selected @endif>{{ $value }}</option>
+                  @endforeach
+                </select>
               </div>
             @endif
           </div>
@@ -81,7 +84,7 @@
             <label class="pl-1 mb-1" for="item_image_url">Image URL or PATH</label>
             <input name="item_image_url" type="text" class="form-control mb-1" placeholder="Optional" maxlength="250" value="{{ $item->image_url ?? '' }}">
           </div>
-          <div class="col-sm-3">  
+          <div class="col-sm-3">
             <label class="pl-1 mb-1" for="item_active">Active</label>
             <input type="hidden" name="item_active" value="0">
             <input name="item_active" type="checkbox" @if($item && $item->active == 1) checked="true" @endif class="form-control mb-1" value="1">
@@ -97,10 +100,9 @@
             <button class="btn btn-primary pl-1 mb-1" type="submit">@if($item && $item->id) Update @else Save @endif</button>
           </div>
         </div>
-      {{ Form::close() }}
+      </form>
     </div>
   </div>
-
   @if(filled($item) && $item->owners->count() > 0)
     <div class="row" style="margin-left:5px; margin-right:5px;">
       <div class="card border-blue-bottom" style="padding:10px;">
@@ -111,13 +113,13 @@
       </div>
     </div>
   @endif
-
   <style>
     ::placeholder { color: indianred !important; opacity: 0.6 !important; }
     :-ms-input-placeholder { color: indianred !important; }
     ::-ms-input-placeholder { color: indianred !important; }
   </style>
 @endsection
+
 @section('scripts')
   @parent
   <script type="text/javascript">

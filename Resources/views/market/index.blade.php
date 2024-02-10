@@ -40,10 +40,11 @@
             </div>
             <div class="card-footer p-1 text-end">
               @if(!in_array($item->id, $myitems))
-                {{ Form::open(['route' => 'DSpecial.market.buy']) }}
-                {{ Form::hidden('item_id', $item->id) }}
-                {{ Form::button(__('DSpecial::common.buy'), ['type' => 'submit', 'class' => 'btn btn-sm py-0 px-2 ms-2 btn-success float-start']) }}
-                {{ Form::close() }}
+                <form class="form" method="post" action="{{ route('DSpecial.market.buy') }}">
+                  @csrf
+                  <input type="hidden" name="item_id" value="{{ $item->id }}" />
+                  <button class="btn btn-sm btn-success py-0 px-2 ms-2 float-start" type="submit">{{ __('DSpecial::common.buy') }}</button>
+                </form>
               @endif
               <button type="button" class="btn btn-sm btn-primary py-0 px-2 ms-2 float-start" data-bs-toggle="modal" data-bs-target="#giftModal{{ $item->id}}">@lang('DSpecial::common.gift')</button>
               {{ money($item->price, $units['currency'], true) }}
@@ -57,9 +58,10 @@
               <div class="modal-header p-1">
                 <h5 class="modal-title p-0" id="giftModalLabel">Gift Market Item</h5>
               </div>
-              {{ Form::open(['route' => 'DSpecial.market.buy', 'class="form-group']) }}
-              {{ Form::hidden('item_id', $item->id) }}
-              {{ Form::hidden('is_gift', true) }}
+              <form class="form-group" method="post" action="{{ route('DSpecial.market.buy') }}">
+                @csrf
+                <input type="hidden" name="item_id" value="{{ $item->id }}" />
+                <input type="hidden" name="is_gift" value="true" />
                 <div class="modal-body p-1">
                   <select name="gift_id" class="form-control form-select">
                     <option value="0" selected>Select a pilot to gift {{ $item->name }}</option>
@@ -72,13 +74,12 @@
                   <button type="button" class="btn btn-sm btn-warning py-0 px-2" data-bs-dismiss="modal">Cancel</button>
                   <button type="submit" class="btn btn-sm btn-success py-0 px-2" data-bs-dismiss="modal">@lang('DSpecial::common.gift')</button>
                 </div>
-              {{ Form::close() }}
+              </form>
             </div>
           </div>
         </div>
       @endforeach
     </div>
   @endif
-
   {{ $items->links('pagination.default') }}
 @endsection

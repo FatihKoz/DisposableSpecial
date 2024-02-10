@@ -159,28 +159,29 @@
           @if(!$sys_check)
             <div class="col">
               <div class="text-end">
-                {{ Form::open(array('route' => 'DSpecial.assignments_manual', 'method' => 'post')) }}
+                <form class="form" method="post" action="{{ route('DSpecial.assignments_manual') }}">
+                  @csrf
                   <input type="hidden" name="curr_page" value="{{ url()->full() }}">
                   <button class="btn btn-sm bg-success p-0 px-1 text-black" type="submit">Assign Monthly Flights</button>
-                {{ Form::close() }}
+                </form>
               </div>
             </div>
           @else
             <div class="col">
               <div class="float-start">
-                {{ Form::open(array('route' => 'DSpecial.assignments_manual', 'method' => 'post')) }}
+                <form class="form" method="post" action="{{ route('DSpecial.assignments_manual') }}">
+                  @csrf
                   <input type="hidden" name="curr_page" value="{{ url()->full() }}">
                   <button class="btn btn-sm bg-warning p-0 px-1" type="submit">Re-Assign Current Month</button>
-                {{ Form::close() }}
+                </form>
               </div>
               <div class="float-end">
-                {{ Form::open(array('route' => 'DSpecial.assignments_manual', 'method' => 'post')) }}
+                <form class="form" method="post" action="{{ route('DSpecial.assignments_manual') }}">
+                  @csrf
                   <input type="hidden" name="curr_page" value="{{ url()->full() }}">
                   <input type="hidden" name="resetmonth" value="true">
-                  <button class="btn btn-sm bg-danger p-0 px-1 text-black" type="submit" onclick="return confirm('Are you REALLY sure ? This will DELETE and re-assign flights !')">
-                    Delete & Re-Assign Current Month
-                  </button>
-                {{ Form::close() }}
+                  <button class="btn btn-sm bg-danger p-0 px-1 text-black" type="submit" onclick="return confirm('Are you REALLY sure ? This will DELETE and re-assign flights !')">Delete & Re-Assign Current Month</button>
+                </form>
               </div>
             </div>
           @endif

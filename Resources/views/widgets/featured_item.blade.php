@@ -14,10 +14,11 @@
       {!! $item->description !!}
     </div>
     <div class="card-footer p-1 text-end">
-      {{ Form::open(['route' => 'DSpecial.market.buy']) }}
-      {{ Form::hidden('item_id', $item->id) }}
-      {{ Form::button(__('DSpecial::common.buy'), ['type' => 'submit', 'class' => 'btn btn-sm py-0 px-2 ms-2 btn-success float-start']) }}
-      {{ Form::close() }}
+      <form class="form" method="post" action="{{ route('DSpecial.market.buy') }}">
+        @csrf
+        <input type="hidden" name="item_id" value="{{ $item->id }}" />
+        <button class="btn btn-sm btn-success py-0 px-2 ms-2 float-start" type="submit">{{ __('DSpecial::common.buy') }}</button>
+      </form>
       {{ money($item->price, $units['currency'], true) }}
     </div>
   </div>

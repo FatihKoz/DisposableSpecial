@@ -9,10 +9,8 @@
       <p><a href="https://github.com/FatihKoz" target="_blank">&copy; B.Fatih KOZ</a></p>
     </div>
   </div>
-
   @if($activemaint->count())
     <div class="row text-center" style="margin:5px;"><h4 style="margin: 5px; padding:0px;"><b>Ongoing Maintenance</b></h4></div>
-
     <div class="row" style="margin-left:5px; margin-right:5px;">
       <div class="card border-blue-bottom" style="padding:10px;">
         <table class="table table-sm table-striped text-left mt-0 mb-0">
@@ -25,39 +23,38 @@
             <th class="text-right">Actions&nbsp;&nbsp;</th>
           </tr>
           @foreach($activemaint as $active)
-          {{ Form::open(['route' => 'DSpecial.maint_finish', 'method' => 'post']) }}
-            <tr class="m-0 p-0">
-              <td class="m-0 p-0 align-middle">
-                {{ optional($active->aircraft)->ident }}
-                @if($active->aircraft && $active->aircraft->registration != $active->aircraft->name) {{ "'".$active->aircraft->name."'" }} @endif
-              </td>
-              <td>
-                {{ '%'.$active->curr_state }}
-              </td>
-              <td class="m-0 p-0 align-middle">
-                {{ $active->act_note }}
-              </td>
-              <td class="m-0 p-0 align-middle">
-                {{ $active->act_start }}
-              </td>
-              <td class="m-0 p-0 align-middle">
-                {{ $active->act_end }}
-              </td>
-              <td class="text-right m-0 p-0 align-middle">
-                <input type="hidden" name="id" value="{{ $active->id }}">
-                <input type="hidden" name="act_note" value="{{ $active->act_note }}">
-                <button class="btn btn-sm btn-success m-0" type="submit">Finish Maintenance</button>
-              </td>
-            </tr>
-          {{ Form::close() }}
+            <form class="form" method="post" action="{{ route('DSpecial.maint_finish') }}">
+              @csrf
+              <tr class="m-0 p-0">
+                <td class="m-0 p-0 align-middle">
+                  {{ optional($active->aircraft)->ident }}
+                  @if($active->aircraft && $active->aircraft->registration != $active->aircraft->name) {{ "'".$active->aircraft->name."'" }} @endif
+                </td>
+                <td>
+                  {{ '%'.$active->curr_state }}
+                </td>
+                <td class="m-0 p-0 align-middle">
+                  {{ $active->act_note }}
+                </td>
+                <td class="m-0 p-0 align-middle">
+                  {{ $active->act_start }}
+                </td>
+                <td class="m-0 p-0 align-middle">
+                  {{ $active->act_end }}
+                </td>
+                <td class="text-right m-0 p-0 align-middle">
+                  <input type="hidden" name="id" value="{{ $active->id }}" />
+                  <input type="hidden" name="act_note" value="{{ $active->act_note }}" />
+                  <button class="btn btn-sm btn-success m-0" type="submit">Finish Maintenance</button>
+                </td>
+              </tr>
+            </form>
           @endforeach
         </table>
       </div>
     </div>
   @endif
-
   <div class="row text-center" style="margin:5px;"><h4 style="margin: 5px; padding:0px;"><b>Fleet Maintenance Status</b></h4></div>
-
   <div class="row" style="margin-left:5px; margin-right:5px;">
     <div class="card border-blue-bottom" style="padding:10px;">
       <table class="table table-sm table-striped border-0 text-left mt-0 mb-0">
@@ -98,30 +95,30 @@
               {{ $maint->last_time }}
             </td>
             <td class="m-0 p-0 text-right">
-              {{ Form::open(['route' => 'DSpecial.maint_finish', 'method' => 'post']) }}
-                <input type="hidden" name="id" value="{{ $maint->id }}">
-                <input type="hidden" name="ops" value="manual">
+              <form class="form" method="post" action="{{ route('DSpecial.maint_finish') }}">
+                @csrf
+                <input type="hidden" name="id" value="{{ $maint->id }}" />
+                <input type="hidden" name="ops" value="manual" />
                 @if ($maint->limits->time_c - $maint->time_c < 100 || $maint->limits->cycle_c - $maint->cycle_c < 15)
-                  <input type="hidden" name="act_note" value="C Check">
+                  <input type="hidden" name="act_note" value="C Check" />
                   <button class="btn btn-sm btn-danger m-0" type="submit">Perform C Check</button>
                 @elseif ($maint->limits->time_b - $maint->time_b < 50 || $maint->limits->cycle_b - $maint->cycle_b < 10)
-                  <input type="hidden" name="act_note" value="B Check">
+                  <input type="hidden" name="act_note" value="B Check" />
                   <button class="btn btn-sm btn-warning m-0" type="submit">Perform B Check</button>
                 @elseif ($maint->limits->time_a - $maint->time_a < 25 || $maint->limits->cycle_a - $maint->cycle_a < 5)
-                  <input type="hidden" name="act_note" value="A Check">
+                  <input type="hidden" name="act_note" value="A Check" />
                   <button class="btn btn-sm btn-secondary m-0" type="submit">Perform A Check</button>
                 @elseif ($maint->curr_state < 75)
-                  <input type="hidden" name="act_note" value="Line Check">
+                  <input type="hidden" name="act_note" value="Line Check" />
                   <button class="btn btn-sm btn-primary m-0" type="submit">Perform Line Check</button>
                 @endif
-              {{ Form::close() }}
+              </form>
             </td>
           </tr>
         @endforeach
       </table>
     </div>
   </div>
-
   @if($maintenance->hasPages())
     <div class="row" style="margin-left:5px; margin-right:5px;">
       <div class="col-sm-12 text-center">
@@ -129,5 +126,4 @@
       </div>
     </div>
   @endif
-
 @endsection

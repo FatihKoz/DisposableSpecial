@@ -4,7 +4,8 @@
 @section('content')
   <div class="row mb-2">
     <div class="col">
-      {{ Form::open(array('route' => 'DSpecial.freeflight_store', 'method' => 'post')) }}
+      <form class="form" method="post" action="{{ route('DSpecial.freeflight_store') }}">
+        @csrf
         <div class="card mb-2">
           <div class="card-header p-1" >
             <h5 class="m-1">
@@ -96,10 +97,9 @@
             <button id="form_proceed" class="btn btn-sm btn-primary p-0 px-1" type="submit">@lang('DSpecial::common.ff_button')</button>
           </div>
         </div>
-      {{ Form::close() }}
+      </form>
     </div>
   </div>
-
   <div class="row row-cols-xl-2">
     <div class="col-xl-6">
       {{-- Empty Column For Spacing --}}
