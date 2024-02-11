@@ -5,7 +5,7 @@ phpVMS v7 module for Extended VA features
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 * Module supports **only** php8.1+ and laravel10
-* Minimum required phpVMS v7 version is `phpVms 7.0.0-beta.5`
+* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+240124.225c43` / 24.JAN.2024
 * _php8.0 and laravel9 compatible latest version: v3.3.1_
 * _php7.4 and laravel8 compatible latest version: v3.0.19_
 
