@@ -361,6 +361,11 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
+11.FEB.24
+
+* Removed `laravelcollective/html` package features/usage
+  **WARNING: Code Breaking Changes Present, update your duplicated blades**
+
 04.FEB.24
 
 * Market prices now allow two decimal digits for precision
