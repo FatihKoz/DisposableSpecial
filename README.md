@@ -361,6 +361,10 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
+22.FEB.24
+
+* Provides an interim solution for Market item prices (for two currencies using `,` as decimal seperator)
+
 11.FEB.24
 
 * Removed `laravelcollective/html` package features/usage
