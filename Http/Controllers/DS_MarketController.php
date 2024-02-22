@@ -41,6 +41,7 @@ class DS_MarketController extends Controller
             'myitems'    => $myitems,
             'units'      => DS_GetUnits(),
             'users'      => $users,
+            'seperation' => (in_array(setting('units.currency'), ['EUR', 'TRY'])) ? false : true,
         ]);
     }
 
@@ -55,9 +56,10 @@ class DS_MarketController extends Controller
         $items = DS_Marketitem::whereIn('id', $myitems)->sortable('name', 'price')->paginate(18);
 
         return view('DSpecial::market.show', [
-            'items' => $items,
-            'owner' => isset($id) ? $id : null,
-            'units' => DS_GetUnits(),
+            'items'      => $items,
+            'owner'      => isset($id) ? $id : null,
+            'units'      => DS_GetUnits(),
+            'seperation' => (in_array(setting('units.currency'), ['EUR', 'TRY'])) ? false : true,
         ]);
     }
 

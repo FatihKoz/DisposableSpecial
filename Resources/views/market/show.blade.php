@@ -27,7 +27,7 @@
               <span class="text-start">{!! $item->description !!}</span>
             </div>
             <div class="card-footer p-1 text-end">
-              {{ money($item->price, $units['currency'], true) }}
+              {{ money($item->price, $units['currency'], $seperation) }}
             </div>
             @if(filled($item->notes) && Auth::id() == $owner)
               <div class="card-body p-1 text-start">{!! $item->notes !!}</div>

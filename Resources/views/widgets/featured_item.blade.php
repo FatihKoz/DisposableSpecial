@@ -19,7 +19,7 @@
         <input type="hidden" name="item_id" value="{{ $item->id }}" />
         <button class="btn btn-sm btn-success py-0 px-2 ms-2 float-start" type="submit">{{ __('DSpecial::common.buy') }}</button>
       </form>
-      {{ money($item->price, $units['currency'], true) }}
+      {{ money($item->price, $units['currency'], $seperation) }}
     </div>
   </div>
 @endif

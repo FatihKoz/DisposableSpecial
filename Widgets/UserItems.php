@@ -21,8 +21,9 @@ class UserItems extends Widget
         }
 
         return view('DSpecial::widgets.user_items', [
-            'items' => isset($items) ? $items : null,
-            'units' => DS_GetUnits(),
+            'items'      => isset($items) ? $items : null,
+            'units'      => DS_GetUnits(),
+            'seperation' => (in_array(setting('units.currency'), ['EUR', 'TRY'])) ? false : true,
         ]);
     }
 }

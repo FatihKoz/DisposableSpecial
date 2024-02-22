@@ -47,7 +47,7 @@
                 </form>
               @endif
               <button type="button" class="btn btn-sm btn-primary py-0 px-2 ms-2 float-start" data-bs-toggle="modal" data-bs-target="#giftModal{{ $item->id}}">@lang('DSpecial::common.gift')</button>
-              {{ money($item->price, $units['currency'], true) }}
+              {{ money($item->price, $units['currency'], $seperation) }}
             </div>
           </div>
         </div>

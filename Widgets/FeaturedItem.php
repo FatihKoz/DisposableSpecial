@@ -19,8 +19,9 @@ class FeaturedItem extends Widget
         }
 
         return view('DSpecial::widgets.featured_item', [
-            'item'  => isset($item) ? $item : null,
-            'units' => DS_GetUnits(),
+            'item'       => isset($item) ? $item : null,
+            'units'      => DS_GetUnits(),
+            'seperation' => (in_array(setting('units.currency'), ['EUR', 'TRY'])) ? false : true,
         ]);
     }
 }
