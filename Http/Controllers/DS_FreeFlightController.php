@@ -126,6 +126,10 @@ class DS_FreeFlightController extends Controller
             foreach ($aircraft as $ac) {
                 $text = $ac->airline->icao . ' | ' . $ac->ident;
 
+                if ($ac->registration != $ac->name) {
+                    $text = $text . ' ' . $ac->name;
+                }
+
                 if ($ac->fuel_onboard[$units['fuel']] > 0) {
                     $text = $text . ' | ' . __('DSpecial::common.fuelob') . ': ' . DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
                 }
@@ -141,6 +145,10 @@ class DS_FreeFlightController extends Controller
                 $airline_fleet[$airline->icao][] = ['id' => 0, 'text' => __('DSpecial::common.selectac')];
                 foreach ($list_aircraft as $ac) {
                     $text = $ac->airline->icao . ' | ' . $ac->ident;
+
+                    if ($ac->registration != $ac->name) {
+                        $text = $text . ' ' . $ac->name;
+                    }
 
                     if ($ac->fuel_onboard[$units['fuel']] > 0) {
                         $text = $text . ' | ' . __('DSpecial::common.fuelob') . ': ' . DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);

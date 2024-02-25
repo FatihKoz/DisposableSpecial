@@ -90,7 +90,9 @@
             </div>
           </div>
           <div class="card-footer p-1 text-end">
-            <i class="fas fa-money-bill-wave text-danger float-start m-1" title="FreeFlight cost per save/edit: {{ $ff_cost }}"></i>
+            @if($ff_cost > 0)
+              <i class="fas fa-money-bill-wave text-danger float-start m-1" title="FreeFlight cost per save/edit: {{ $ff_cost }}"></i>
+            @endif
             <input type="hidden" name="ff_id" value="{{ $fflight->id }}">
             <input type="hidden" name="user_id" value="{{ $user->id }}">
             <input type="hidden" name="ff_owner" value="@if(Theme::getSetting('roster_ident')) {{ $user->ident.' - ' }} @endif {{ $user->name_private }}">
