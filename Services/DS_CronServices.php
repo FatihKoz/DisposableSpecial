@@ -114,6 +114,22 @@ class DS_CronServices
         // Get Tour Codes
         $activate = DS_Tour::whereDate('start_date', $tomorrow)->pluck('tour_code')->toArray();
         $deactivate = DS_Tour::whereDate('end_date', '<', $today)->orWhereDate('start_date', '>', $tomorrow)->pluck('tour_code')->toArray();
+        $keephidden = DS_Tour::whereDate('start_date', '<=', $today)->orWhereDate('end_date', '>=', $tomorrow)->pluck('tour_code')->toArray();
+
+        if (filled($keephidden) && count($keephidden) > 0 && DS_Setting('dspecial.keep_tf_invisible', false) == true) {
+
+            $flights = Flight::whereIn('route_code', $keephidden)->get();
+
+            if (filled($flights) && $flights->count() > 0) {
+                foreach ($flights as $flight) {
+                    $flight->visible = 0;
+                    $flight->save();
+                }
+                Log::info('Disposable Special | Processed ' . count($keephidden) . ' Tours and hidden ' . $flights->count() . ' flights');
+            } else {
+                Log::info('Disposable Special | No Tours Flights Found for Hiding');
+            }
+        }
 
         if (filled($activate) && count($activate) > 0) {
 

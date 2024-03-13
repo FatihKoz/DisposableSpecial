@@ -361,6 +361,10 @@ Notam Management airport dropdown does not select already assigned/saved airport
 
 ## Release / Update Notes
 
+13.MAR.24
+
+* Updated CronServices to cover a logical flaw in keeping tour flights hidden
+
 22.FEB.24
 
 * Provides an interim solution for Market item prices (for two currencies using `,` as decimal seperator)
