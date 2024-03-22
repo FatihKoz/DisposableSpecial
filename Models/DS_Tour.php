@@ -8,6 +8,7 @@ use App\Models\Airline;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\DisposableSpecial\Models\DS_Marketitem;
 
 class DS_Tour extends Model
 {
@@ -19,6 +20,7 @@ class DS_Tour extends Model
         'tour_desc',
         'tour_rules',
         'tour_airline',
+        'tour_token',
         'start_date',
         'end_date',
         'active',
@@ -30,6 +32,7 @@ class DS_Tour extends Model
         'tour_desc'    => 'nullable',
         'tour_rules'   => 'nullable',
         'tour_airline' => 'nullable',
+        'tour_token'   => 'nullable',
         'start_date'   => 'required',
         'end_date'     => 'required',
         'active'       => 'nullable',
@@ -58,5 +61,11 @@ class DS_Tour extends Model
     public function airline(): BelongsTo
     {
         return $this->belongsTo(Airline::class, 'tour_airline', 'id');
+    }
+
+    // Tour Token (Market Item)
+    public function token(): BelongsTo
+    {
+        return $this->belongsTo(DS_Marketitem::class, 'tour_token', 'id');
     }
 }

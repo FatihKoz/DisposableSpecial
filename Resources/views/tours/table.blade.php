@@ -43,5 +43,10 @@
         @endif
       </table>
     </div>
+    @if($tour->tour_token > 0 && !in_array($tour->tour_token, $user_tokens))
+      <div class="card-footer small fw-bold text-end p-1">
+        Tour Requires <a href="{{ route('DSpecial.market').'?cat='.$market_cat }}"><i class="fas fa-shopping-bag mx-1"></i>{{ optional($tour->token)->name }}</a> 
+      </div>
+    @endif
   </div>
 </div>

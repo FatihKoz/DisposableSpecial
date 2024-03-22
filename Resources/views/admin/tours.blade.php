@@ -67,6 +67,14 @@
                 <option value="{{ $airline->id }}" @if($tour && $tour->tour_airline == $airline->id) selected @endif>{{ $airline->icao }} | {{ $airline->name }}</option>
               @endforeach
             </select>
+            <hr>
+            <label class="pl-1 mb-1" for="tour_token">Token</label>
+            <select name="tour_token" class="form-control select2">
+              <option value="0">Select A Market Token (Optional)</option>
+              @foreach($tokens as $token)
+                <option value="{{ $token->id }}" @if($tour && $tour->tour_token == $token->id) selected @endif>{{ $token->name }}</option>
+              @endforeach
+            </select>
           </div>
         </div>
         <div class="row" style="margin-bottom: 10px;">

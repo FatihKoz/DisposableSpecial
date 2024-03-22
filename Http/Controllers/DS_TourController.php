@@ -16,17 +16,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\DisposableSpecial\Models\DS_Tour;
+use Modules\DisposableSpecial\Models\DS_Marketitem;
+use Modules\DisposableSpecial\Models\DS_Marketowner;
+use Modules\DisposableSpecial\Models\Enums\DS_ItemCategory;
 
 class DS_TourController extends Controller
 {
     public function index()
     {
-        $tours = DS_Tour::withCount('legs')->with('airline')->where('active', 1)->orderby('start_date')->orderby('tour_name')->get();
+        $tours = DS_Tour::withCount('legs')->with(['airline', 'token'])->where('active', 1)->orderby('start_date')->orderby('tour_name')->get();
+
+        // Provide market bought tokens per user
+        $user_id = Auth::id();
+        $tour_tokens = DS_Marketitem::where('category', DS_ItemCategory::TOUR)->pluck('id')->toArray();
+        $user_tokens = DS_Marketowner::where('user_id', $user_id)->whereIn('marketitem_id', $tour_tokens)->pluck('marketitem_id')->toArray();
 
         return view('DSpecial::tours.index', [
-            'tours'      => $tours,
-            'carbon_now' => Carbon::now(),
-            'units'      => DS_GetUnits(),
+            'carbon_now'  => Carbon::now(),
+            'market_cat'  => DS_ItemCategory::TOUR,
+            'tours'       => $tours,
+            'tour_tokens' => $tour_tokens,
+            'user_tokens' => $user_tokens,
+            'units'       => DS_GetUnits(),
         ]);
     }
 
@@ -45,11 +56,23 @@ class DS_TourController extends Controller
             'legs.arr_airport',
             'legs.airline',
             'airline',
+            'token',
         ])->where('tour_code', $code)->first();
 
         if (!$tour) {
             flash()->error('Tour not found !');
             return redirect(route('DSpecial.tours'));
+        }
+
+        // Logged in user
+        $user = User::with('current_airport')->find(Auth::id());
+
+        // Check user tokens and redirect even before starting lots of stuff
+        $user_token_check = DS_Marketowner::where(['user_id' => $user->id, 'marketitem_id' => $tour->tour_token])->count();
+
+        if ($tour->tour_token > 0 && $user_token_check == 0) {
+            flash()->error('You do not have the required token for ' . $tour->tour_name . ', please check the shop...');
+            return redirect(route('DSpecial.market') . '?cat=' . DS_ItemCategory::TOUR);
         }
 
         // Tour Award Winners
@@ -72,9 +95,6 @@ class DS_TourController extends Controller
                 }
             }
         }
-
-        // Logged in user
-        $user = User::with('current_airport')->find(Auth::id());
 
         // Map Center
         if ($user && $user->current_airport && filled($tour->legs()->where('dpt_airport_id', $user->current_airport->id))) {
@@ -159,6 +179,7 @@ class DS_TourController extends Controller
             'mapCenter'   => isset($user_mapCenter) ? '[' . $user_mapCenter . ']' : '[' . $tour_mapCenter . ']',
             'mapAirports' => $mapAirports,
             'mapFlights'  => $mapFlights,
+            'market_cat'  => DS_ItemCategory::TOUR,
             'pilots'      => $pilots,
             'tour'        => $tour,
             'tour_awards' => $tour_awards,
@@ -175,6 +196,7 @@ class DS_TourController extends Controller
         $alltours = DS_Tour::get();
         $airlines = Airline::where('active', 1)->orderby('name')->get();
         $subfleets = Subfleet::with('airline')->orderby('name')->get();
+        $tokens = DS_Marketitem::where('category', DS_ItemCategory::TOUR)->get();
 
         if ($request->input('act') && $request->input('tcode') && $request->input('sfid')) {
             $action = $request->input('act');
@@ -197,6 +219,7 @@ class DS_TourController extends Controller
             'alltours'  => $alltours,
             'airlines'  => $airlines,
             'subfleets' => $subfleets,
+            'tokens'    => $tokens,
             'tour'      => isset($tour) ? $tour : null,
         ]);
     }
@@ -225,6 +248,7 @@ class DS_TourController extends Controller
                 'tour_desc'    => $request->tour_desc,
                 'tour_rules'   => $request->tour_rules,
                 'tour_airline' => $request->tour_airline,
+                'tour_token'   => $request->tour_token,
                 'start_date'   => $request->start_date,
                 'end_date'     => $request->end_date,
                 'active'       => $request->active,

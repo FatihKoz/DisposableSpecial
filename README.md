@@ -226,6 +226,8 @@ This logic may be extended as you wish.
 
 If you have a multiple airline setup, then you can setup your tours for your airlines too. Checks will done according to that. Also two Award Classes are provided, one for Open/Generic Tours (no airline defined) one for Airline Tours (with airline checks).
 
+Tours can be limited by market powered "Tour Token"s, a token can be defined/used for multiple tours (but a tour can not have multiple tokens). Users without required tokens can not visit the tour details pages at all.  
+
 ### How to use NOTAMs ?
 
 Well, it is totaly up to you. They will be displayed close to real life NOTAM format, you can use them as News like or inform your pilots about procedures for a special airport etc. Just check module admin page for Notam management.
@@ -326,6 +328,8 @@ To keep the virtual money inside v7 economics, each item should have a dealer, a
 
 Market comes with two widgets for displaying user owned items and providing a featured item at dashboard (or any other location with login protection).  
 
+Market also provides a category for "Tour Tokens" to allow tour access to be bought by pilots/users before participating in them. Also Tour feature is updated to support automation of this process.  
+
 ### Monthly Flight Assignments
 
 This system relies heavily on your flight structure and database records. The settings are pretty basic, it also considers your phpVMS settings too. Auto assignments requires cron to be running, if somehow it fails or you wish to manually trigger the process it is possible to do so.
@@ -360,6 +364,12 @@ So it is highly probable that some features of this module may fail when SC3 Bet
 Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+22.MAR.24
+
+* Fixed a possible issue in free flight blade (currencies with comma as seperator)
+* Added a new category to Market (Tour Token)
+* Updated Tour logic to allow defining tokens for tour, and not allowing pilots to participate tours when token/access is not bought (optional)
 
 13.MAR.24
 
