@@ -90,7 +90,7 @@
             </div>
           </div>
           <div class="card-footer p-1 text-end">
-            @if($ff_cost > 0)
+            @if(filled($ff_cost))
               <i class="fas fa-money-bill-wave text-danger float-start m-1" title="FreeFlight cost per save/edit: {{ $ff_cost }}"></i>
             @endif
             <input type="hidden" name="ff_id" value="{{ $fflight->id }}">
