@@ -62,7 +62,7 @@ class Expense_Maintenance
 
         // Get ICAO Specific Roll And Pitch limits
         $aircraft = $pirep->aircraft;
-        if (DS_CheckModule('DisposableBasic') && $aircraft && filled($aircraft->icao)) {
+        if (check_module('DisposableBasic') && $aircraft && filled($aircraft->icao)) {
             $tech_limits = DB_Tech::where('icao', $aircraft->icao)->first();
 
             if ($tech_limits && is_numeric($tech_limits->max_pitch)) {

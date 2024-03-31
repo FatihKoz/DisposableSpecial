@@ -5,7 +5,7 @@ phpVMS v7 module for Extended VA features
 :warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
 
 * Module supports **only** php8.1+ and laravel10
-* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+240124.225c43` / 24.JAN.2024
+* Minimum required phpVMS v7 version is `phpVms 7.0.0-dev+240328.cc074f` / 28.MAR.2024
 * _php8.0 and laravel9 compatible latest version: v3.3.1_
 * _php7.4 and laravel8 compatible latest version: v3.0.19_
 
@@ -42,7 +42,8 @@ As of date, module supports vmsACARS.
 * This is a **PRIVATE** module, do **NOT** share it with someone else without my written approval.
 * Some other developers do charge nice amounts for single capabilities like only Tours, I do not.
 * Module is technically **"DonationWare"**, where you donate (for good) and how much you donate is up to you.  
-  _(Minimum donation amount is 50 USD/EUR.)_
+  _(Minimum donation amount is 50 USD/EUR.)_  
+* **3rd party theme authors can redistribute module blade files only** (view files for frontend) if required along with their products to provide support for thier customers/users, or ship customized and compatible blades with their themes.
 
 ### DonationWare Explained
 
@@ -358,12 +359,15 @@ If you have duplicated blades and encounter problems after updating the module o
 
 ## Known Bugs / Problems
 
-Beta testers of SmartCars v3 reported problems with some of the widgets of Disposable Basic, root cause is SC3 being not fully phpVMS v7 compatible yet and not sending proper data.  
-So it is highly probable that some features of this module may fail when SC3 Beta is in use too.
-
-Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
+* Beta testers of SmartCars v3 reported problems with some of the widgets of Disposable Basic, root cause is SC3 being not fully phpVMS v7 compatible yet and not sending proper data. So it is highly probable that some features of this module may fail when SC3 Beta is in use too. With latest improvements done to SC3 implementation incompatibilities are reduced but still it may behave different than expected. Please follow changes/updates of SC3 modules being develop by other devs.
+* Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+31.MAR.24
+
+* Helper changes to match phpvms v7 improvements  
+  _Change require latest dev build as of 28th March 2024_
 
 22.MAR.24
 

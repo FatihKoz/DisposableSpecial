@@ -17,7 +17,7 @@ class Gen_RandomFlights
     {
         $reward_rf = DS_Setting('turksim.randomflights_reward', false);
         $reward_mfa = DS_Setting('turksim.assignments_reward', false);
-        $DBasic = DS_CheckModule('DisposableBasic');
+        $DBasic = check_module('DisposableBasic');
 
         if (!$reward_rf && !$reward_mfa) {
             return;

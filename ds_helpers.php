@@ -136,16 +136,6 @@ if (!function_exists('DS_CalculateDistance')) {
     }
 }
 
-// Check phpVMS Module
-// Return boolean
-if (!function_exists('DS_CheckModule')) {
-    function DS_CheckModule($module_name)
-    {
-        $phpvms_module = Module::find($module_name);
-        return isset($phpvms_module) ? $phpvms_module->isEnabled() : false;
-    }
-}
-
 // Convert Minutes
 // Return string
 if (!function_exists('DS_ConvertMinutes')) {

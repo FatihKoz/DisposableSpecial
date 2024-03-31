@@ -100,7 +100,7 @@ class DS_AssignmentController extends Controller
 
         return view('DSpecial::assignments.index', [
             'assignments' => $groupped_assignments,
-            'dbasic'      => DS_CheckModule('DisposableBasic'),
+            'dbasic'      => check_module('DisposableBasic'),
             'stats'       => $stats,
             'sys_check'   => isset($sys_check) ? $sys_check : false,
         ]);
