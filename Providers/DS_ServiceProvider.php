@@ -146,9 +146,10 @@ class DS_ServiceProvider extends ServiceProvider
 
         $this->publishes([$sourcePath => $viewPath,], 'views');
 
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path . '/modules/DisposableSpecial';
-        }, \Config::get('view.paths')), [$sourcePath]), 'DSpecial');
+        $this->loadViewsFrom(array_merge(array_filter(array_map(function ($path) {
+            $path = str_replace('default', setting('general.theme'), $path).'/modules/DisposableSpecial'; 
+            return (file_exists($path) && is_dir($path)) ? $path : null;
+        }, \Config::get('view.paths'))), [$sourcePath]), 'DSpecial');
     }
 
     public function provides(): array
