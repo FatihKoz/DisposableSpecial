@@ -365,7 +365,7 @@ Powered by <a href="https://www.phpvms.net" target="_blank">phpVMS v7</a> & <a h
 ```
 or
 ```html
-Ehnaced by <a href="https://github.com/FatihKoz" target="_blank">DH Addons</a>
+Enhanced by <a href="https://github.com/FatihKoz" target="_blank">DH Addons</a>
 ```
 _Not providing attribution link will result in removal of access and no support is provided afterwards._
 
