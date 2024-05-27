@@ -57,7 +57,7 @@ class DS_CronServices
     // Deactivate them and hide if not
     public function ProcessFreeFlights()
     {
-        $ffs = Flight::where('flight_type', 'E')->where(function ($query) {
+        $ffs = Flight::whereNotNull('user_id')->where('route_code', 'PF')->where(function ($query) {
             $query->where('active', 1)->orWhere('visible', 1);
         })->get();
 
