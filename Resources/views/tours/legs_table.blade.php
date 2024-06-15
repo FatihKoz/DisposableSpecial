@@ -49,7 +49,7 @@
         </td>
       @else
         <td class="text-center">
-          @if((!setting('pilots.only_flights_from_current') || $leg->dpt_airport_id == optional($user)->curr_airport_id) && ($leg_checks[($leg->route_leg - 1)] === true || $leg->route_leg == 1))
+          @if((!setting('pilots.only_flights_from_current') || $leg->dpt_airport_id == optional($user)->curr_airport_id) && (($leg->route_leg > 1 && $leg_checks[($leg->route_leg - 1)] === true) || $leg->route_leg == 1))
             {{-- Bid --}}
             @if((setting('bids.allow_multiple_bids') === true || setting('bids.allow_multiple_bids') === false && count($saved) === 0))
               <button class="btn btn-sm m-0 mx-1 p-0 px-1 save_flight {{ isset($saved[$leg->id]) ? 'btn-danger':'btn-success' }}"
