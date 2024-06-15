@@ -90,6 +90,7 @@ class DS_TourController extends Controller
                 $tour_order = range(1, count($user_pireps));
                 $tour_report[$pilot->id] = [];
                 $tour_report[$pilot->id]['order'] = ($tour_order == $user_pireps) ? true : false;
+                $tour_report[$pilot->id]['flown'] = implode(', ', $user_pireps);
                 foreach ($tour->legs->sortBy('route_leg', SORT_NATURAL) as $tl) {
                     $tour_report[$pilot->id][$tl->route_leg] = DS_IsTourLegFlown($tour, $tl, $pilot->id);
                 }

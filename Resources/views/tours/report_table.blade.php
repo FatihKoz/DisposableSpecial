@@ -13,6 +13,9 @@
             @if(Theme::getSetting('roster_ident')) {{ $pilot->ident.' - ' }} @endif
             {{ $pilot->name_private }}
           </a>
+          @if($tour_report[$pilot->id]['order'] === false)
+            <span class="float-end me-1"><i class="fas fa-tasks text-danger" title="Flown Order: {{ $tour_report[$pilot->id]['flown'] }}"></i></span>
+          @endif
         </th>
         @for($y = 1; $y <= $tour->legs_count; $y++)
           <td class="text-center">
