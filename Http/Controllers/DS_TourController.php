@@ -65,7 +65,7 @@ class DS_TourController extends Controller
         }
 
         // Logged in user
-        $user = User::with('current_airport')->find(Auth::id());
+        $user = User::with(['bids', 'current_airport'])->find(Auth::id());
 
         // Check user tokens and redirect even before starting lots of stuff
         $user_token_check = DS_Marketowner::where(['user_id' => $user->id, 'marketitem_id' => $tour->tour_token])->count();
@@ -172,20 +172,28 @@ class DS_TourController extends Controller
             ];
         }
 
+        $saved_flights = [];
+        foreach ($user->bids as $bid) {
+            $saved_flights[$bid->flight_id] = $bid->id;
+        }
+
         return view('DSpecial::tours.show', [
-            'carbon_now'  => Carbon::now(),
-            'leg_checks'  => $leg_checks,
-            'mapIcons'    => $mapIcons,
-            'mapCenter'   => isset($user_mapCenter) ? '[' . $user_mapCenter . ']' : '[' . $tour_mapCenter . ']',
-            'mapAirports' => $mapAirports,
-            'mapFlights'  => $mapFlights,
-            'market_cat'  => DS_ItemCategory::TOUR,
-            'pilots'      => $pilots,
-            'tour'        => $tour,
-            'tour_awards' => $tour_awards,
-            'tour_report' => $tour_report,
-            'user'        => isset($user) ? $user : null,
-            'units'       => DS_GetUnits(),
+            'carbon_now'    => Carbon::now(),
+            'leg_checks'    => $leg_checks,
+            'mapIcons'      => $mapIcons,
+            'mapCenter'     => isset($user_mapCenter) ? '[' . $user_mapCenter . ']' : '[' . $tour_mapCenter . ']',
+            'mapAirports'   => $mapAirports,
+            'mapFlights'    => $mapFlights,
+            'market_cat'    => DS_ItemCategory::TOUR,
+            'pilots'        => $pilots,
+            'saved'         => $saved_flights,
+            'simbrief'      => !empty(setting('simbrief.api_key')),
+            'simbrief_bids' => setting('simbrief.only_bids'),
+            'tour'          => $tour,
+            'tour_awards'   => $tour_awards,
+            'tour_report'   => $tour_report,
+            'user'          => isset($user) ? $user : null,
+            'units'         => DS_GetUnits(),
         ]);
     }
 
