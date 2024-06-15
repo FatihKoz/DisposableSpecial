@@ -69,6 +69,9 @@ class DS_ServiceProvider extends ServiceProvider
             // Tour Controller Routes
             Route::get('dtours', 'DS_TourController@index')->name('tours');
             Route::get('dtours/{code}', 'DS_TourController@show')->name('tour');
+            // Tools
+            Route::get('dtools/calc_trl', 'DS_ToolsController@calc_trl')->name('calc_trl');
+            Route::post('dtools/calc_trl_calcTrl', 'DS_ToolsController@calcTrl')->name('calc_trl.calcTrl');
         });
 
         // Frontend Public
