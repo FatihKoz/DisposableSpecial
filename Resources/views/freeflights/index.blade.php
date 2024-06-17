@@ -69,7 +69,7 @@
                   <select id="type_selection" name="ff_iatatype" class="form-control select2">
                     <option value="E">Select Flight Type (Optional)</option>
                     @foreach($flight_types as $key => $name)
-                      @if(in_array($key, ['C', 'E', 'H', 'K', 'O', 'P', 'T']))
+                      @if(in_array($key, ['C', 'D', 'E', 'H', 'K', 'L', 'N', 'O', 'P', 'T', 'Z']))
                         <option value="{{ $key }}" @if($fflight->flight_type == $key) selected @endif>{{ $name }}</option>
                       @endif
                     @endforeach
