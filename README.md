@@ -376,6 +376,12 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+30.JUN.24
+
+* Improved Tour details page, added bid/simbrief buttons
+* Improved Tour reports page, added pilot based flown order for easy problem identification
+* Improved Free Flight IATA flight types (following v7 core changes, added more types)
+
 27.MAY.24
 
 * Improved module view path registering code
