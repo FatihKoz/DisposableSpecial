@@ -89,16 +89,25 @@ class DS_CronServices
     {
         if ($days > 0) {
             // Return aircraft to their bases if landed n days before cron runtime
-            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', Carbon::now()->subDays($days))->get();
+            $today = Carbon::now();
+            $margin = Carbon::now()->subDays($days);
+            $aircraft = Aircraft::with('subfleet')->where('landing_time', '<', $margin)->get();
+
             foreach ($aircraft as $ac) {
+                // Don't rebase the aircraft if it is recently updated (moved manually)
+                if ($ac->updated_at->diffInDays($today) < 4) {
+                    Log::info('Disposable Special | ' . $ac->ident . ' not returned to base, manual placement protection');
+                    continue;
+                }
+
                 if ($ac->hub_id && $ac->airport_id != $ac->hub_id) {
                     $ac->airport_id = $ac->hub_id;
                     $ac->save();
-                    Log::info('Disposable Special | ' . $ac->registration . ' returned to ' . $ac->hub_id);
+                    Log::info('Disposable Special | ' . $ac->ident . ' returned to ' . $ac->hub_id);
                 } elseif (!$ac->hub_id && $ac->subfleet->hub_id && $ac->airport_id != $ac->subfleet->hub_id) {
                     $ac->airport_id = $ac->subfleet->hub_id;
                     $ac->save();
-                    Log::info('Disposable Special | ' . $ac->registration . ' returned to ' . $ac->subfleet->hub_id);
+                    Log::info('Disposable Special | ' . $ac->ident . ' returned to ' . $ac->subfleet->hub_id);
                 }
             }
         }
