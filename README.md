@@ -378,8 +378,9 @@ _Not providing attribution link will result in removal of access and no support 
 
 17.AUG.24
 
+* Added ability to filter Tours by assigned subfleets
 * Added limit to Market Items, default is 0 (unlimited owners/buyers)  
-  _includes blade/view changes_
+  _both features include blade/view changes_
 
 30.JUN.24
 
