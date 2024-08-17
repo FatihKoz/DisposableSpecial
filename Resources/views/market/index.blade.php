@@ -36,18 +36,22 @@
               @if(filled($item->image_url))
                 <img class="card-image mw-100 mb-1" src="{{ $item->image_url }}" alt="{{ $item->name }}" title="{{ $item->name }}">
               @endif
-                {!! $item->description !!}
+              {!! $item->description !!}
             </div>
             <div class="card-footer p-1 text-end">
-              @if(!in_array($item->id, $myitems))
-                <form class="form" method="post" action="{{ route('DSpecial.market.buy') }}">
-                  @csrf
-                  <input type="hidden" name="item_id" value="{{ $item->id }}" />
-                  <button class="btn btn-sm btn-success py-0 px-2 ms-2 float-start" type="submit">{{ __('DSpecial::common.buy') }}</button>
-                </form>
+              @if($item->limit == 0 || $item->owners_count < $item->limit)
+                @if(!in_array($item->id, $myitems))
+                  <form class="form" method="post" action="{{ route('DSpecial.market.buy') }}">
+                    @csrf
+                    <input type="hidden" name="item_id" value="{{ $item->id }}" />
+                    <button class="btn btn-sm btn-success py-0 px-2 ms-2 float-start" type="submit">{{ __('DSpecial::common.buy') }}</button>
+                  </form>
+                @endif
+                <button type="button" class="btn btn-sm btn-primary py-0 px-2 ms-2 float-start" data-bs-toggle="modal" data-bs-target="#giftModal{{ $item->id}}">@lang('DSpecial::common.gift')</button>
+                {{ money($item->price, $units['currency'], $seperation) }}
+              @else
+                <span class="fw-bold small">SOLD OUT</span>
               @endif
-              <button type="button" class="btn btn-sm btn-primary py-0 px-2 ms-2 float-start" data-bs-toggle="modal" data-bs-target="#giftModal{{ $item->id}}">@lang('DSpecial::common.gift')</button>
-              {{ money($item->price, $units['currency'], $seperation) }}
             </div>
           </div>
         </div>

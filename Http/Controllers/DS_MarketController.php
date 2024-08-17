@@ -31,7 +31,7 @@ class DS_MarketController extends Controller
 
         $myitems = DS_Marketowner::where('user_id', Auth::id())->orderBy('marketitem_id')->pluck('marketitem_id')->toArray();
 
-        $items = DS_Marketitem::when($selection, function ($query) use ($selection) {
+        $items = DS_Marketitem::withCount('owners')->when($selection, function ($query) use ($selection) {
             return $query->where('category', $selection);
         })->where('active', 1)->sortable('name', 'price')->paginate(18);
 
@@ -112,6 +112,7 @@ class DS_MarketController extends Controller
                 'image_url'     => $request->item_image_url,
                 'category'      => $request->item_category,
                 'dealer_id'     => $request->item_dealer,
+                'limit'         => $request->item_limit,
                 'active'        => $request->item_active,
                 'notifications' => $request->item_notifications,
             ]
@@ -124,10 +125,15 @@ class DS_MarketController extends Controller
     // Buy item
     public function buy(Request $request)
     {
-        $item = DS_Marketitem::where('id', $request->item_id)->first();
+        $item = DS_Marketitem::withCount('owners')->where('id', $request->item_id)->first();
 
         if (!$item) {
             flash()->error('Item not found!');
+            return back();
+        }
+
+        if ($item->limit > 0 && $item->owners_count >= $item->limit) {
+            flash()->error('Item can not bought/gifted anymore! Usage limit reached.');
             return back();
         }
 

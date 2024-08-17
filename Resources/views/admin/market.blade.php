@@ -39,9 +39,13 @@
             <label class="pl-1 mb-1" for="item_name">Name <span class="small" title="Mandatory">*</span></label>
             <input name="item_name" type="text" class="form-control" placeholder="Mandatory" maxlength="250" value="{{ $item->name ?? '' }}">
           </div>
-          <div class="col-sm-2">
-            <label class="pl-1 mb-1" for="eff_start">Price <span class="small" title="Mandatory">*</span></label>
+          <div class="col-sm-1">
+            <label class="pl-1 mb-1" for="item_price">Price <span class="small" title="Mandatory">*</span></label>
             <input name="item_price" type="number" step="0.01" class="form-control" value="{{ $item->price ?? '' }}">
+          </div>
+          <div class="col-sm-1">
+            <label class="pl-1 mb-1" for="item_limit">Limit <span class="small" title="Set 0 (zero) for unlimited owners">?</span></label>
+            <input name="item_limit" type="number" step="1" class="form-control" value="{{ $item->limit ?? 0 }}">
           </div>
           <div class="col-sm-3">
             @if($airlines)

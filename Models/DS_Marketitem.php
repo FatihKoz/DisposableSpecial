@@ -24,6 +24,7 @@ class DS_Marketitem extends Model
         'image_url',
         'category',
         'dealer_id',
+        'limit',
         'active',
         'notifications',
     ];
@@ -36,6 +37,7 @@ class DS_Marketitem extends Model
         'image_url'     => 'nullable',
         'category'      => 'nullable',
         'dealer_id'     => 'required|numeric',
+        'limit'         => 'nullable|numeric',
         'active'        => 'required|boolean',
         'notifications' => 'nullable|boolean',
     ];

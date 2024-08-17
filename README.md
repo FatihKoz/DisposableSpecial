@@ -376,6 +376,11 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+17.AUG.24
+
+* Added limit to Market Items, default is 0 (unlimited owners/buyers)  
+  _includes blade/view changes_
+
 30.JUN.24
 
 * Improved Tour details page, added bid/simbrief buttons
