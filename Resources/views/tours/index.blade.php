@@ -26,6 +26,20 @@
           @lang('DSpecial::tours.trules')
         </a>
       </li>
+      @if($tour_subfleets->count() > 0)
+        <form method="GET" action="{{ route('DSpecial.tours') }}">
+          <div class="input-group input-group-sm mx-1">
+            <span class="input-group-text">Fleet :</span>
+            <select class="form-select form-select-sm" name="sfid">
+              <option value="">Please select...</option>
+              @foreach($tour_subfleets as $sf)
+                <option value="{{ $sf->id }}" @if($sf->id == @request()->input('sfid')) selected @endif>{{ $sf->name.' | '.optional($sf->airline)->code }}</option>
+              @endforeach
+            </select>
+            <input class="btn btn-sm btn-success" type="submit" value="Search">
+          </div>
+        </form>
+      @endif
     </ul>
 
     <div class="tab-content" id="pills-tabContent">

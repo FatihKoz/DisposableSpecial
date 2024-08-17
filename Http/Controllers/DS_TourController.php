@@ -22,22 +22,36 @@ use Modules\DisposableSpecial\Models\Enums\DS_ItemCategory;
 
 class DS_TourController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $sfid = !empty($request->input('sfid')) ? $request->input('sfid') : null;
         $tours = DS_Tour::withCount('legs')->with(['airline', 'token'])->where('active', 1)->orderby('start_date')->orderby('tour_name')->get();
 
         // Provide market bought tokens per user
         $user_id = Auth::id();
         $tour_tokens = DS_Marketitem::where('category', DS_ItemCategory::TOUR)->pluck('id')->toArray();
         $user_tokens = DS_Marketowner::where('user_id', $user_id)->whereIn('marketitem_id', $tour_tokens)->pluck('marketitem_id')->toArray();
+        // Prepare tour subfleets for dropdown
+        $tour_codes = $tours->where('end_date', '>=', Carbon::today())->sortBy('tour_code', SORT_NATURAL)->pluck('tour_code')->toArray();
+        $tour_flights = Flight::withCount('subfleets')->whereIn('route_code', $tour_codes)->having('subfleets_count', '>', 0)->pluck('id')->toArray();
+        $tour_subfleets = DB::table('flight_subfleet')->whereIn('flight_id', $tour_flights)->groupBy('subfleet_id')->pluck('subfleet_id')->toArray();
+        $view_subfleets = Subfleet::with('airline')->whereIn('id', $tour_subfleets)->orderBy('name')->get();
+
+        if ($sfid) {
+            $fleet_flights = DB::table('flight_subfleet')->where('subfleet_id', $sfid)->whereIn('flight_id', $tour_flights)->pluck('flight_id')->toArray();
+            $fleet_codes = Flight::whereIn('id', $fleet_flights)->groupBy('route_code')->pluck('route_code')->toArray();
+            // Filter tours according to selected subfleet
+            $tours = $tours->whereIn('tour_code', $fleet_codes);
+        }
 
         return view('DSpecial::tours.index', [
-            'carbon_now'  => Carbon::now(),
-            'market_cat'  => DS_ItemCategory::TOUR,
-            'tours'       => $tours,
-            'tour_tokens' => $tour_tokens,
-            'user_tokens' => $user_tokens,
-            'units'       => DS_GetUnits(),
+            'carbon_now'     => Carbon::now(),
+            'market_cat'     => DS_ItemCategory::TOUR,
+            'tours'          => $tours,
+            'tour_subfleets' => $view_subfleets,
+            'tour_tokens'    => $tour_tokens,
+            'user_tokens'    => $user_tokens,
+            'units'          => DS_GetUnits(),
         ]);
     }
 
