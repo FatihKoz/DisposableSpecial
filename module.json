@@ -1,7 +1,15 @@
 {
     "name": "DisposableSpecial",
-    "alias": "disposableSpecial",
+    "alias": "disposablespecial",
     "description": "phpVMS v7 module for Extended VA features like tours, assignments, maintenance etc.",
+    "version": "3.6.7",
+    "readme_url": "https://github.com/FatihKoz/DisposableSpecial?tab=readme-ov-file#readme",
+    "license_url": "https://github.com/FatihKoz/DisposableSpecial?tab=License-1-ov-file#readme",
+    "attribution": {
+        "text": "Disposable Special by DH Addons",
+        "url": "https://github.com/FatihKoz",
+        "img": null
+    },
     "keywords": [],
     "active": 0,
     "order": 9002,
