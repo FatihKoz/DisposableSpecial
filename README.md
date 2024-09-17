@@ -378,7 +378,8 @@ _Not providing attribution link will result in removal of access and no support 
 
 17.SEP.24
 
-* Reverted back module view path changes with a slight improvement for active theme  
+* Reverted back module view path changes with a slight improvement for active theme
+* Updated module.json for future development
 * Added manual placement protection for returning leftover/non-flown aircraft to their bases (3 days)
 * Added limits to market items, now they can be sold according to stock/limits
 * Added some filtering options for tours page (frontend)  
