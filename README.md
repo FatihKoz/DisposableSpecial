@@ -376,6 +376,14 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+17.SEP.24
+
+* Reverted back module view path changes with a slight improvement for active theme  
+* Added manual placement protection for returning leftover/non-flown aircraft to their bases (3 days)
+* Added limits to market items, now they can be sold according to stock/limits
+* Added some filtering options for tours page (frontend)  
+  _both features include blade/view changes_  
+
 17.AUG.24
 
 * Added ability to filter Tours by assigned subfleets
