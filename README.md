@@ -345,6 +345,8 @@ If you have multiple airlines in your setup, code tries to use the same airline 
 
 Admins can delete and re-assing monthy flights of users, there is a button for this at user profile (of Disposable Theme). You can check the code and use the same route/button in your own theme too.
 
+As an additional option, admins can select "Always Return to Home" (_which will try to find flights returning to base/home airport for each even leg_) and "Last Flight Returns Home" (_which will try to return home for the last assignment of month_). As one can expect, both options can not run at the same time and this logic will not work with odd number of assignment flights (_like 3,5,7 etc._)
+
 ## Duplicating Module Blades/Views
 
 Technically all blade files should work with your template but they are mainly designed for Bootstrap v5.* compatible themes. So if something looks weird in your template then you need to edit the blades files. I kindly suggest copying/duplicating them under your theme folder and do your changes there, directly editing module files will only make updating harder for you.
@@ -375,6 +377,10 @@ _Not providing attribution link will result in removal of access and no support 
 * Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+24.SEP.24
+
+* Added two new options to monthly assignments (Always return home, Last flight returns home)
 
 17.SEP.24
 

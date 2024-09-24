@@ -209,6 +209,8 @@ class DS_AssignmentController extends Controller
         $force_hubs = DS_Setting('turksim.assignments_usehubs', false);
         $force_rank = setting('pireps.restrict_aircraft_to_rank', true);
         $force_rate = setting('pireps.restrict_aircraft_to_typerating', false);
+        $force_always = DS_Setting('turksim.assignments_alwayshome', false);
+        $force_return = DS_Setting('turksim.assignments_returnhome', false);
         $prefer_icao = DS_Setting('turksim.assignments_preficao', false);
 
         $where_flight = [];
@@ -278,6 +280,12 @@ class DS_AssignmentController extends Controller
                 })
                 ->when(($prefer_icao || $force_rank || $force_rate), function ($query) use ($suitable_flights) {
                     return $query->whereIn('id', $suitable_flights);
+                })
+                ->when(($force_always && $i % 2 == 0), function ($query) use ($user) {
+                    return $query->where('arr_airport_id', $user->home_airport_id);
+                })
+                ->when((!$force_always && $force_return && $assign_count %2 == 0 && $i == $assign_count), function ($query) use ($user) {
+                    return $query->where('arr_airport_id', $user->home_airport_id);
                 })
                 ->get();
 
