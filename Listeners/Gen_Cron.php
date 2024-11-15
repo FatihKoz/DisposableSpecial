@@ -10,7 +10,7 @@ use App\Events\CronHourly;
 use App\Events\CronNightly;
 use App\Events\CronWeekly;
 use App\Events\CronMonthly;
-use App\Events\UserRegistered;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableSpecial\Http\Controllers\DS_AssignmentController;
@@ -28,7 +28,7 @@ class Gen_Cron extends Listener
         CronNightly::class => 'handle_nightly',
         CronWeekly::class => 'handle_weekly',
         CronMonthly::class => 'handle_monthly',
-        UserRegistered::class => 'handle_newuser',
+        Registered::class => 'handle_newuser',
     ];
 
     // Cron 5 mins
@@ -103,7 +103,7 @@ class Gen_Cron extends Listener
     }
 
     // New User Registrations
-    public function handle_newuser(UserRegistered $event)
+    public function handle_newuser(Registered $event)
     {
         if (DS_Setting('turksim.discord_registermsg', false)) {
             $NotificationSVC = app(DS_NotificationServices::class);
