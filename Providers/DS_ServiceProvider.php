@@ -105,7 +105,7 @@ class DS_ServiceProvider extends ServiceProvider
             Route::get('dspecial', 'DS_AdminController@index')->name('admin')->middleware('ability:admin,addons,modules');
             Route::post('dsettings_store', 'DS_AdminController@update')->name('save_settings')->middleware('ability:admin,addons,modules');
             // Assignment Admin Routes
-            Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual')->middleware('ability:admin,addons,modules');
+            Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual')->middleware('ability:admin-access,flights');
             // Market Admin Routes
             Route::get('dmarket_admin', 'DS_MarketController@index_admin')->name('market_admin')->middleware('ability:admin,addons,modules');
             Route::post('dmarket_store', 'DS_MarketController@store')->name('market_store')->middleware('ability:admin,addons,modules');
