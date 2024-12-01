@@ -5,7 +5,6 @@ namespace Modules\DisposableSpecial\Listeners;
 use App\Events\Fares;
 use App\Models\Fare;
 use App\Models\Enums\FareType;
-use Illuminate\Support\Facades\Log;
 
 class Fare_InFlight
 {
@@ -49,7 +48,6 @@ class Fare_InFlight
         if (!is_numeric($pax)) {
             return $fares;
         }
-        // Log::debug('Disposable Special, InFlight Sales | Flight=' . $pirep->ident . ' Total Passengers=' . $pax . ' Pirep=' . $pirep->id);
 
         if ($df_method === 'int' && $int === true || $df_method === 'all') {
             // Duty Free Sales
@@ -68,7 +66,6 @@ class Fare_InFlight
             }
 
             if ($income > 0) {
-                // Log::debug('Disposable Special, DutyFree Sale Customers=' . $buyers . ' Profit=' . round($income - $cost) . ' ' . $currency);
                 $fares[] = new Fare([
                     'name'  => $memo,
                     'type'  => FareType::PASSENGER,
@@ -80,7 +77,6 @@ class Fare_InFlight
         }
 
         if (in_array($airline->icao, $airline_codes)) {
-            // Log::debug('Disposable Special, Bouffet Sale NOT possible for Airline=' . $airline->icao . ' Pirep=' . $pirep->id);
             return $fares;
         }
 
@@ -101,7 +97,6 @@ class Fare_InFlight
             }
 
             if ($income > 0) {
-                // Log::debug('Disposable Special, Bouffet Sale Customers=' . $buyers . ' Profit=' . round($income - $cost) . ' ' . $currency);
                 $fares[] = new Fare([
                     'name'  => $memo,
                     'type'  => FareType::PASSENGER,

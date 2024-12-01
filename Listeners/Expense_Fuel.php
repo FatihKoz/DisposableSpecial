@@ -8,7 +8,6 @@ use App\Models\Pirep;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FuelType;
 use App\Models\Enums\PirepState;
-use Illuminate\Support\Facades\Log;
 
 class Expense_Fuel
 {
@@ -89,7 +88,7 @@ class Expense_Fuel
         // Apply Fuel Draining or De-Fuelling Cost (per drained amount)
         if ($fs_drain && isset($drain_amount) && $drain_amount > $fuel_margin) {
             $drain_cost = round($drain_amount * $drain_service_cost, 2);
-            // Log::debug('Disposable Special, De-Fuelling Charge applied for ' . $drain_amount . ' lbs Pirep=' . $pirep->id);
+
             $expenses[] = new Expense([
                 'type'              => ExpenseType::FLIGHT,
                 'amount'            => $drain_cost,
@@ -103,7 +102,7 @@ class Expense_Fuel
         // Apply Fuel Service Cost (per uplifted amount)
         if ($fs_service && $fuel_amount > $fuel_margin) {
             $service_cost = round($fuel_amount * $fuel_service_cost, 2);
-            // Log::debug('Disposable Special, Fuel Service Cost applied Pirep=' . $pirep->id);
+
             $expenses[] = new Expense([
                 'type'              => ExpenseType::FLIGHT,
                 'amount'            => $service_cost,
@@ -117,7 +116,7 @@ class Expense_Fuel
         // Apply Low Fuel Uplift Extra
         if ($fs_low && $fuel_type === FuelType::JET_A && $fuel_amount > $fuel_margin && $fuel_amount < $fuel_lowuplift_limit) {
             $extra_service_cost = $fuel_lowuplift_cost;
-            // Log::debug('Disposable Special, Fuel Service (Low Uplift Charge) applied Pirep=' . $pirep->id);
+
             $expenses[] = new Expense([
                 'type'              => ExpenseType::FLIGHT,
                 'amount'            => $extra_service_cost,
@@ -132,7 +131,7 @@ class Expense_Fuel
         if ($fs_tax && $domestic && $fuel_amount > $fuel_margin) {
             $fuel_tax = round($fuel_domestic_tax / 100, 2);
             $tax_cost = round($fuel_amount * ($fuel_cost * $fuel_tax), 2);
-            // Log::debug('Disposable Special, Fuel Tax (Domestic Flight) Applied T=' . $fuel_tax . ' Fc=' . $fuel_cost . ' A=' . $fuel_amount . ' C=' . $tax_cost . ' Pirep=' . $pirep->id);
+
             $expenses[] = new Expense([
                 'type'              => ExpenseType::FLIGHT,
                 'amount'            => $tax_cost,

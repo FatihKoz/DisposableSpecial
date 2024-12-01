@@ -8,7 +8,6 @@ use App\Models\Pirep;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FareType;
 use App\Models\Enums\PirepState;
-use Illuminate\Support\Facades\Log;
 
 class Expense_Airport
 {
@@ -85,15 +84,14 @@ class Expense_Airport
         $int = ($orig && $dest && $orig->country === $dest->country) ? false : true;
 
         // Get Aircraft Details (Certification & Capacity)
-        if ($needmax && $aircraft && is_numeric($aircraft->mtow)) {
-            $mtow = $aircraft->mtow;
+        if ($needmax && $aircraft && $aircraft->mtow->internal(2) > 0) {
+            $mtow = $aircraft->mtow->internal(2);
         }
 
         if ($needmax && $aircraft && $aircraft->subfleet->fares->count() > 0) {
             $pax_cap = 0;
             $cgo_cap = 0;
             foreach ($aircraft->subfleet->fares as $fare) {
-                // Log::debug(json_encode($fare));
                 if ($fare->type === FareType::PASSENGER) {
                     $pax_cap = $pax_cap + $fare->pivot->capacity;
                 }
@@ -108,7 +106,6 @@ class Expense_Airport
             if ($cgo_cap > 0) {
                 $maxcgo = $cgo_cap;
             }
-            // Log::debug('Disposable Special, Equipment details Reg=' . $aircraft->registration . ' MTOW=' . $mtow . ' MaxPax=' . $pax_cap . ' MaxCgo=' . $cgo_cap . ' Units=' . $units['weight']);
         }
 
         // Get Pirep Details (Actual Figures)
@@ -129,7 +126,6 @@ class Expense_Airport
                     $tow = round($tow / 2.20462262185);
                 }
             }
-            // Log::debug('Disposable Special, Actual Weight details Reg=' . $aircraft->registration . ' TOW=' . $tow . ' LW=' . $lw . ' Units=' . $units['weight']);
         }
 
         if ($needact && $aircraft && $pirep->fares->count() > 0) {
@@ -150,7 +146,6 @@ class Expense_Airport
             if ($act_cgo >= 0) {
                 $cgo = $act_cgo;
             }
-            // Log::debug('Disposable Special, Load details Reg=' . $aircraft->registration . ' Pax=' . $act_pax . ' Cgo=' . $act_cgo . ' Units=' . $units['weight']);
         }
 
         // Landing Fee
@@ -183,9 +178,8 @@ class Expense_Airport
                 }
 
                 $base_weight = ($units['weight'] === 'kg') ? round($base_weight / 1000, 2) : round($base_weight / 2240, 2);
-
                 $landing_fee = round($base_weight * $base_fee, 2);
-                // Log::debug('Disposable Special, Landing Fee details Base Fee=' . $base_fee . ' Weight Factor=' . $base_weight . ' ' . $units['weight']);
+
                 $expenses[] = new Expense([
                     'type'              => ExpenseType::FLIGHT,
                     'amount'            => $landing_fee,
@@ -367,7 +361,6 @@ class Expense_Airport
             $dep_hub = ($orig && $orig->hub == 1) ? true : false;
             $arr_hub = ($dest && $dest->hub == 1) ? true : false;
 
-            // Log::debug('Disposable Special, Ground Handling Fee A:' . $amount .' B:' . $base_price .' S:'. $srv_type);
             if ($amount > 0) {
                 $expenses[] = $this->GroundHandlingFee($amount, $base_price, $dep_hub, $srv_type, 'Departure', $units);
                 $expenses[] = $this->GroundHandlingFee($amount, $base_price, $arr_hub, $srv_type, 'Arrival', $units);
@@ -440,7 +433,6 @@ class Expense_Airport
             $catering_fee = $catering_srv + $catering_items;
 
             if ($catering_fee > 0) {
-                // Log::debug('Disposable Special, Catering Fee details Type=' . $cat_note . ' (' . $intdom . $cat_time . ') Load=' . $base_pax . ' Service=' . $catering_srv . ' Items=' . $catering_items);
                 $expenses[] = new Expense([
                     'type'              => ExpenseType::FLIGHT,
                     'amount'            => $catering_fee,
@@ -482,7 +474,6 @@ class Expense_Airport
             } elseif ($cgo > 300) {
                 $price = round($price * 8);
             }
-            // $log_note = 'Cargo Aircraft, Weight=' . $amount . ' ' . $units['weight'];
         } else {
             $pax = $amount;
             // Passenger Services, Load Control, Ramp, Luggage & Cargo, Flight Ops, Supervision
@@ -504,7 +495,6 @@ class Expense_Airport
             } elseif ($pax > 350) {
                 $price = round($price * 9.21875);
             }
-            // $log_note = 'Passenger Aircraft, Pax=' . $amount;
         }
         // Apply Arrival Discount
         if ($apt_type === 'Arrival') {
@@ -516,7 +506,6 @@ class Expense_Airport
             $nat = 'National ';
         }
 
-        // Log::debug('Disposable Special, ' . $apt_type . ' Airport Authority Fee calculated for ' . $log_note . ' Base=' . $base_price . ' ' . $units['currency']);
         return new Expense([
             'type'              => ExpenseType::FLIGHT,
             'amount'            => $price,
@@ -553,7 +542,6 @@ class Expense_Airport
             } elseif ($cgo > 150) {
                 $price = round($price * 7);
             }
-            // $log_note = 'Cargo Aircraft, Weight=' . $amount . ' ' . $units['weight'];
         } else {
             $pax = $amount;
             // Passenger Services, Load Control, Ramp, Luggage & Cargo, Flight Ops, Supervision
@@ -575,7 +563,6 @@ class Expense_Airport
             } elseif ($pax > 350) {
                 $price = round($price * 9.48);
             }
-            // $log_note = 'Passenger Aircraft, Pax=' . $amount;
         }
         // Apply Hub Discount
         if ($is_hub === true) {
@@ -585,7 +572,7 @@ class Expense_Airport
         if ($apt_type === 'Arrival') {
             $price = round($price * 0.62, 2);
         }
-        // Log::debug('Disposable Special, ' . $apt_type . ' Ground Handling Fee calculated for ' . $log_note . ' Base=' . $base_price . ' ' . $units['currency']);
+
         return new Expense([
             'type'              => ExpenseType::FLIGHT,
             'amount'            => $price,

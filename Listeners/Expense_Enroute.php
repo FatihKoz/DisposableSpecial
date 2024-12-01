@@ -5,7 +5,6 @@ namespace Modules\DisposableSpecial\Listeners;
 use App\Events\Expenses;
 use App\Models\Expense;
 use App\Models\Enums\ExpenseType;
-use Illuminate\Support\Facades\Log;
 
 class Expense_Enroute
 {
@@ -22,7 +21,6 @@ class Expense_Enroute
             return $expenses;
         }
 
-        $units = DS_GetUnits();
         $pirep = $event->pirep;
         $pirep->loadMissing('aircraft', 'arr_airport', 'dpt_airport');
         $aircraft = $pirep->aircraft;
@@ -32,13 +30,12 @@ class Expense_Enroute
         $tow = null;
         $mtow = null;
         $unit_rate = is_numeric($atc_base) ? $atc_base : null;
-        $distance = is_numeric($pirep->distance->internal()) ? $pirep->distance->toUnit('km', 2) : null;
+        $distance = ($pirep->distance->internal(2) > 0) ? $pirep->distance->toUnit('km', 2) : null;
         $distance_factor = is_numeric($distance) ? round($distance / 100, 2) : null;
         $time_factor = is_numeric($pirep->flight_time) ? round($pirep->flight_time / 100, 2) : null;
 
         if ($orig && $dest && $orig->country === $dest->country) {
             $unit_rate = $unit_rate * 0.60;
-            // Log::debug('Disposable Special, Enroute Fees, Flight is Domestic, Country=' . $orig->country . ' Pirep=' . $pirep->id);
         }
 
         if ($orig && $dest) {
@@ -46,8 +43,8 @@ class Expense_Enroute
             $distance_factor = is_numeric($gc_distance) ? round($gc_distance / 100, 2) : $distance_factor;
         }
 
-        if ($aircraft && is_numeric($aircraft->mtow)) {
-            $mtow = ($units['weight'] === 'lbs') ? round($aircraft->mtow / 2.20462262185, 2) : $aircraft->mtow;
+        if ($aircraft && $aircraft->mtow->internal(2) > 0) {
+            $mtow = $aircraft->mtow->toUnit('kg', 2);
         }
 
         if ($atc_method === 'tow') {
@@ -62,7 +59,7 @@ class Expense_Enroute
         if ($atc_method != 'none' && is_numeric($base_weight) &&  is_numeric($distance_factor) && is_numeric($unit_rate)) {
             $weight_factor = round(sqrt($base_weight / 50), 2);
             $atc_fee = round($distance_factor * $weight_factor * $unit_rate, 2);
-            // Log::debug('Disposable Special, ATC Services details Distance Factor=' . $distance_factor . ' Weight Factor=' . $weight_factor . ' for ' . $base_weight . ' ' . $units['weight']);
+
             $expenses[] = new Expense([
                 'type'              => ExpenseType::FLIGHT,
                 'amount'            => $atc_fee,

@@ -4,7 +4,6 @@ namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\PirepFiled;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class Gen_Comments

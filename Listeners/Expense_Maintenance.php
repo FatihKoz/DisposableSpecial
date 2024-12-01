@@ -78,7 +78,7 @@ class Expense_Maintenance
         if ($maint_hard && abs($landing_rate) > $maint_hardlimit) {
             $service_cost = $this->MaintenanceChecks('Hard Landing Check', $aircraft, true);
             $service_cost = round($service_cost * (abs($landing_rate) / $maint_hardlimit), 2);
-            // Log::debug('Disposable Special, Maintenance Check Expense (Hard Landing) applied Pirep=' . $pirep->id);
+
             $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (Hard Landing)');
 
             if ($maint_user) {
@@ -91,7 +91,7 @@ class Expense_Maintenance
             if ($aircraft->subfleet->fuel_type === FuelType::JET_A) {
                 $service_cost = $this->MaintenanceChecks('Soft Landing Check', $aircraft, true);
                 $service_cost = round($service_cost * ($maint_softlimit / abs($landing_rate)), 2);
-                // Log::debug('Disposable Special, Maintenance Check Expense (Soft Landing) applied Pirep=' . $pirep->id);
+
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (Soft Landing)');
 
                 if ($maint_user) {
@@ -105,7 +105,7 @@ class Expense_Maintenance
             if (is_numeric($landing_roll) && abs($landing_roll) > $maint_winglimit) {
                 $service_cost = $this->MaintenanceChecks('Engine/Wing Strike Check', $aircraft, true);
                 $service_cost = round($service_cost * (abs($landing_roll) / $maint_winglimit), 2);
-                // Log::debug('Disposable Special, Maintenance Check Expense (Landing Engine/Wing Strike) applied Pirep=' . $pirep->id);
+
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (Landing Engine/Wing Strike)');
 
                 if ($maint_user) {
@@ -116,7 +116,7 @@ class Expense_Maintenance
             if (is_numeric($takeoff_roll) && abs($takeoff_roll) > $maint_winglimit) {
                 $service_cost = $this->MaintenanceChecks('Engine/Wing Strike Check', $aircraft, true);
                 $service_cost = round($service_cost * (abs($takeoff_roll) / $maint_winglimit), 2);
-                // Log::debug('Disposable Special, Maintenance Check Expense (TakeOff Engine/Wing Strike) applied Pirep=' . $pirep->id);
+
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (TakeOff Engine/Wing Strike)');
 
                 if ($maint_user) {
@@ -130,7 +130,7 @@ class Expense_Maintenance
             if (is_numeric($landing_pitch) && abs($landing_pitch) > $maint_taillimit) {
                 $service_cost = $this->MaintenanceChecks('Tail Strike Check', $aircraft, true);
                 $service_cost = round($service_cost * (abs($landing_pitch) / $maint_taillimit), 2);
-                // Log::debug('Disposable Special, Maintenance Check Expense (Landing Tail Strike) applied Pirep=' . $pirep->id);
+
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (Landing Tail Strike)');
 
                 if ($maint_user) {
@@ -141,7 +141,7 @@ class Expense_Maintenance
             if (is_numeric($takeoff_pitch) && abs($takeoff_pitch) > $maint_taillimit) {
                 $service_cost = $this->MaintenanceChecks('Tail Strike Check', $aircraft, true);
                 $service_cost = round($service_cost * (abs($takeoff_pitch) / $maint_taillimit), 2);
-                // Log::debug('Disposable Special, Maintenance Check Expense (TakeOff Tail Strike) applied Pirep=' . $pirep->id);
+
                 $expenses[] = $this->MaintenanceExpense($group, $service_cost, 'Maintenance Check (TakeOff Tail Strike)');
 
                 if ($maint_user) {
@@ -202,7 +202,7 @@ class Expense_Maintenance
             $flight_only = true;
         }
 
-        $mtow = $aircraft->mtow;
+        $mtow = ($aircraft->mtow->internal(2) > 0) ? $aircraft->mtow->internal(2) : null;
 
         if (!is_numeric($mtow)) {
             // Try to get at last TOW
@@ -224,7 +224,6 @@ class Expense_Maintenance
         }
 
         $maintenance_cost = round(($unit_rate * $mtow) * $multiplier, 2);
-        // Log::debug('Disposable Maintenance, Calculation Details T=' . $check . ' W=' . $mtow . ' ' . $units['weight'] . ' C=' . $maintenance_cost . ' ' . $units['currency']);
 
         // Change aircraft status, Write actual maintenance operation details
         if ($change_status) {

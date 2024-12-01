@@ -378,6 +378,11 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+01.DEC.24
+
+* Fixed an issue with user based assignments manual triggering (staff was not able to do it)  
+* Fixed weight based expenses not working (after phpvms aircraft weight changes as expected)  
+
 15.NOV.24
 
 * Turkish language support _Requires latest dev as of 15.NOV.24_  
