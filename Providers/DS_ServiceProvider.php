@@ -102,23 +102,23 @@ class DS_ServiceProvider extends ServiceProvider
             'middleware' => ['web', 'auth', 'ability:admin,admin-access'],
             'namespace'  => 'Modules\DisposableSpecial\Http\Controllers',
         ], function () {
-            Route::get('dspecial', 'DS_AdminController@index')->name('admin')->middleware('ability:admin,addons,modules');
-            Route::post('dsettings_store', 'DS_AdminController@update')->name('save_settings')->middleware('ability:admin,addons,modules');
+            Route::get('dspecial', 'DS_AdminController@index')->name('admin')->middleware('ability:admin|admin-access,addons|modules');
+            Route::post('dsettings_store', 'DS_AdminController@update')->name('save_settings')->middleware('ability:admin|admin-access,addons|modules');
             // Assignment Admin Routes
-            Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual')->middleware('ability:admin-access,flights');
+            Route::post('dassignments_manual', 'DS_AssignmentController@assignments_manual')->name('assignments_manual')->middleware('ability:admin|admin-access,users|flights');
             // Market Admin Routes
-            Route::get('dmarket_admin', 'DS_MarketController@index_admin')->name('market_admin')->middleware('ability:admin,addons,modules');
-            Route::post('dmarket_store', 'DS_MarketController@store')->name('market_store')->middleware('ability:admin,addons,modules');
+            Route::get('dmarket_admin', 'DS_MarketController@index_admin')->name('market_admin')->middleware('ability:admin|admin-access,addons|modules');
+            Route::post('dmarket_store', 'DS_MarketController@store')->name('market_store')->middleware('ability:admin|admin-access,addons|modules');
             // Maintenance Admin Routes
-            Route::get('dmaint_admin', 'DS_MaintenanceController@index_admin')->name('maint_admin')->middleware('ability:admin,addons,modules');
-            Route::post('dmaint_finish', 'DS_MaintenanceController@finish_maint')->name('maint_finish')->middleware('ability:admin,addons,modules');
+            Route::get('dmaint_admin', 'DS_MaintenanceController@index_admin')->name('maint_admin')->middleware('ability:admin|admin-access,addons|modules');
+            Route::post('dmaint_finish', 'DS_MaintenanceController@finish_maint')->name('maint_finish')->middleware('ability:admin|admin-access,addons|modules');
             // Notam Admin Routes
-            Route::get('dnotam_admin', 'DS_NotamController@index_admin')->name('notam_admin')->middleware('ability:admin,addons,modules');
-            Route::post('dnotam_store', 'DS_NotamController@store')->name('notam_store')->middleware('ability:admin,addons,modules');
+            Route::get('dnotam_admin', 'DS_NotamController@index_admin')->name('notam_admin')->middleware('ability:admin|admin-access,addons|modules');
+            Route::post('dnotam_store', 'DS_NotamController@store')->name('notam_store')->middleware('ability:admin|admin-access,addons|modules');
             // Tour Admin Routes
-            Route::get('dtour_admin', 'DS_TourController@index_admin')->name('tour_admin')->middleware('ability:admin,addons,modules');
-            Route::post('dtour_store', 'DS_TourController@store')->name('tour_store')->middleware('ability:admin,addons,modules');
-            Route::get('dtours/remove/{pirep_id}', 'DS_TourController@remove_from_pirep')->name('tour_remove')->middleware('ability:admin,addons,modules');
+            Route::get('dtour_admin', 'DS_TourController@index_admin')->name('tour_admin')->middleware('ability:admin|admin-access,addons|modules');
+            Route::post('dtour_store', 'DS_TourController@store')->name('tour_store')->middleware('ability:admin|admin-access,addons|modules');
+            Route::get('dtours/remove/{pirep_id}', 'DS_TourController@remove_from_pirep')->name('tour_remove')->middleware('ability:admin|admin-access,addons|modules|pireps');
         });
     }
 
