@@ -378,6 +378,10 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+16.DEC.24
+
+* Fixed the issue with assignment triggering rights (staff and admin)
+
 01.DEC.24
 
 * Fixed an issue with user based assignments manual triggering (staff was not able to do it)  
