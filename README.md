@@ -2,12 +2,13 @@
 
 phpVMS v7 module for Extended VA features
 
-:warning: This is a **PRIVATE** module, do **NOT** redistribute without author's written approval :warning:
+> [!IMPORTANT]
+> Minimum required phpVMS v7 version is `phpVms 7.0.38-dev.g47ce6755b4` / 15.NOV.2024
 
-* Module supports **only** php8.1+ and laravel10
-* Minimum required phpVMS v7 version is `phpVms 7.0.38-dev.g47ce6755b4` / 15.NOV.2024
-* _php8.0 and laravel9 compatible latest version: v3.3.1_
-* _php7.4 and laravel8 compatible latest version: v3.0.19_
+> [!TIP]
+> * Module supports **only** php8.1+ and laravel10
+> * _php8.0 and laravel9 compatible latest version: v3.3.1_
+> * _php7.4 and laravel8 compatible latest version: v3.0.19_
 
 Module blades are designed for themes using **Bootstrap v5.x** and FontAwesome v5.x (not v6) icons.
 
@@ -36,38 +37,17 @@ If an addon is fully compatible with phpVMS v7 and needs/uses some custom featur
 
 As of date, module supports vmsACARS.
 
-## Important info about License Conditions
-
-* Please do read the License, it is really short but holds important information.
-* This is a **PRIVATE** module, do **NOT** share it with someone else without my written approval.
-* Some other developers do charge nice amounts for single capabilities like only Tours, I do not.
-* Module is technically **"DonationWare"**, where you donate (for good) and how much you donate is up to you.  
-  _(Minimum donation amount is 50 USD/EUR.)_  
-* **3rd party theme authors can redistribute module blade files only** (view files for frontend) if required along with their products to provide support for thier customers/users, or ship customized and compatible blades with their themes.
-
-### DonationWare Explained
-
-Yes, the module is not FREE but it does not have fixed price tag too. So you will decide how much you donate and where you donate. Below you will see some options, and yes I am at the very last line of that list.
-
-* Religious Community (nearby church or mosque etc, people you really know helping others in need for the glory of God)
-* Neighborhood Community (like the one above, helping homeless and poor)
-* Military Staff Community (like helping wounded soldiers of your country, those men risked their lives for us amd deserve some support from us too)
-* Animal shelters nearby (yes, their lives are important too and much more important than most of crowd around us)
-* Any other humanitarian/animal charity for saving lives and helping the ones in need (like donating vaccines, or fighting with hunger at Africa etc)
-* Worldwide non-profit organizations (like UNICEF etc.)
-* Author of this module (if you really want to and can not find somewhere else for donation)
-
 ## Installation and Updates
 
 * Manual Install : Upload contents of the package to your phpvms root `/modules` folder via ftp or your control panel's file manager
 * GitHub Clone : Clone/pull repository to your phpvms root `/modules/DisposableSpecial` folder
 * PhpVms Module Installer : Go to admin -> addons/modules , click Add New , select downloaded file then click Add Module
-
 * Go to admin > addons/modules enable the module
 * Go to admin > dashboard (or /update) to trigger module migrations
 * When migration is completed, go to admin > maintenance and clean `application` cache
 
-:information_source: *There is a known bug in v7 core, which causes an error/exception when enabling/disabling modules manually. If you see a server error page or full stacktrace debug window when you enable a module just close that page and re-visit admin area in a different browser tab/window. You will see that the module is enabled and active, to be sure just clean your `application` cache*
+> [!WARNING]
+> :information_source: *There is a known bug in v7 core, which causes an error/exception when enabling/disabling modules manually. If you see a server error page or full stacktrace debug window when you enable a module just close that page and re-visit admin area in a different browser tab/window. You will see that the module is enabled and active, to be sure just clean your `application` cache*
 
 ### Update (from v3.xx to v3.yy)
 
@@ -77,9 +57,10 @@ Just upload updated files by overwriting your old module files, visit /update an
 
 Below order and steps are really important for proper update from old modules to new combined module pack
 
-:warning: **There is no easy going back to v2 series once v3 is installed !!!** :warning:  
-**Backup your database tables and old module files before this process**  
-**Only database tables starting with `turksim_` is needed to be backed up**
+> [!CAUTION]
+> :warning: **There is no easy going back to v2 series once v3 is installed !!!** :warning:  
+> **Backup your database tables and old module files before this process**  
+> **Only database tables starting with `turksim_` is needed to be backed up**
 
 * From admin > addons/modules **DISABLE** all old TurkSim modules
 * From admin > addons/modules **DELETE** all old TurkSim modules
