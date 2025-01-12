@@ -3,7 +3,7 @@
 phpVMS v7 module for Extended VA features
 
 > [!IMPORTANT]
-> Minimum required phpVMS v7 version is `phpVms 7.0.38-dev.g47ce6755b4` / 15.NOV.2024
+> Minimum required phpVMS v7 version is `phpVms 7.0.52-dev.g0421186c64` / 05.JAN.2025
 
 > [!TIP]
 > * Module supports **only** php8.1+ and laravel10
@@ -358,6 +358,10 @@ _Not providing attribution link will result in removal of access and no support 
 * Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+12.JAN.25
+
+* Version rounding and required minimum phpVMS version change
 
 16.DEC.24
 
