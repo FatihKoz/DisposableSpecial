@@ -18,6 +18,6 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        name: 'Disposable Special - Private Module'
+        name: 'Disposable Special'
         artifacts: "../DisposableSpecial.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
