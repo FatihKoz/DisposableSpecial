@@ -1,16 +1,16 @@
 <?php
 
 use App\Models\Airport;
-use App\Models\Pirep;
-use App\Models\User;
 use App\Models\Enums\FareType;
 use App\Models\Enums\FlightType;
 use App\Models\Enums\PirepState;
+use App\Models\Pirep;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
+use League\Geotools\Geotools;
 use Modules\DisposableSpecial\Models\DS_Tour;
 
 // Generate automatic fare price based on GC distance
@@ -81,7 +81,7 @@ if (!function_exists('DS_AutoPrice')) {
             $multiplier = 1;
         }
 
-        Log::debug('Disposable Special | APC F=' . $pirep->airline->icao . $pirep->flight_number . ' B=' . $base_price . ' D=' . $distance . ' Pd=' . $per_nm . ' M=' . $multiplier);
+        Log::debug('Disposable Special | APC F='.$pirep->airline->icao.$pirep->flight_number.' B='.$base_price.' D='.$distance.' Pd='.$per_nm.' M='.$multiplier);
 
         return round($base_price + ($distance * $per_nm) * $multiplier, 2);
     }
@@ -164,7 +164,7 @@ if (!function_exists('DS_ConvertWeight')) {
             return null;
         }
 
-        $value = number_format($value[$target_unit]) . ' ' . $target_unit;
+        $value = number_format($value[$target_unit]).' '.$target_unit;
 
         return $value;
     }
@@ -185,6 +185,7 @@ if (!function_exists('DS_GetTourName')) {
     function DS_GetTourName($route_code = null)
     {
         $tour = DS_Tour::select('tour_name')->where('tour_code', $route_code)->first();
+
         return filled($tour) ? $tour->tour_name : $route_code;
     }
 }
@@ -205,6 +206,7 @@ if (!function_exists('DS_GetTourCodes')) {
         ];
 
         $tours = DS_Tour::where($where)->orderBy('tour_code')->pluck('tour_code')->toArray();
+
         return $tours;
     }
 }
@@ -291,7 +293,7 @@ if (!function_exists('DS_IsTourLegFlown')) {
             $end_date = $flight->end_date->endOfDay();
         } else {
             $start_date = $tour->start_date->startOfDay();
-            $end_date = $tour->end_date->endOfDay();            
+            $end_date = $tour->end_date->endOfDay();
         }
 
         // Define Default Check Results
@@ -328,7 +330,7 @@ if (!function_exists('DS_FormatScheduleTime')) {
         }
 
         if (!str_contains($time, ':') && strlen($time) === 4) {
-            $time = substr($time, 0, 2) . ':' . substr($time, 2, 2);
+            $time = substr($time, 0, 2).':'.substr($time, 2, 2);
         }
 
         return $time;

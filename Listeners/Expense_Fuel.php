@@ -3,11 +3,11 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\Expenses;
-use App\Models\Expense;
-use App\Models\Pirep;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FuelType;
 use App\Models\Enums\PirepState;
+use App\Models\Expense;
+use App\Models\Pirep;
 
 class Expense_Fuel
 {
@@ -95,7 +95,7 @@ class Expense_Fuel
                 'transaction_group' => $group,
                 'name'              => 'De-Fuelling Service',
                 'multiplier'        => true,
-                'charge_to_user'    => false
+                'charge_to_user'    => false,
             ]);
         }
 
@@ -109,7 +109,7 @@ class Expense_Fuel
                 'transaction_group' => $group,
                 'name'              => 'Fuel Service',
                 'multiplier'        => true,
-                'charge_to_user'    => false
+                'charge_to_user'    => false,
             ]);
         }
 
@@ -123,7 +123,7 @@ class Expense_Fuel
                 'transaction_group' => $group,
                 'name'              => 'Fuel Service (Low Uplift Charge)',
                 'multiplier'        => false,
-                'charge_to_user'    => false
+                'charge_to_user'    => false,
             ]);
         }
 
@@ -138,7 +138,7 @@ class Expense_Fuel
                 'transaction_group' => $group,
                 'name'              => 'Fuel Tax (Domestic Flight)',
                 'multiplier'        => false,
-                'charge_to_user'    => false
+                'charge_to_user'    => false,
             ]);
         }
 

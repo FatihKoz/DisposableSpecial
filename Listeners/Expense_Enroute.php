@@ -3,8 +3,8 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\Expenses;
-use App\Models\Expense;
 use App\Models\Enums\ExpenseType;
+use App\Models\Expense;
 
 class Expense_Enroute
 {
@@ -56,7 +56,7 @@ class Expense_Enroute
         $distance_factor = is_numeric($distance_factor) ? $distance_factor : $time_factor;
 
         // Air Traffic Services Fee
-        if ($atc_method != 'none' && is_numeric($base_weight) &&  is_numeric($distance_factor) && is_numeric($unit_rate)) {
+        if ($atc_method != 'none' && is_numeric($base_weight) && is_numeric($distance_factor) && is_numeric($unit_rate)) {
             $weight_factor = round(sqrt($base_weight / 50), 2);
             $atc_fee = round($distance_factor * $weight_factor * $unit_rate, 2);
 
@@ -66,7 +66,7 @@ class Expense_Enroute
                 'transaction_group' => $group,
                 'name'              => 'Air Traffic Services',
                 'multiplier'        => false,
-                'charge_to_user'    => false
+                'charge_to_user'    => false,
             ]);
         }
 

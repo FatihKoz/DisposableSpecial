@@ -10,14 +10,14 @@ class RebaseParkedAircraftSetting extends Migration
         if (Schema::hasTable('disposable_settings')) {
             DB::table('disposable_settings')->updateOrInsert(
                 [
-                    'key' => 'dspecial.rebase_parked_aircraft'
+                    'key' => 'dspecial.rebase_parked_aircraft',
                 ],
                 [
                     'group'      => 'Cron',
                     'name'       => 'Return Aircraft to Hubs (days)',
                     'field_type' => 'numeric',
                     'default'    => '0',
-                    'order'      => '2005'
+                    'order'      => '2005',
                 ]
             );
         }

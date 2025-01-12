@@ -3,8 +3,8 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\PirepFiled;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Gen_Comments
 {
@@ -43,12 +43,12 @@ class Gen_Comments
             // $act_lcent = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'arrival-centerline-deviation'])->value('value');
             // $act_ldist = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'arrival-threshold-distance'])->value('value');
             $act_lfuel = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-fuel'])->value('value');
-            // $act_lpitch = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-pitch'])->value('value');
-            // $act_lroll = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-roll'])->value('value');
-            // $act_lspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-speed'])->value('value');
-            // $act_tspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-speed'])->value('value');
-            // $act_aircraft = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'aircraft'])->value('value');
-            // $act_light_rules = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'ignore-light-rules'])->value('value');
+        // $act_lpitch = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-pitch'])->value('value');
+        // $act_lroll = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-roll'])->value('value');
+        // $act_lspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-speed'])->value('value');
+        // $act_tspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-speed'])->value('value');
+        // $act_aircraft = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'aircraft'])->value('value');
+        // $act_light_rules = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'ignore-light-rules'])->value('value');
         } else {
             // $act_rw = optional($pirep->fields->where('slug', 'ramp-weight')->first())->value;
             $act_tow = optional($pirep->fields->where('slug', 'takeoff-weight')->first())->value;
@@ -66,7 +66,6 @@ class Gen_Comments
 
         // SimBrief based checks
         if ($simbrief && $aircraft) {
-
             if ($simbrief->xml->params->units == 'kgs') {
                 $block_fuel = $pirep->block_fuel->toUnit('kg', 2);
                 $fuel_used = $pirep->fuel_used->toUnit('kg', 2);
@@ -84,7 +83,6 @@ class Gen_Comments
             }
 
             if ($check_times === true) {
-
                 $dla_margin = DS_Setting('turksim.auto_comment_dlamargin', 20);
 
                 if ($use_direct_db === true) {
@@ -104,17 +102,17 @@ class Gen_Comments
 
                 if ($diff_dep > $dla_margin) {
                     if ($sb_dep > $act_dep) {
-                        $pirep_comments[] = array_merge($default_fields, ['comment' => 'Early Departure ' . $diff_dep . 'm']);
+                        $pirep_comments[] = array_merge($default_fields, ['comment' => 'Early Departure '.$diff_dep.'m']);
                     } else {
-                        $pirep_comments[] = array_merge($default_fields, ['comment' => 'Late Departure ' . $diff_dep . 'm']);
+                        $pirep_comments[] = array_merge($default_fields, ['comment' => 'Late Departure '.$diff_dep.'m']);
                     }
                 }
 
                 if ($diff_arr > $dla_margin) {
                     if ($sb_arr > $act_arr) {
-                        $pirep_comments[] = array_merge($default_fields, ['comment' => 'Early Arrival ' . $diff_arr . 'm']);
+                        $pirep_comments[] = array_merge($default_fields, ['comment' => 'Early Arrival '.$diff_arr.'m']);
                     } else {
-                        $pirep_comments[] = array_merge($default_fields, ['comment' => 'Late Arrival ' . $diff_arr . 'm']);
+                        $pirep_comments[] = array_merge($default_fields, ['comment' => 'Late Arrival '.$diff_arr.'m']);
                     }
                 }
             }
@@ -166,7 +164,6 @@ class Gen_Comments
 
         // Basic checks (with pirep figures)
         elseif (!$simbrief && $aircraft) {
-
             if ($pirep->block_fuel->internal(2) < ($pirep->fuel_used->internal(2) + round(($pirep->fuel_used->internal(2) / $pirep->flight_time) * 30, 2))) {
                 $pirep_comments[] = array_merge($default_fields, ['comment' => 'TakeOff Below Minimum Required Block Fuel']);
             }

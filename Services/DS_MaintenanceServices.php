@@ -4,8 +4,8 @@ namespace Modules\DisposableSpecial\Services;
 
 use App\Models\Enums\AircraftStatus;
 use Carbon\Carbon;
-use Modules\DisposableSpecial\Models\DS_Maintenance;
 use Illuminate\Support\Facades\Log;
+use Modules\DisposableSpecial\Models\DS_Maintenance;
 
 class DS_MaintenanceServices
 {
@@ -15,7 +15,6 @@ class DS_MaintenanceServices
         $current_time = Carbon::now();
         $active_maint_ops = DS_Maintenance::with('aircraft')->whereNotNull('act_end')->where('act_end', '<', $current_time)->get();
         foreach ($active_maint_ops as $active) {
-
             $active->last_note = $active->act_note;
             $active->last_time = $active->act_end;
             $active->act_note = null;
@@ -28,7 +27,7 @@ class DS_MaintenanceServices
             }
 
             $active->save();
-            Log::info('Disposable Special | ' . $active->aircraft->registration . ' released back to service after ' . $active->last_note);
+            Log::info('Disposable Special | '.$active->aircraft->registration.' released back to service after '.$active->last_note);
         }
     }
 }

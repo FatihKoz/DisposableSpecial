@@ -3,13 +3,13 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\Expenses;
-use App\Models\Expense;
-use App\Models\JournalTransaction;
-use App\Models\Pirep;
 use App\Models\Enums\AircraftStatus;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FuelType;
 use App\Models\Enums\PirepState;
+use App\Models\Expense;
+use App\Models\JournalTransaction;
+use App\Models\Pirep;
 use App\Services\FinanceService;
 use App\Support\Money;
 use Carbon\Carbon;
@@ -162,7 +162,7 @@ class Expense_Maintenance
             'transaction_group' => $group,
             'name'              => $memo,
             'multiplier'        => $multiplier,
-            'charge_to_user'    => $charge_user
+            'charge_to_user'    => $charge_user,
         ]);
     }
 
@@ -250,7 +250,7 @@ class Expense_Maintenance
                 $ds_maint->act_end = Carbon::now()->addMinutes($duration);
                 $ds_maint->save();
 
-                Log::info('Disposable Special | ' . $ds_maint->aircraft->registration . ' grounded until ' . Carbon::now()->addMinutes($duration));
+                Log::info('Disposable Special | '.$ds_maint->aircraft->registration.' grounded until '.Carbon::now()->addMinutes($duration));
             }
         }
 
@@ -268,7 +268,7 @@ class Expense_Maintenance
             $airline->journal,
             $amount,
             $aircraft,
-            $check . ' for Reg=' . $aircraft->registration,
+            $check.' for Reg='.$aircraft->registration,
             'Maintenance Fees',
             'maintenance',
             Carbon::now()->format('Y-m-d')
@@ -282,12 +282,13 @@ class Expense_Maintenance
         $check_where = [];
         $check_where['ref_model_id'] = $pirep->user->id;
         $check_where[] = ['ref_model', 'LIKE', '%User'];
-        $check_where[] = ['memo', 'LIKE', '%' . $pirep->id];
+        $check_where[] = ['memo', 'LIKE', '%'.$pirep->id];
 
         $check = JournalTransaction::where($check_where)->count();
 
         if ($check > 0) {
-            Log::debug('Disposable Special | User ' . $pirep->user->name_private . ' ALREADY charged for ' . $memo . ' Pirep=' . $pirep->id . ' SKIPPING');
+            Log::debug('Disposable Special | User '.$pirep->user->name_private.' ALREADY charged for '.$memo.' Pirep='.$pirep->id.' SKIPPING');
+
             return;
         }
 
@@ -299,7 +300,7 @@ class Expense_Maintenance
             $pirep->user->journal,
             $amount,
             $pirep->user,
-            $memo . ' Pirep=' . $pirep->id,
+            $memo.' Pirep='.$pirep->id,
             'Maintenance Fees',
             'maintenance',
             Carbon::now()->format('Y-m-d')
@@ -310,12 +311,12 @@ class Expense_Maintenance
             $pirep->aircraft->airline->journal,
             $amount,
             $pirep->user,
-            $memo . ' User=' . $pirep->user->name_private . ' Pirep=' . $pirep->id,
+            $memo.' User='.$pirep->user->name_private.' Pirep='.$pirep->id,
             'Maintenance Fees',
             'maintenance',
             Carbon::now()->format('Y-m-d')
         );
         // Note Transaction
-        Log::debug('Disposable Special | User ' . $pirep->user->name_private . ' charged for ' . $memo . ' Pirep=' . $pirep->id);
+        Log::debug('Disposable Special | User '.$pirep->user->name_private.' charged for '.$memo.' Pirep='.$pirep->id);
     }
 }

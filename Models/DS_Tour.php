@@ -3,12 +3,11 @@
 namespace Modules\DisposableSpecial\Models;
 
 use App\Contracts\Model;
-use App\Models\Flight;
 use App\Models\Airline;
+use App\Models\Flight;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Modules\DisposableSpecial\Models\DS_Marketitem;
 
 class DS_Tour extends Model
 {

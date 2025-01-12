@@ -3,9 +3,9 @@
 namespace Modules\DisposableSpecial\Widgets;
 
 use App\Contracts\Widget;
+use Illuminate\Support\Facades\Auth;
 use Modules\DisposableSpecial\Models\DS_Marketitem;
 use Modules\DisposableSpecial\Models\DS_Marketowner;
-use Illuminate\Support\Facades\Auth;
 
 class FeaturedItem extends Widget
 {

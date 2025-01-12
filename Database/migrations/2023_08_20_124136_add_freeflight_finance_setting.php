@@ -11,27 +11,27 @@ class AddFreeflightFinanceSetting extends Migration
             // Minimum required amount for FreeFlights
             DB::table('disposable_settings')->updateOrInsert(
                 [
-                    'key' => 'dspecial.freeflights_reqbalance'
+                    'key' => 'dspecial.freeflights_reqbalance',
                 ],
                 [
                     'group'      => 'Free Flights',
                     'name'       => 'Required balance for flight',
                     'field_type' => 'numeric',
                     'default'    => '0',
-                    'order'      => '1004'
+                    'order'      => '1004',
                 ]
             );
             // Cost of each FreeFlight save/update (no matter if it is performed or not)
             DB::table('disposable_settings')->updateOrInsert(
                 [
-                    'key' => 'dspecial.freeflights_costperedit'
+                    'key' => 'dspecial.freeflights_costperedit',
                 ],
                 [
                     'group'      => 'Free Flights',
                     'name'       => 'Cost of each flight (save/update)',
                     'field_type' => 'numeric',
                     'default'    => '0',
-                    'order'      => '1005'
+                    'order'      => '1005',
                 ]
             );
         }

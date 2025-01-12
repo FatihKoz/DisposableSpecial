@@ -18,7 +18,7 @@ class DS_ApiController extends Controller
     {
         if (!$this->AuthCheck($request->header('x-service-key'))) {
             return response(['error' => ['code' => '401', 'http_code' => 'Unauthorized', 'message' => 'Check Service Key!']], 401);
-        };
+        }
 
         $curr_y = is_numeric($request->header('x-a-year')) ? $request->header('x-a-year') : Carbon::now()->format('Y');
         $curr_m = is_numeric($request->header('x-a-month')) ? $request->header('x-a-month') : Carbon::now()->format('m');
@@ -70,7 +70,7 @@ class DS_ApiController extends Controller
     {
         if (!$this->AuthCheck($request->header('x-service-key'))) {
             return response(['error' => ['code' => '401', 'http_code' => 'Unauthorized', 'message' => 'Check Service Key!']], 401);
-        };
+        }
 
         $now = Carbon::now();
         $with = ['airline', 'legs'];
@@ -131,8 +131,8 @@ class DS_ApiController extends Controller
         return response()->json([
             'App Name'           => config('app.name'),
             'App URL'            => config('app.url'),
-            'Disposable Basic'   => 'Installed: ' . isset($DBM) . ' | Enabled: ' . $DBE,
-            'Disposable Special' => 'Installed: ' . isset($DSM) . ' | Enabled: ' . $DSE,
+            'Disposable Basic'   => 'Installed: '.isset($DBM).' | Enabled: '.$DBE,
+            'Disposable Special' => 'Installed: '.isset($DSM).' | Enabled: '.$DSE,
         ]);
     }
 

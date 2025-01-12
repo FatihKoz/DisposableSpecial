@@ -4,8 +4,8 @@ namespace Modules\DisposableSpecial\Providers;
 
 use App\Events\Expenses;
 use App\Events\Fares;
-use App\Events\PirepFiled;
 use App\Events\PirepAccepted;
+use App\Events\PirepFiled;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Modules\DisposableSpecial\Listeners\Expense_Airport;
 use Modules\DisposableSpecial\Listeners\Expense_Enroute;

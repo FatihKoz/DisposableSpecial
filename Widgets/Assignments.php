@@ -3,9 +3,9 @@
 namespace Modules\DisposableSpecial\Widgets;
 
 use App\Contracts\Widget;
-use Modules\DisposableSpecial\Models\DS_Assignment;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Modules\DisposableSpecial\Models\DS_Assignment;
 
 class Assignments extends Widget
 {

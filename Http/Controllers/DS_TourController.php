@@ -15,9 +15,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Modules\DisposableSpecial\Models\DS_Tour;
 use Modules\DisposableSpecial\Models\DS_Marketitem;
 use Modules\DisposableSpecial\Models\DS_Marketowner;
+use Modules\DisposableSpecial\Models\DS_Tour;
 use Modules\DisposableSpecial\Models\Enums\DS_ItemCategory;
 
 class DS_TourController extends Controller
@@ -59,6 +59,7 @@ class DS_TourController extends Controller
     {
         if (!$code) {
             flash()->error('Tour not specified !');
+
             return redirect(route('DSpecial.tours'));
         }
 
@@ -75,6 +76,7 @@ class DS_TourController extends Controller
 
         if (!$tour) {
             flash()->error('Tour not found !');
+
             return redirect(route('DSpecial.tours'));
         }
 
@@ -85,8 +87,9 @@ class DS_TourController extends Controller
         $user_token_check = DS_Marketowner::where(['user_id' => $user->id, 'marketitem_id' => $tour->tour_token])->count();
 
         if ($tour->tour_token > 0 && $user_token_check == 0) {
-            flash()->error('You do not have the required token for ' . $tour->tour_name . ', please check the shop...');
-            return redirect(route('DSpecial.market') . '?cat=' . DS_ItemCategory::TOUR);
+            flash()->error('You do not have the required token for '.$tour->tour_name.', please check the shop...');
+
+            return redirect(route('DSpecial.market').'?cat='.DS_ItemCategory::TOUR);
         }
 
         // Tour Award Winners
@@ -113,14 +116,14 @@ class DS_TourController extends Controller
 
         // Map Center
         if ($user && $user->current_airport && filled($tour->legs()->where('dpt_airport_id', $user->current_airport->id))) {
-            $user_mapCenter = $user->current_airport->lat . ',' . $user->current_airport->lon;
+            $user_mapCenter = $user->current_airport->lat.','.$user->current_airport->lon;
             $user_loc = $user->current_airport->id;
         } else {
             $tour_mapCenter = setting('acars.center_coords');
         }
 
         foreach ($tour->legs->where('route_leg', 1) as $fleg) {
-            $tour_mapCenter = $fleg->dpt_airport->lat . ',' . $fleg->dpt_airport->lon;
+            $tour_mapCenter = $fleg->dpt_airport->lat.','.$fleg->dpt_airport->lon;
         }
 
         // Map Icons Array
@@ -153,15 +156,15 @@ class DS_TourController extends Controller
         $airports = $airports_pack->unique('id');
 
         foreach ($airports as $airport) {
-            $apop = '<a href="' . route('frontend.airports.show', [$airport->id]) . '" target="_blank">' . $airport->id . ' ' . str_replace("'", "", $airport->name) . '</a>';
+            $apop = '<a href="'.route('frontend.airports.show', [$airport->id]).'" target="_blank">'.$airport->id.' '.str_replace("'", '', $airport->name).'</a>';
             if (isset($user_loc) && $user_loc === $airport->id) {
-                $iconColor = "YellowIcon";
+                $iconColor = 'YellowIcon';
             } else {
-                $iconColor = "BlueIcon";
+                $iconColor = 'BlueIcon';
             }
             $mapAirports[] = [
                 'id'   => $airport->id,
-                'loc'  => $airport->lat . ', ' . $airport->lon,
+                'loc'  => $airport->lat.', '.$airport->lon,
                 'pop'  => $apop,
                 'icon' => $iconColor,
             ];
@@ -175,13 +178,13 @@ class DS_TourController extends Controller
             // Leg Checks
             $leg_checks[$mf->route_leg] = DS_IsTourLegFlown($tour, $mf, optional($user)->id);
             // Popups
-            $pop = '<a href="/flights/' . $mf->id . '" target="_blank">Leg #';
-            $pop .= $mf->route_leg . ': ' . $mf->airline->code . $mf->flight_number . ' ' . $mf->dpt_airport_id . '-' . $mf->arr_airport_id;
+            $pop = '<a href="/flights/'.$mf->id.'" target="_blank">Leg #';
+            $pop .= $mf->route_leg.': '.$mf->airline->code.$mf->flight_number.' '.$mf->dpt_airport_id.'-'.$mf->arr_airport_id;
             $pop .= '</a>';
             // Flights with popups and check results
             $mapFlights[] = [
                 'id'   => $mf->id,
-                'geod' => '[[' . $mf->dpt_airport->lat . ',' . $mf->dpt_airport->lon . '],[' . $mf->arr_airport->lat . ',' . $mf->arr_airport->lon . ']]',
+                'geod' => '[['.$mf->dpt_airport->lat.','.$mf->dpt_airport->lon.'],['.$mf->arr_airport->lat.','.$mf->arr_airport->lon.']]',
                 'geoc' => $leg_checks[$mf->route_leg] ? 'Flown' : 'NotFlown', // (DS_IsTourLegFlown($tour, $mf, optional($user)->id)) ? 'Flown' : 'NotFlown',
                 'pop'  => $pop,
             ];
@@ -196,7 +199,7 @@ class DS_TourController extends Controller
             'carbon_now'    => Carbon::now(),
             'leg_checks'    => $leg_checks,
             'mapIcons'      => $mapIcons,
-            'mapCenter'     => isset($user_mapCenter) ? '[' . $user_mapCenter . ']' : '[' . $tour_mapCenter . ']',
+            'mapCenter'     => isset($user_mapCenter) ? '['.$user_mapCenter.']' : '['.$tour_mapCenter.']',
             'mapAirports'   => $mapAirports,
             'mapFlights'    => $mapFlights,
             'market_cat'    => DS_ItemCategory::TOUR,
@@ -226,6 +229,7 @@ class DS_TourController extends Controller
             $tour_codes = $request->input('tcode');
             $subfleet_ids = $request->input('sfid');
             $this->ManageTourSubfleets($action, explode(',', $tour_codes), explode(',', $subfleet_ids));
+
             return redirect(route('DSpecial.tour_admin'));
         }
 
@@ -234,6 +238,7 @@ class DS_TourController extends Controller
 
             if (!isset($tour)) {
                 flash()->error('Tour Not Found !');
+
                 return redirect(route('DSpecial.tour_admin'));
             }
         }
@@ -250,14 +255,15 @@ class DS_TourController extends Controller
     // Store Tour
     public function store(Request $request)
     {
-
         if (!$request->tour_name || !$request->tour_code) {
             flash()->error('Name And Code Fields Are Required For Tours!');
+
             return redirect(route('DSpecial.tour_admin'));
         }
 
         if (!$request->start_date || !$request->end_date) {
             flash()->error('Dates Are Required For Tours!');
+
             return redirect(route('DSpecial.tour_admin'));
         }
 
@@ -279,6 +285,7 @@ class DS_TourController extends Controller
         );
 
         flash()->success('Tour Saved');
+
         return redirect(route('DSpecial.tour_admin'));
     }
 
@@ -309,6 +316,7 @@ class DS_TourController extends Controller
 
             if (count($flights) === 0) {
                 flash()->error('No flights found for '.implode(',', $tour_codes).' !');
+
                 return;
             }
 
@@ -325,7 +333,7 @@ class DS_TourController extends Controller
             }
 
             if (!isset($error)) {
-                flash()->success('Subfleets assigned successfully to ' .implode(', ', $tour_codes) . ' flights !');
+                flash()->success('Subfleets assigned successfully to '.implode(', ', $tour_codes).' flights !');
             } else {
                 flash()->error('Some subfleets were already assigned to '.implode(', ', $tour_codes).' flights !');
             }
@@ -336,6 +344,7 @@ class DS_TourController extends Controller
 
             if (count($flights) === 0) {
                 flash()->error('No flights found for '.implode(', ', $tour_codes).' !');
+
                 return;
             }
 
@@ -343,7 +352,7 @@ class DS_TourController extends Controller
 
             if ($sf_count > 0) {
                 DB::table('flight_subfleet')->whereIn('subfleet_id', $subfleet_ids)->whereIn('flight_id', $flights)->delete();
-                flash()->success('Subfleets removed successfully to ' .implode(', ', $tour_codes) . ' flights !');
+                flash()->success('Subfleets removed successfully to '.implode(', ', $tour_codes).' flights !');
             } else {
                 flash()->error('Subfleets were not assigned to '.implode(', ', $tour_codes).' flights !');
             }

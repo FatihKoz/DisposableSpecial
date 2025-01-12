@@ -3,8 +3,8 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\Fares;
-use App\Models\Fare;
 use App\Models\Enums\FareType;
+use App\Models\Fare;
 
 class Fare_InFlight
 {

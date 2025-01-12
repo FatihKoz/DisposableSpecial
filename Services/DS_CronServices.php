@@ -37,7 +37,7 @@ class DS_CronServices
                 $brief->pirep_id = null;
                 $brief->save();
             }
-            Log::info('Disposable Special | Fixed ' . $briefs->count() . ' SimBrief packs with no matching PIREPs');
+            Log::info('Disposable Special | Fixed '.$briefs->count().' SimBrief packs with no matching PIREPs');
         }
     }
 
@@ -49,7 +49,7 @@ class DS_CronServices
 
         $deleted_ofps = SimBrief::whereNull('pirep_id')->where('created_at', '<=', $expire_time)->delete();
         if ($deleted_ofps > 0) {
-            Log::info('Disposable Special | Deleted ' . $deleted_ofps . ' expired SimBrief OFP Packs');
+            Log::info('Disposable Special | Deleted '.$deleted_ofps.' expired SimBrief OFP Packs');
         }
     }
 
@@ -67,7 +67,7 @@ class DS_CronServices
                 $ff->visible = 0;
                 $ff->save();
             }
-            Log::info('Disposable Special | ' . $ffs->count() . ' Free Flights processed and updated as inactive and invisible');
+            Log::info('Disposable Special | '.$ffs->count().' Free Flights processed and updated as inactive and invisible');
         }
     }
 
@@ -80,7 +80,7 @@ class DS_CronServices
         foreach ($active_aircraft as $aircraft) {
             $aircraft->state = AircraftState::PARKED;
             $aircraft->save();
-            Log::info('Disposable Special | ' . $aircraft->registration . ' state changed to PARKED');
+            Log::info('Disposable Special | '.$aircraft->registration.' state changed to PARKED');
         }
     }
 
@@ -96,18 +96,18 @@ class DS_CronServices
             foreach ($aircraft as $ac) {
                 // Don't rebase the aircraft if it is recently updated (moved manually)
                 if ($ac->updated_at->diffInDays($today) < 4) {
-                    Log::info('Disposable Special | ' . $ac->ident . ' not returned to base, manual placement protection');
+                    Log::info('Disposable Special | '.$ac->ident.' not returned to base, manual placement protection');
                     continue;
                 }
 
                 if ($ac->hub_id && $ac->airport_id != $ac->hub_id) {
                     $ac->airport_id = $ac->hub_id;
                     $ac->save();
-                    Log::info('Disposable Special | ' . $ac->ident . ' returned to ' . $ac->hub_id);
+                    Log::info('Disposable Special | '.$ac->ident.' returned to '.$ac->hub_id);
                 } elseif (!$ac->hub_id && $ac->subfleet->hub_id && $ac->airport_id != $ac->subfleet->hub_id) {
                     $ac->airport_id = $ac->subfleet->hub_id;
                     $ac->save();
-                    Log::info('Disposable Special | ' . $ac->ident . ' returned to ' . $ac->subfleet->hub_id);
+                    Log::info('Disposable Special | '.$ac->ident.' returned to '.$ac->subfleet->hub_id);
                 }
             }
         }
@@ -126,7 +126,6 @@ class DS_CronServices
         $keephidden = DS_Tour::whereDate('start_date', '<=', $today)->orWhereDate('end_date', '>=', $tomorrow)->pluck('tour_code')->toArray();
 
         if (filled($keephidden) && count($keephidden) > 0 && DS_Setting('dspecial.keep_tf_invisible', false) == true) {
-
             $flights = Flight::whereIn('route_code', $keephidden)->get();
 
             if (filled($flights) && $flights->count() > 0) {
@@ -134,14 +133,13 @@ class DS_CronServices
                     $flight->visible = 0;
                     $flight->save();
                 }
-                Log::info('Disposable Special | Processed ' . count($keephidden) . ' Tours and hidden ' . $flights->count() . ' flights');
+                Log::info('Disposable Special | Processed '.count($keephidden).' Tours and hidden '.$flights->count().' flights');
             } else {
                 Log::info('Disposable Special | No Tours Flights Found for Hiding');
             }
         }
 
         if (filled($activate) && count($activate) > 0) {
-
             $flights = Flight::whereIn('route_code', $activate)->whereNull('start_date')->whereNull('end_date')->get();
 
             if (filled($flights) && $flights->count() > 0) {
@@ -150,14 +148,13 @@ class DS_CronServices
                     $flight->visible = (DS_Setting('dspecial.keep_tf_invisible', false)) ? 0 : 1;
                     $flight->save();
                 }
-                Log::info('Disposable Special | Processed ' . count($activate) . ' Tours and activated ' . $flights->count() . ' flights');
+                Log::info('Disposable Special | Processed '.count($activate).' Tours and activated '.$flights->count().' flights');
             } else {
                 Log::info('Disposable Special | No Tours Flights Found for Activation');
             }
         }
 
         if (filled($deactivate) && count($deactivate) > 0) {
-
             $flights = Flight::whereIn('route_code', $deactivate)->whereNull('start_date')->whereNull('end_date')->get();
 
             if (filled($flights) && $flights->count() > 0) {
@@ -166,7 +163,7 @@ class DS_CronServices
                     $flight->visible = 0;
                     $flight->save();
                 }
-                Log::info('Disposable Special | Processed ' . count($deactivate) . ' Tours and deactivated ' . $flights->count() . ' flights');
+                Log::info('Disposable Special | Processed '.count($deactivate).' Tours and deactivated '.$flights->count().' flights');
             } else {
                 Log::info('Disposable Special | No Tours Flights Found for De-Activation');
             }
@@ -184,7 +181,7 @@ class DS_CronServices
 
         foreach ($acars_logs as $acars_log) {
             Acars::where(['pirep_id' => $acars_log->pirep_id, 'type' => AcarsType::LOG])->delete();
-            Log::info('Disposable Special | Deleted ' . $acars_log->log_counts . ' log entries for PIREP ' . $acars_log->pirep_id . ' | acars');
+            Log::info('Disposable Special | Deleted '.$acars_log->log_counts.' log entries for PIREP '.$acars_log->pirep_id.' | acars');
         }
     }
 
@@ -195,7 +192,7 @@ class DS_CronServices
         if ($days > 0) {
             $acars = Acars::where('type', AcarsType::FLIGHT_PATH)->where('created_at', '<', Carbon::now()->subDays($days))->delete();
             if ($acars > 0) {
-                Log::info('Disposable Special | Deleted ' . $acars . ' position report records | acars');
+                Log::info('Disposable Special | Deleted '.$acars.' position report records | acars');
             }
         }
     }
@@ -206,7 +203,7 @@ class DS_CronServices
         if ($days > 0) {
             $simbrief = SimBrief::where('created_at', '<', Carbon::now()->subDays($days))->delete();
             if ($simbrief > 0) {
-                Log::info('Disposable Special | Deleted ' . $simbrief . ' OFP packs | simbrief');
+                Log::info('Disposable Special | Deleted '.$simbrief.' OFP packs | simbrief');
             }
         }
     }
@@ -224,9 +221,9 @@ class DS_CronServices
 
             // Delete each user, remove their bids and user field entries
             if ($picked_users) {
-                Log::info('Disposable Special | Deleting ' . $picked_users->count() . ' non-flown members | users');
+                Log::info('Disposable Special | Deleting '.$picked_users->count().' non-flown members | users');
                 foreach ($picked_users as $user) {
-                    Log::info('Disposable Special | Deleted user, roles, bids, custom field values for id:' . $user->id . ' > ' . $user->name_private . ' identified as non-flown user');
+                    Log::info('Disposable Special | Deleted user, roles, bids, custom field values for id:'.$user->id.' > '.$user->name_private.' identified as non-flown user');
                     // Detach all roles from the user
                     $user->removeRoles($user->roles->toArray());
                     // Delete any custom profile fields
@@ -247,7 +244,6 @@ class DS_CronServices
     public function DeletePausedPireps($hours = 0)
     {
         if ($hours > 0) {
-
             $date = Carbon::now('UTC')->subHours($hours);
 
             $where = [];
@@ -258,7 +254,7 @@ class DS_CronServices
 
             foreach ($pireps as $pirep) {
                 event(new PirepCancelled($pirep));
-                Log::info('Disposable Special | Cancelled Pirep id=' . $pirep->id . ', state=' . PirepState::label($pirep->state));
+                Log::info('Disposable Special | Cancelled Pirep id='.$pirep->id.', state='.PirepState::label($pirep->state));
                 $pirep->delete();
             }
         }
@@ -272,7 +268,7 @@ class DS_CronServices
         $acars = Acars::whereIn('id', $records)->delete();
 
         if ($acars > 0) {
-            Log::info('Disposable Special | Deleted ' . $acars . ' redundant records with no matching PIREP | acars');
+            Log::info('Disposable Special | Deleted '.$acars.' redundant records with no matching PIREP | acars');
         }
     }
 
@@ -289,62 +285,62 @@ class DS_CronServices
 
         $ff_no_flight = DB::table('flight_fare')->whereNotIn('flight_id', $flights)->delete();
         if ($ff_no_flight > 0) {
-            Log::info('Disposable Special | Deleted ' . $ff_no_flight . ' redundant records with no matching FLIGHT | flight_fare');
+            Log::info('Disposable Special | Deleted '.$ff_no_flight.' redundant records with no matching FLIGHT | flight_fare');
         }
 
         $ff_no_fare = DB::table('flight_fare')->whereNotIn('fare_id', $fares)->delete();
         if ($ff_no_fare > 0) {
-            Log::info('Disposable Special | Deleted ' . $ff_no_fare . ' redundant records with no matching FARE | flight_fare');
+            Log::info('Disposable Special | Deleted '.$ff_no_fare.' redundant records with no matching FARE | flight_fare');
         }
 
         $sf_no_subfleet = DB::table('subfleet_fare')->whereNotIn('subfleet_id', $subfleets)->delete();
         if ($sf_no_subfleet > 0) {
-            Log::info('Disposable Special | Deleted ' . $sf_no_subfleet . ' redundant records with no matching SUBFLEET | subfleet_fare');
+            Log::info('Disposable Special | Deleted '.$sf_no_subfleet.' redundant records with no matching SUBFLEET | subfleet_fare');
         }
 
         $sf_no_fare = DB::table('subfleet_fare')->whereNotIn('fare_id', $fares)->delete();
         if ($sf_no_fare > 0) {
-            Log::info('Disposable Special | Deleted ' . $sf_no_fare . ' redundant records with no matching FARE | subfleet_fare');
+            Log::info('Disposable Special | Deleted '.$sf_no_fare.' redundant records with no matching FARE | subfleet_fare');
         }
 
         $fs_no_flight = DB::table('flight_subfleet')->whereNotIn('flight_id', $flights)->delete();
         if ($fs_no_flight > 0) {
-            Log::info('Disposable Special | Deleted ' . $fs_no_flight . ' redundant records with no matching FLIGHT | flight_subfleets');
+            Log::info('Disposable Special | Deleted '.$fs_no_flight.' redundant records with no matching FLIGHT | flight_subfleets');
         }
 
         $fs_no_subfleet = DB::table('flight_subfleet')->whereNotIn('subfleet_id', $subfleets)->delete();
         if ($fs_no_subfleet > 0) {
-            Log::info('Disposable Special | Deleted ' . $fs_no_subfleet . ' redundant records with no matching SUBFLEET | flight_subfleets');
+            Log::info('Disposable Special | Deleted '.$fs_no_subfleet.' redundant records with no matching SUBFLEET | flight_subfleets');
         }
 
         $sr_no_rank = DB::table('subfleet_rank')->whereNotIn('rank_id', $ranks)->delete();
         if ($sr_no_rank > 0) {
-            Log::info('Disposable Special | Deleted ' . $sr_no_rank . ' redundant records with no matching RANK | subfleet_rank');
+            Log::info('Disposable Special | Deleted '.$sr_no_rank.' redundant records with no matching RANK | subfleet_rank');
         }
 
         $sr_no_subfleet = DB::table('subfleet_rank')->whereNotIn('subfleet_id', $subfleets)->delete();
         if ($sr_no_subfleet > 0) {
-            Log::info('Disposable Special | Deleted ' . $sr_no_subfleet . ' redundant records with no matching SUBFLEET | subfleet_rank');
+            Log::info('Disposable Special | Deleted '.$sr_no_subfleet.' redundant records with no matching SUBFLEET | subfleet_rank');
         }
 
         $user_field_values = DB::table('user_field_values')->whereNotIn('user_id', $users)->delete();
         if ($user_field_values > 0) {
-            Log::info('Disposable Special | Deleted ' . $user_field_values . ' redundant records with no matching USER | user_field_values');
+            Log::info('Disposable Special | Deleted '.$user_field_values.' redundant records with no matching USER | user_field_values');
         }
 
         $journals = DB::table('journals')->where('morphed_type', 'LIKE', '%User')->whereNotIn('morphed_id', $users)->delete();
         if ($journals > 0) {
-            Log::info('Disposable Special | Deleted ' . $journals . ' redundant records with no matching USER | journals');
+            Log::info('Disposable Special | Deleted '.$journals.' redundant records with no matching USER | journals');
         }
 
         $ur_users = DB::table('role_user')->whereNotIn('user_id', $users)->delete();
         if ($journals > 0) {
-            Log::info('Disposable Special | Deleted ' . $ur_users . ' redundant records with no matching USER | role_user');
+            Log::info('Disposable Special | Deleted '.$ur_users.' redundant records with no matching USER | role_user');
         }
 
         $ur_roles = DB::table('role_user')->whereNotIn('role_id', $roles)->delete();
         if ($journals > 0) {
-            Log::info('Disposable Special | Deleted ' . $ur_roles . ' redundant records with no matching ROLE | role_user');
+            Log::info('Disposable Special | Deleted '.$ur_roles.' redundant records with no matching ROLE | role_user');
         }
     }
 }

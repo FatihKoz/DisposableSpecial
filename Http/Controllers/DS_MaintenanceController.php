@@ -40,6 +40,7 @@ class DS_MaintenanceController extends Controller
     {
         if (empty($request->id) || empty($request->act_note)) {
             flash()->error('Maintenance NOT performed !');
+
             return redirect(route('DSpecial.maint_admin'));
         }
 
@@ -49,6 +50,7 @@ class DS_MaintenanceController extends Controller
 
         if (empty($aircraft)) {
             flash()->error('Aircraft NOT Found... Maintenance NOT Performed !');
+
             return redirect(route('DSpecial.maint_admin'));
         }
 
@@ -68,7 +70,7 @@ class DS_MaintenanceController extends Controller
             $maint->cycle_a = 0;
             $maint->time_a = 0;
             $maint->last_a = $now;
-        } else if ($request->act_note === 'B Check') {
+        } elseif ($request->act_note === 'B Check') {
             // Reset B and A
             $maint->cycle_b = 0;
             $maint->time_b = 0;
@@ -76,7 +78,7 @@ class DS_MaintenanceController extends Controller
             $maint->cycle_a = 0;
             $maint->time_a = 0;
             $maint->last_a = $now;
-        } else if ($request->act_note === 'A Check') {
+        } elseif ($request->act_note === 'A Check') {
             // Reset A
             $maint->cycle_a = 0;
             $maint->time_a = 0;
@@ -88,7 +90,7 @@ class DS_MaintenanceController extends Controller
         if ($request->ops === 'manual') {
             $maint_expense = app(Expense_Maintenance::class);
             $maint_expense->MaintenanceChecks($request->act_note, $aircraft, false, DS_Setting('turksim.maint_acstate_control', false));
-            Log::debug('Disposable Maintenance, ' . $request->act_note . ' performed manually for ' . $aircraft->registration);
+            Log::debug('Disposable Maintenance, '.$request->act_note.' performed manually for '.$aircraft->registration);
         } else {
             $maint->last_note = $request->act_note;
             $maint->last_time = $now;
@@ -98,6 +100,7 @@ class DS_MaintenanceController extends Controller
         $maint->save();
 
         flash()->success('Maintenance Performed');
+
         return redirect(route('DSpecial.maint_admin'));
     }
 }

@@ -11,14 +11,14 @@ class AddCompanySetting extends Migration
             // Monthly Assignments
             DB::table('disposable_settings')->updateOrInsert(
                 [
-                    'key' => 'turksim.assignments_usecompany'
+                    'key' => 'turksim.assignments_usecompany',
                 ],
                 [
                     'group'      => 'Assignments',
                     'name'       => 'Use Pilot Company',
                     'field_type' => 'check',
                     'default'    => 'false',
-                    'order'      => '7830'
+                    'order'      => '7830',
                 ]
             );
         }

@@ -11,14 +11,14 @@ class AddFreeflightCompanySetting extends Migration
             // Monthly Assignments
             DB::table('disposable_settings')->updateOrInsert(
                 [
-                    'key' => 'dspecial.freeflights_companyfleet'
+                    'key' => 'dspecial.freeflights_companyfleet',
                 ],
                 [
                     'group'      => 'Free Flights',
                     'name'       => 'Allow fleet of selected Airline only',
                     'field_type' => 'check',
                     'default'    => 'false',
-                    'order'      => '1002'
+                    'order'      => '1002',
                 ]
             );
         }

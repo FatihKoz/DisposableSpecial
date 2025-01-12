@@ -4,8 +4,8 @@ namespace Modules\DisposableSpecial\Models;
 
 use App\Contracts\Model;
 use App\Models\Aircraft;
-use Modules\DisposableBasic\Models\DB_Tech;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Modules\DisposableBasic\Models\DB_Tech;
 use stdClass;
 
 class DS_Maintenance extends Model

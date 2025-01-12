@@ -5,10 +5,10 @@ namespace Modules\DisposableSpecial\Models;
 use App\Contracts\Model;
 use App\Models\Aircraft;
 use App\Models\Airport;
+use App\Models\Enums\PirepState;
 use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\User;
-use App\Models\Enums\PirepState;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DS_Mission extends Model

@@ -4,8 +4,8 @@ namespace Modules\DisposableSpecial\Widgets;
 
 use App\Contracts\Widget;
 use Carbon\Carbon;
-use Modules\DisposableSpecial\Models\DS_Notam;
 use Illuminate\Support\Facades\Auth;
+use Modules\DisposableSpecial\Models\DS_Notam;
 
 class Notams extends Widget
 {

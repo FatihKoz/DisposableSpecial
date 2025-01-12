@@ -21,7 +21,7 @@ class DS_ServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->registerLinks();
 
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
 
         app('arrilot.widget-namespaces')->registerNamespace('DSpecial', 'Modules\DisposableSpecial\Widgets');
     }
@@ -124,8 +124,8 @@ class DS_ServiceProvider extends ServiceProvider
 
     protected function registerConfig()
     {
-        $this->publishes([__DIR__ . '/../Config/config.php' => config_path('DSpecial.php'),], 'config');
-        $this->mergeConfigFrom(__DIR__ . '/../Config/config.php', 'DSpecial');
+        $this->publishes([__DIR__.'/../Config/config.php' => config_path('DSpecial.php')], 'config');
+        $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'DSpecial');
     }
 
     public function registerTranslations()
@@ -135,19 +135,19 @@ class DS_ServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, 'DSpecial');
         } else {
-            $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'DSpecial');
+            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'DSpecial');
         }
     }
 
     public function registerViews()
     {
         $viewPath = resource_path('views/modules/DisposableSpecial');
-        $sourcePath = __DIR__ . '/../Resources/views';
+        $sourcePath = __DIR__.'/../Resources/views';
 
-        $this->publishes([$sourcePath => $viewPath,], 'views');
+        $this->publishes([$sourcePath => $viewPath], 'views');
 
         $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return str_replace('default', setting('general.theme'), $path) . '/modules/DisposableSpecial';
+            return str_replace('default', setting('general.theme'), $path).'/modules/DisposableSpecial';
         }, \Config::get('view.paths')), [$sourcePath]), 'DSpecial');
 
         /*

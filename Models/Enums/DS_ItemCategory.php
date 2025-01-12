@@ -16,13 +16,13 @@ class DS_ItemCategory extends Enum
     public const TOUR = 8;
 
     public static array $labels = [
-        self::GENERIC => 'Generic Item',
-        self::AIRCRAFT => 'Aircraft | Addon',
-        self::LIVERY => 'Aircraft | Livery',
-        self::SCENERY => 'Scenery',
-        self::TOOL => 'Tool | Addon',
+        self::GENERIC    => 'Generic Item',
+        self::AIRCRAFT   => 'Aircraft | Addon',
+        self::LIVERY     => 'Aircraft | Livery',
+        self::SCENERY    => 'Scenery',
+        self::TOOL       => 'Tool | Addon',
         self::TYPERATING => 'Type Rating',
-        self::TRAINING => 'Training',
-        self::TOUR => 'Tour Token',
+        self::TRAINING   => 'Training',
+        self::TOUR       => 'Tour Token',
     ];
 }

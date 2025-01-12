@@ -3,11 +3,11 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Events\Expenses;
-use App\Models\Expense;
-use App\Models\Pirep;
 use App\Models\Enums\ExpenseType;
 use App\Models\Enums\FareType;
 use App\Models\Enums\PirepState;
+use App\Models\Expense;
+use App\Models\Pirep;
 
 class Expense_Airport
 {
@@ -69,8 +69,8 @@ class Expense_Airport
 
         // High Season Dates
         $pirep_year = $pirep->submitted_at->format('Y');
-        $season_s = $pirep_year . '05-01';
-        $season_e = $pirep_year . '10-31';
+        $season_s = $pirep_year.'05-01';
+        $season_e = $pirep_year.'10-31';
 
         // Low Cost Airline Check
         $lowcost = (in_array($pirep->airline->icao, $lc_carriers) || $pirep->route_code === 'AJ') ? true : false;
@@ -186,7 +186,7 @@ class Expense_Airport
                     'transaction_group' => $group,
                     'name'              => 'Landing Fee',
                     'multiplier'        => false,
-                    'charge_to_user'    => false
+                    'charge_to_user'    => false,
                 ]);
             }
         }
@@ -225,7 +225,7 @@ class Expense_Airport
                 }
                 // Apply Parking Fee Based on HOURS
                 if ($diff_hours >= 2 && $diff_hours <= 24) {
-                    $parking_note = $diff_hours . ' Hours';
+                    $parking_note = $diff_hours.' Hours';
                     $parking_fee = round($base_weight * $pf_base, 2);
                 }
                 // Apply Parking Fee Based on DAYS
@@ -236,7 +236,7 @@ class Expense_Airport
                         $diff_days = $pf_maxd;
                         // $max_note = ' | Max Rule Applied';
                     }
-                    $parking_note = $diff_days . ' Days';
+                    $parking_note = $diff_days.' Days';
                     // Apply Reduced Long Term Parking Base Fee For Hubs
                     if ($orig && $orig->hub == 1) {
                         $pf_base = round($pf_base * 0.50, 2);
@@ -251,9 +251,9 @@ class Expense_Airport
                         'type'              => ExpenseType::FLIGHT,
                         'amount'            => round($parking_fee + 84, 2),
                         'transaction_group' => $group,
-                        'name'              => 'Parking Fee (' . $parking_note . ')',
+                        'name'              => 'Parking Fee ('.$parking_note.')',
                         'multiplier'        => false,
-                        'charge_to_user'    => false
+                        'charge_to_user'    => false,
                     ]);
                 }
             }
@@ -300,7 +300,7 @@ class Expense_Airport
                         'transaction_group' => $group,
                         'name'              => 'Terminal Services',
                         'multiplier'        => false,
-                        'charge_to_user'    => false
+                        'charge_to_user'    => false,
                     ]);
                 }
             }
@@ -437,9 +437,9 @@ class Expense_Airport
                     'type'              => ExpenseType::FLIGHT,
                     'amount'            => $catering_fee,
                     'transaction_group' => $group,
-                    'name'              => $cat_note . ' Catering (' . $intdom . $cat_time . ')',
+                    'name'              => $cat_note.' Catering ('.$intdom.$cat_time.')',
                     'multiplier'        => false,
-                    'charge_to_user'    => false
+                    'charge_to_user'    => false,
                 ]);
             }
         }
@@ -510,9 +510,9 @@ class Expense_Airport
             'type'              => ExpenseType::FLIGHT,
             'amount'            => $price,
             'transaction_group' => 'Airport Fees',
-            'name'              => $nat . 'Airport Authority Fee (' . $apt_type . ')',
+            'name'              => $nat.'Airport Authority Fee ('.$apt_type.')',
             'multiplier'        => false,
-            'charge_to_user'    => false
+            'charge_to_user'    => false,
         ]);
     }
 
@@ -577,9 +577,9 @@ class Expense_Airport
             'type'              => ExpenseType::FLIGHT,
             'amount'            => $price,
             'transaction_group' => 'Airport Fees',
-            'name'              => 'Ground Handling Fee (' . $apt_type . ')',
+            'name'              => 'Ground Handling Fee ('.$apt_type.')',
             'multiplier'        => false,
-            'charge_to_user'    => false
+            'charge_to_user'    => false,
         ]);
     }
 }

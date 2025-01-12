@@ -3,8 +3,8 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Contracts\Listener;
-use App\Events\PirepFiled;
 use App\Events\PirepAccepted;
+use App\Events\PirepFiled;
 use App\Events\PirepRejected;
 use App\Models\Enums\AircraftStatus;
 use App\Models\Enums\PirepSource;
@@ -91,7 +91,7 @@ class Gen_Maintenance extends Listener
 
         // Save and ammend Log
         $maint->save();
-        Log::info('Disposable Special | Maintenance Records for ' . $aircraft->registration . ' (ID:' . $aircraft->id . ') increased Pirep ID:' . $pirep->id . ' ' . $op_type);
+        Log::info('Disposable Special | Maintenance Records for '.$aircraft->registration.' (ID:'.$aircraft->id.') increased Pirep ID:'.$pirep->id.' '.$op_type);
     }
 
     // Pirep Rejected
@@ -164,6 +164,6 @@ class Gen_Maintenance extends Listener
 
         // Save and ammend Log
         $maint->save();
-        Log::info('Disposable Special | Maintenance Records for ' . $aircraft->registration . ' (ID:' . $aircraft->id . ') decreased Pirep ID:' . $pirep->id . ' REJECTED');
+        Log::info('Disposable Special | Maintenance Records for '.$aircraft->registration.' (ID:'.$aircraft->id.') decreased Pirep ID:'.$pirep->id.' REJECTED');
     }
 }

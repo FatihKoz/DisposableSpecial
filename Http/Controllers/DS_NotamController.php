@@ -6,8 +6,8 @@ use App\Contracts\Controller;
 use App\Models\Airline;
 use App\Models\Airport;
 use Carbon\Carbon;
-use Modules\DisposableSpecial\Models\DS_Notam;
 use Illuminate\Http\Request;
+use Modules\DisposableSpecial\Models\DS_Notam;
 
 class DS_NotamController extends Controller
 {
@@ -41,7 +41,7 @@ class DS_NotamController extends Controller
             })->orderby('updated_at', 'desc')
             ->paginate(15);
 
-        $remove_array = array('<p>', '</p>', '<br>', '<br/>', '<br />', '<hr>', '<hr/>', '<hr />');
+        $remove_array = ['<p>', '</p>', '<br>', '<br/>', '<br />', '<hr>', '<hr/>', '<hr />'];
 
         return view('DSpecial::notams.index', [
             'notams' => $notams,
@@ -54,6 +54,7 @@ class DS_NotamController extends Controller
         if ($request->input('deletentm')) {
             DS_Notam::where('id', $request->input('deletentm'))->delete();
             flash()->warning('Notam Deleted !');
+
             return redirect(route('DSpecial.notam_admin'));
         }
 
@@ -66,6 +67,7 @@ class DS_NotamController extends Controller
 
             if (!isset($notam)) {
                 flash()->error('Notam Not Found !');
+
                 return redirect(route('DSpecial.notam_admin'));
             }
         }
@@ -81,9 +83,9 @@ class DS_NotamController extends Controller
     // Store Notam
     public function store(Request $request)
     {
-
         if (!$request->notam_title || !$request->notam_body || !$request->eff_start) {
             flash()->error('Title, Notam Body and Effective From fields are mandatory !');
+
             return redirect(route('DSpecial.notam_admin'));
         }
 
@@ -106,6 +108,7 @@ class DS_NotamController extends Controller
         );
 
         flash()->success('Notam Saved');
+
         return redirect(route('DSpecial.notam_admin'));
     }
 }

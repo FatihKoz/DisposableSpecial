@@ -3,8 +3,8 @@
 namespace Modules\DisposableSpecial\Awards;
 
 use App\Contracts\Award;
-use App\Models\Pirep;
 use App\Models\Enums\PirepState;
+use App\Models\Pirep;
 use Illuminate\Support\Facades\Log;
 
 class DSpecial_TestPilot extends Award
@@ -16,6 +16,7 @@ class DSpecial_TestPilot extends Award
     {
         if (!$start_date) {
             Log::error('Disposable Special | Test Pilot Award Date Not Set');
+
             return false;
         }
 

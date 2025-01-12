@@ -4,17 +4,17 @@ namespace Modules\DisposableSpecial\Http\Controllers;
 
 use App\Contracts\Controller;
 use App\Models\Airline;
-use App\Models\User;
 use App\Models\Enums\UserState;
+use App\Models\User;
 use App\Services\FinanceService;
 use App\Support\Money;
 use Carbon\Carbon;
-use Modules\DisposableSpecial\Models\Enums\DS_ItemCategory;
-use Modules\DisposableSpecial\Models\DS_Marketitem;
-use Modules\DisposableSpecial\Models\DS_Marketowner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Modules\DisposableSpecial\Models\DS_Marketitem;
+use Modules\DisposableSpecial\Models\DS_Marketowner;
+use Modules\DisposableSpecial\Models\Enums\DS_ItemCategory;
 use Modules\DisposableSpecial\Services\DS_NotificationServices;
 
 class DS_MarketController extends Controller
@@ -49,6 +49,7 @@ class DS_MarketController extends Controller
     {
         if (!$id) {
             flash()->error('Provide a user ID to proceed!');
+
             return back();
         }
 
@@ -68,6 +69,7 @@ class DS_MarketController extends Controller
         if ($request->input('itemdelete')) {
             DS_Marketitem::where('id', $request->input('itemdelete'))->delete();
             flash()->warning('Market item deleted!');
+
             return redirect(route('DSpecial.market_admin'));
         }
 
@@ -76,6 +78,7 @@ class DS_MarketController extends Controller
 
             if (!isset($item)) {
                 flash()->error('Market item not found!');
+
                 return redirect(route('DSpecial.market_admin'));
             }
         }
@@ -97,6 +100,7 @@ class DS_MarketController extends Controller
     {
         if (!$request->item_name || !$request->item_price || !$request->item_dealer) {
             flash()->error('Name, price and dealer fields are mandatory !');
+
             return back();
         }
 
@@ -119,6 +123,7 @@ class DS_MarketController extends Controller
         );
 
         flash()->success('Market item saved');
+
         return back();
     }
 
@@ -129,11 +134,13 @@ class DS_MarketController extends Controller
 
         if (!$item) {
             flash()->error('Item not found!');
+
             return back();
         }
 
         if ($item->limit > 0 && $item->owners_count >= $item->limit) {
             flash()->error('Item can not bought/gifted anymore! Usage limit reached.');
+
             return back();
         }
 
@@ -143,6 +150,7 @@ class DS_MarketController extends Controller
 
         if ($request->is_gift && !$gifted) {
             flash()->error('Target user not selected for gifting the item!');
+
             return back();
         }
 
@@ -150,24 +158,26 @@ class DS_MarketController extends Controller
         $amount = Money::createFromAmount($item->price);
         if ($buyer->journal->balance < $amount) {
             flash()->error('Not enough funds!');
+
             return back();
         }
 
         // Prepare columns
         if ($gifted) {
             $columns = ['marketitem_id' => $item->id, 'user_id' => $gifted->id];
-            $memo = 'Market gift payment for ' . $item->name;
+            $memo = 'Market gift payment for '.$item->name;
 
             // Check and abort if target user already owns the items
             $ownership_check = DS_Marketowner::where($columns)->count();
 
             if ($ownership_check > 0) {
                 flash()->info('User already owns the item!');
+
                 return back();
             }
         } else {
             $columns = ['marketitem_id' => $item->id, 'user_id' => $buyer->id];
-            $memo = 'Market payment for ' . $item->name;
+            $memo = 'Market payment for '.$item->name;
         }
 
         DS_Marketowner::create($columns);
@@ -179,7 +189,8 @@ class DS_MarketController extends Controller
             $DiscordSVC->MarketActionMessage($buyer, $item, $gifted);
         }
 
-        flash()->success('Transaction completed for ' . $item->name . ' | ' . $amount);
+        flash()->success('Transaction completed for '.$item->name.' | '.$amount);
+
         return back();
     }
 
@@ -204,13 +215,13 @@ class DS_MarketController extends Controller
             $airline->journal,
             $amount,
             $user,
-            $memo . ' UserID:' . $user->id,
+            $memo.' UserID:'.$user->id,
             'Market Actions',
             'market',
             Carbon::now()->format('Y-m-d')
         );
 
         // Note Transaction
-        Log::debug('Disposable Special | UserID:' . $user->id . ' Name:' . $user->name_private . ' charged for ' . $memo);
+        Log::debug('Disposable Special | UserID:'.$user->id.' Name:'.$user->name_private.' charged for '.$memo);
     }
 }

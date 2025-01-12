@@ -3,8 +3,8 @@
 namespace Modules\DisposableSpecial\Models;
 
 use App\Contracts\Model;
-use App\Models\User;
 use App\Models\Airline;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,7 +12,8 @@ use Kyslik\ColumnSortable\Sortable;
 
 class DS_Marketitem extends Model
 {
-    use SoftDeletes, Sortable;
+    use SoftDeletes;
+    use Sortable;
 
     public $table = 'disposable_marketitems';
 

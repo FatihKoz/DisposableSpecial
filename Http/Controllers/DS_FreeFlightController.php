@@ -6,12 +6,12 @@ use App\Contracts\Controller;
 use App\Models\Aircraft;
 use App\Models\Airline;
 use App\Models\Bid;
-use App\Models\Flight;
-use App\Models\Subfleet;
-use App\Models\User;
 use App\Models\Enums\AircraftState;
 use App\Models\Enums\AircraftStatus;
 use App\Models\Enums\FlightType;
+use App\Models\Flight;
+use App\Models\Subfleet;
+use App\Models\User;
 use App\Services\AirportService;
 use App\Services\FinanceService;
 use App\Services\UserService;
@@ -27,6 +27,7 @@ class DS_FreeFlightController extends Controller
     {
         if (DS_Setting('dspecial.freeflights_main', false) === false) {
             flash()->error('Web based Free Flights are disabled... Please select a flight from schedule');
+
             return redirect('/flights');
         }
 
@@ -56,7 +57,8 @@ class DS_FreeFlightController extends Controller
 
         // Check settings for financial settings (requirement, balance)
         if ($ff_finance && $user->journal->balance < $ff_balance) {
-            flash()->error('Not enough balance to perform a free flight. ' . $ff_balance . ' is required to proceed! Please select a flight from schedule...');
+            flash()->error('Not enough balance to perform a free flight. '.$ff_balance.' is required to proceed! Please select a flight from schedule...');
+
             return redirect('/flights');
         }
 
@@ -108,7 +110,7 @@ class DS_FreeFlightController extends Controller
 
         $aircraft = Aircraft::withCount($withCount)->with('airline')
             ->where($ac_where)
-            ->when(($settings['ac_rank'] || $settings['ac_rating'] || $settings['pilot_company']), function ($query) use ($allowed_sf) {
+            ->when($settings['ac_rank'] || $settings['ac_rating'] || $settings['pilot_company'], function ($query) use ($allowed_sf) {
                 return $query->whereIn('subfleet_id', $allowed_sf);
             })
             ->when($settings['sb_block'], function ($query) {
@@ -124,14 +126,14 @@ class DS_FreeFlightController extends Controller
             $select2data = [];
             $select2data[] = ['id' => 0, 'text' => __('DSpecial::common.selectac')];
             foreach ($aircraft as $ac) {
-                $text = $ac->airline->icao . ' | ' . $ac->ident;
+                $text = $ac->airline->icao.' | '.$ac->ident;
 
                 if ($ac->registration != $ac->name) {
-                    $text = $text . ' ' . $ac->name;
+                    $text = $text.' '.$ac->name;
                 }
 
                 if ($ac->fuel_onboard[$units['fuel']] > 0) {
-                    $text = $text . ' | ' . __('DSpecial::common.fuelob') . ': ' . DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
+                    $text = $text.' | '.__('DSpecial::common.fuelob').': '.DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
                 }
 
                 $select2data[] = ['id' => $ac->id, 'text' => $text];
@@ -144,14 +146,14 @@ class DS_FreeFlightController extends Controller
                 $list_aircraft = $aircraft->whereIn('subfleet_id', $fleet_list[$airline->id]);
                 $airline_fleet[$airline->icao][] = ['id' => 0, 'text' => __('DSpecial::common.selectac')];
                 foreach ($list_aircraft as $ac) {
-                    $text = $ac->airline->icao . ' | ' . $ac->ident;
+                    $text = $ac->airline->icao.' | '.$ac->ident;
 
                     if ($ac->registration != $ac->name) {
-                        $text = $text . ' ' . $ac->name;
+                        $text = $text.' '.$ac->name;
                     }
 
                     if ($ac->fuel_onboard[$units['fuel']] > 0) {
-                        $text = $text . ' | ' . __('DSpecial::common.fuelob') . ': ' . DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
+                        $text = $text.' | '.__('DSpecial::common.fuelob').': '.DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
                     }
 
                     $airline_fleet[$airline->icao][] = ['id' => $ac->id, 'text' => $text];
@@ -170,7 +172,7 @@ class DS_FreeFlightController extends Controller
                 'flight_type'    => 'E',
                 'route_code'     => 'PF',
                 'user_id'        => $user->id,
-                'notes'          => $user->ident . ' - ' . $user->name_private,
+                'notes'          => $user->ident.' - '.$user->name_private,
                 'dpt_airport_id' => $user_loc ?? 'ZZZZ',
                 'arr_airport_id' => $user->home_airport_id ?? 'ZZZZ',
                 'level'          => null,
@@ -178,7 +180,7 @@ class DS_FreeFlightController extends Controller
                 'route'          => null,
                 'days'           => null,
                 'active'         => 0,
-                'visible'        => 0
+                'visible'        => 0,
             ]
         );
 
@@ -267,7 +269,7 @@ class DS_FreeFlightController extends Controller
         Bid::firstorCreate(
             [
                 'user_id'   => $request->user_id,
-                'flight_id' => $request->ff_id
+                'flight_id' => $request->ff_id,
             ],
             [
                 'user_id'     => $request->user_id,
@@ -278,7 +280,7 @@ class DS_FreeFlightController extends Controller
 
         if ($ff_finance) {
             $user = User::with('airline', 'journal')->find(Auth::id());
-            $memo = 'FreeFlight ' . $freeflight->dpt_airport_id . '-' . $freeflight->arr_airport_id . ' ' . Carbon::now()->format('ymdHi');
+            $memo = 'FreeFlight '.$freeflight->dpt_airport_id.'-'.$freeflight->arr_airport_id.' '.Carbon::now()->format('ymdHi');
             $this->ChargeForFreeFlight($user, $ff_cost, $memo);
             flash()->success('Transaction Completed... Personal Flight Updated & Bid Inserted');
         } else {
@@ -287,14 +289,13 @@ class DS_FreeFlightController extends Controller
 
         // Check if SimBrief is enabled and redirect to planning form or to bids page
         if (!empty(setting('simbrief.api_key'))) {
-            $sblink = '?flight_id=' . $request->ff_id;
+            $sblink = '?flight_id='.$request->ff_id;
             if ($request->ff_aircraft != '0') {
-                $sblink .= '&aircraft_id=' . $request->ff_aircraft;
+                $sblink .= '&aircraft_id='.$request->ff_aircraft;
             }
 
-            return redirect(route('frontend.simbrief.generate') . $sblink);
+            return redirect(route('frontend.simbrief.generate').$sblink);
         } else {
-
             return redirect(route('frontend.flights.bids'));
         }
     }
@@ -319,13 +320,13 @@ class DS_FreeFlightController extends Controller
             $user->airline->journal,
             $amount,
             $user,
-            $memo . ' UserID:' . $user->id,
+            $memo.' UserID:'.$user->id,
             'FreeFlight Fees',
             'freeflight',
             Carbon::now()->format('Y-m-d')
         );
 
         // Note Transaction
-        Log::debug('Disposable Special | UserID:' . $user->id . ' Name:' . $user->name_private . ' charged for FreeFlight ' . $memo);
+        Log::debug('Disposable Special | UserID:'.$user->id.' Name:'.$user->name_private.' charged for FreeFlight '.$memo);
     }
 }

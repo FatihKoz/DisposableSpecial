@@ -82,7 +82,7 @@ class Gen_RandomFlights
             $user->journal,
             $amount,
             $user,
-            'Flight Reward (Pirep: ' . $pirep->id . ')',
+            'Flight Reward (Pirep: '.$pirep->id.')',
             $group,
             'rewards',
             $today
@@ -92,13 +92,13 @@ class Gen_RandomFlights
             $airline->journal,
             $amount,
             $user,
-            'Flight Reward (' . $user->name_private . ' Pirep: ' . $pirep->id . ')',
+            'Flight Reward ('.$user->name_private.' Pirep: '.$pirep->id.')',
             $group,
             'rewards',
             $today
         );
 
         // Ammend Log
-        Log::debug('Disposable Special | ' . $user->name_private . ' rewarded ' . $amount . ' for ' . $group . ' completion');
+        Log::debug('Disposable Special | '.$user->name_private.' rewarded '.$amount.' for '.$group.' completion');
     }
 }

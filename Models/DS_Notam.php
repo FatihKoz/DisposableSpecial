@@ -44,15 +44,15 @@ class DS_Notam extends Model
         $serial = str_pad($this->id, 4, '0', STR_PAD_LEFT);
 
         if (isset($this->ref_airline)) {
-            $serial = 'C' . $serial;
+            $serial = 'C'.$serial;
         } elseif (isset($this->ref_airport)) {
-            $serial = 'A' . $serial;
+            $serial = 'A'.$serial;
         }
 
-        $serial .= '/' . $this->created_at->format('y');
+        $serial .= '/'.$this->created_at->format('y');
 
         if (isset($this->ref_notamid)) {
-            $serial .= ' NOTAMR ' . str_pad($this->ref_notamid, 4, '0', STR_PAD_LEFT);
+            $serial .= ' NOTAMR '.str_pad($this->ref_notamid, 4, '0', STR_PAD_LEFT);
         } else {
             $serial .= ' NOTAMN';
         }
@@ -72,6 +72,7 @@ class DS_Notam extends Model
                 $from .= '0000';
             }
         }
+
         return $from;
     }
 
@@ -87,6 +88,7 @@ class DS_Notam extends Model
                 $until .= '2359';
             }
         }
+
         return $until;
     }
 

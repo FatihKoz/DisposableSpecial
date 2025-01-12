@@ -3,12 +3,12 @@
 namespace Modules\DisposableSpecial\Widgets;
 
 use App\Contracts\Widget;
-use App\Models\Pirep;
 use App\Models\Enums\PirepState;
 use App\Models\Enums\PirepStatus;
-use Modules\DisposableSpecial\Models\DS_Tour;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Pirep;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Modules\DisposableSpecial\Models\DS_Tour;
 
 class TourProgress extends Widget
 {
@@ -61,7 +61,7 @@ class TourProgress extends Widget
                     // Change the progress bar style and add reminder for closure
                     $diff = $tour->end_date->diffInDays($now);
                     if ($diff < $warn_days) {
-                        $reminder_text = '| Last ' . $diff . ' days until closure !';
+                        $reminder_text = '| Last '.$diff.' days until closure !';
                         $warning_style = 'progress-bar-striped';
                     } else {
                         $reminder_text = null;

@@ -35,8 +35,7 @@ class DS_MissionController extends Controller
         $fr_missions = [];
 
         foreach ($aircraft as $ac) {
-
-            $valid_until =  $ac->landing_time->addDays($basereturn);
+            $valid_until = $ac->landing_time->addDays($basereturn);
             $hub_id = filled($ac->hub_id) ? $ac->hub_id : optional($ac->subfleet)->hub_id;
 
             $where = [
@@ -46,7 +45,6 @@ class DS_MissionController extends Controller
             ];
 
             if ($hub_id && $valid_until > $now && $ac->airport_id != $hub_id) {
-
                 // Find flights between airports and randomly pick one
                 $flt = Flight::with('airline')->where($where)->inRandomOrder()->first();
 
@@ -79,9 +77,9 @@ class DS_MissionController extends Controller
     // Store Mission (add/update to missions table for user)
     public function store(Request $request)
     {
-
         if (!$request->aircraft_id || !$request->flight_id) {
             flash()->error('Aircraft and Flight info are required for Missions!');
+
             return back();
         }
 
@@ -104,6 +102,7 @@ class DS_MissionController extends Controller
         );
 
         flash()->success('Mission Saved');
+
         return back();
     }
 }

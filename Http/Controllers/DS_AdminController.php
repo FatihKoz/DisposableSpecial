@@ -6,10 +6,10 @@ use App\Contracts\Controller;
 use App\Models\Aircraft;
 use App\Models\Airport;
 use App\Models\Bid;
+use App\Models\Enums\PirepState;
 use App\Models\Flight;
 use App\Models\Pirep;
 use App\Models\SimBrief;
-use App\Models\Enums\PirepState;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -23,6 +23,7 @@ class DS_AdminController extends Controller
     {
         if (filled($request->input('action'))) {
             $this->AdminActions($request->input('action'), $request);
+
             return redirect()->route('DSpecial.admin');
         }
 
@@ -55,11 +56,12 @@ class DS_AdminController extends Controller
             if (!$setting) {
                 continue;
             }
-            Log::debug('Disposable Special | ' . $setting->group . ' setting for ' . $setting->name . ' changed to ' . $value);
+            Log::debug('Disposable Special | '.$setting->group.' setting for '.$setting->name.' changed to '.$value);
             DB::table('disposable_settings')->where(['id' => $setting->id])->update(['value' => $value]);
         }
 
-        flash()->success($section . ' settings saved');
+        flash()->success($section.' settings saved');
+
         return redirect(route('DSpecial.admin'));
     }
 
@@ -85,7 +87,7 @@ class DS_AdminController extends Controller
                     $airport->$fuel_type = round(($airport->$fuel_type * $percentage) / 100, 3);
                     $airport->save();
                 }
-                flash()->success('All ' . $fuel_name . ' prices updated (' . $airports->count() . ' airports affected)');
+                flash()->success('All '.$fuel_name.' prices updated ('.$airports->count().' airports affected)');
             } else {
                 flash()->info('Nothing done! Prices remain same... Check your inputs');
             }

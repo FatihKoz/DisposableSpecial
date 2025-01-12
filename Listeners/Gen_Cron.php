@@ -3,13 +3,13 @@
 namespace Modules\DisposableSpecial\Listeners;
 
 use App\Contracts\Listener;
-use App\Events\CronFiveMinute;
 use App\Events\CronFifteenMinute;
-use App\Events\CronThirtyMinute;
+use App\Events\CronFiveMinute;
 use App\Events\CronHourly;
-use App\Events\CronNightly;
-use App\Events\CronWeekly;
 use App\Events\CronMonthly;
+use App\Events\CronNightly;
+use App\Events\CronThirtyMinute;
+use App\Events\CronWeekly;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
@@ -21,14 +21,14 @@ use Modules\DisposableSpecial\Services\DS_NotificationServices;
 class Gen_Cron extends Listener
 {
     public static $callbacks = [
-        CronFiveMinute::class => 'handle_05min',
+        CronFiveMinute::class    => 'handle_05min',
         CronFifteenMinute::class => 'handle_15min',
-        CronThirtyMinute::class => 'handle_30min',
-        CronHourly::class  => 'handle_hourly',
-        CronNightly::class => 'handle_nightly',
-        CronWeekly::class => 'handle_weekly',
-        CronMonthly::class => 'handle_monthly',
-        Registered::class => 'handle_newuser',
+        CronThirtyMinute::class  => 'handle_30min',
+        CronHourly::class        => 'handle_hourly',
+        CronNightly::class       => 'handle_nightly',
+        CronWeekly::class        => 'handle_weekly',
+        CronMonthly::class       => 'handle_monthly',
+        Registered::class        => 'handle_newuser',
     ];
 
     // Cron 5 mins
@@ -113,6 +113,6 @@ class Gen_Cron extends Listener
 
     public function DS_WriteToLog($text = null)
     {
-        Log::debug('Disposable Special | ' . $text);
+        Log::debug('Disposable Special | '.$text);
     }
 }

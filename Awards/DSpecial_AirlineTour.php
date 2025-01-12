@@ -3,8 +3,8 @@
 namespace Modules\DisposableSpecial\Awards;
 
 use App\Contracts\Award;
-use App\Models\Pirep;
 use App\Models\Enums\PirepState;
+use App\Models\Pirep;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableSpecial\Models\DS_Tour;
@@ -18,6 +18,7 @@ class DSpecial_AirlineTour extends Award
     {
         if (!$tour_code) {
             Log::error('Disposable Special | Tour Code Not Set !');
+
             return false;
         }
 
@@ -26,17 +27,20 @@ class DSpecial_AirlineTour extends Award
         if (filled($tour)) {
             if (Carbon::now()->between($tour->start_date->startOfDay(), $tour->end_date->endOfDay()) === false) {
                 // Current date is not between tour start/end dates
-                Log::debug('Disposable Special | ' . $tour_code . ' is ended or not started yet, award check should be disabled');
+                Log::debug('Disposable Special | '.$tour_code.' is ended or not started yet, award check should be disabled');
+
                 return false;
             }
             if (blank($tour->tour_airline)) {
                 // Airline not defined, this may be an open tour
                 Log::error('Disposable Special | Airline Tour Award class is not designed for Open Tour checks');
+
                 return false;
             }
         } else {
             // Tour not found or not active
-            Log::debug('Disposable Special | ' . $tour_code . ' Tour not active or not found');
+            Log::debug('Disposable Special | '.$tour_code.' Tour not active or not found');
+
             return false;
         }
 
@@ -54,13 +58,14 @@ class DSpecial_AirlineTour extends Award
             'airline_id' => $tour->tour_airline,
             'state'      => PirepState::ACCEPTED,
             ['submitted_at', '>=', $tour->start_date],
-            ['submitted_at', '<=', $tour->end_date]
+            ['submitted_at', '<=', $tour->end_date],
         ];
 
         $ordered_user_pireps = Pirep::where($pirep_where)->whereNotNull('route_leg')->orderBy('submitted_at', 'asc')->pluck('route_leg')->toArray();
 
         if (count($ordered_user_pireps) == 0) {
-            Log::debug('Disposable Special | User ID:' . $user_id . ' not participating ' . $tour_code . ' tour');
+            Log::debug('Disposable Special | User ID:'.$user_id.' not participating '.$tour_code.' tour');
+
             return false;
         }
 
@@ -71,7 +76,8 @@ class DSpecial_AirlineTour extends Award
         // If the intersection of arrays do not give what we want, return false
         // No need to proceed and do a flight based check
         if (count($ordered_tour_flights) != count($pirep_order_check)) {
-            Log::debug('Disposable Special | User ID:' . $user_id . ' > ' . $tour->tour_code . ' legs not completed or not flown in correct order');
+            Log::debug('Disposable Special | User ID:'.$user_id.' > '.$tour->tour_code.' legs not completed or not flown in correct order');
+
             return false;
         } elseif (count($ordered_tour_flights) == count($pirep_order_check) && $deep_check === false) {
             return true;
@@ -80,7 +86,7 @@ class DSpecial_AirlineTour extends Award
         // We passed all basic checks, now it is time for a per flight check
         // This takes time and slightly slow
         if ($deep_check === true) {
-            Log::debug('Disposable Special | ' . $tour->tour_code . ' Tour has start/end dates defined for legs, deep checks enabled');
+            Log::debug('Disposable Special | '.$tour->tour_code.' Tour has start/end dates defined for legs, deep checks enabled');
             $tour->loadMissing('legs');
             $pirep_count = 0;
 
@@ -97,7 +103,7 @@ class DSpecial_AirlineTour extends Award
                     'arr_airport_id' => $fl->arr_airport_id,
                     'state'          => PirepState::ACCEPTED,
                     ['submitted_at', '>=', $start_date],
-                    ['submitted_at', '<=', $end_date]
+                    ['submitted_at', '<=', $end_date],
                 ];
 
                 $pirep_check = Pirep::where($where)->count();
