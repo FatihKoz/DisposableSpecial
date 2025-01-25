@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request as Req;
+use Nwidart\Modules\Facades\Module;
 
 class DS_AdminController extends Controller
 {
@@ -38,6 +39,7 @@ class DS_AdminController extends Controller
             ->get();
 
         return view('DSpecial::admin.index', [
+            'details'    => $this->Module_Details('DisposableSpecial'),
             'diversions' => $diversions,
             'settings'   => $settings,
         ]);
@@ -247,5 +249,29 @@ class DS_AdminController extends Controller
         if (!empty($output)) {
             Log::info($output);
         }
+    }
+
+    // Read module.json file
+    // Return laravel collection
+    public function Module_Details($module_name = null)
+    {
+        $details = collect();
+        $file = isset($module_name) ? base_path().'/modules/'.$module_name.'/module.json' : null;
+
+        if (!is_file($file)) {
+            return $details;
+        }
+
+        $contents = json_decode(file_get_contents($file));
+
+        $details->name = isset($contents->name) ? $contents->name : $module_name;
+        $details->description = isset($contents->description) ? $contents->description : null;
+        $details->version = isset($contents->version) ? $contents->version : null;
+        $details->readme_url = isset($contents->readme_url) ? $contents->readme_url : null;
+        $details->license_url = isset($contents->license_url) ? $contents->license_url : null;
+        $details->attribution = isset($contents->attribution) ? $contents->attribution : null;
+        $details->active = Module::isEnabled($contents->name);
+
+        return $details;
     }
 }

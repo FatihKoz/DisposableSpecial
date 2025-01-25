@@ -359,6 +359,10 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+25.JAN.25
+
+* Added version info to module admin area  
+
 12.JAN.25
 
 * Version rounding and required minimum phpVMS version change

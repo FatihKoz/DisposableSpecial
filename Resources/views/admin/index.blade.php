@@ -11,7 +11,7 @@
         <p><b>Details about the module can be found in the README.md file</b></p>
         <p>&bull; <a href="https://github.com/FatihKoz/DisposableSpecial#readme" target="_blank">Online Readme</a></p>
         <hr>
-        <p><a href="https://github.com/FatihKoz" target="_blank">&copy; B.Fatih KOZ</a></p>
+        <p>@if(filled($details->version)) Version: {{ $details->version }} @endif <a href="https://github.com/FatihKoz" target="_blank">&copy; B.Fatih KOZ</a></p>
       </div>
     </div>
   </div>
