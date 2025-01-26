@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Modules\DisposableSpecial\Models\DS_Marketitem;
 use Modules\DisposableSpecial\Models\DS_Marketowner;
 use Modules\DisposableSpecial\Models\DS_Tour;
@@ -230,16 +231,30 @@ class DS_TourController extends Controller
             $subfleet_ids = $request->input('sfid');
             $this->ManageTourSubfleets($action, explode(',', $tour_codes), explode(',', $subfleet_ids));
 
-            return redirect(route('DSpecial.tour_admin'));
+            if (filled($request->input('touredit'))) {
+                return redirect(route('DSpecial.tour_admin').'?touredit='.$request->input('touredit'));
+            } else {
+                return redirect(route('DSpecial.tour_admin'));
+            }
         }
 
         if ($request->input('touredit')) {
-            $tour = DS_Tour::where('id', $request->input('touredit'))->first();
+            $tour = DS_Tour::with('legs.subfleets')->where('id', $request->input('touredit'))->first();
 
             if (!isset($tour)) {
                 flash()->error('Tour Not Found !');
 
                 return redirect(route('DSpecial.tour_admin'));
+            }
+
+            $toursfs = collect();
+
+            if ($tour->legs->count() > 0) {
+                foreach ($tour->legs as $flt) {
+                    foreach ($flt->subfleets as $sf) {
+                        $toursfs->push($sf->id);
+                    }
+                }
             }
         }
 
@@ -249,6 +264,8 @@ class DS_TourController extends Controller
             'subfleets' => $subfleets,
             'tokens'    => $tokens,
             'tour'      => isset($tour) ? $tour : null,
+            'toursfs'   => isset($tour) ? $toursfs->unique()->toArray() : array(),
+            'units'     => DS_GetUnits(),
         ]);
     }
 
@@ -301,6 +318,7 @@ class DS_TourController extends Controller
             $pirep->route_leg = null;
             $pirep->save();
             flash()->success('Tour details removed from pirep');
+            Log::debug('Disposable Special | Tour details removed from Pirep ID:'.$pirep_id);
         } else {
             flash()->error('This is not a tour report');
         }
@@ -333,9 +351,9 @@ class DS_TourController extends Controller
             }
 
             if (!isset($error)) {
-                flash()->success('Subfleets assigned successfully to '.implode(', ', $tour_codes).' flights !');
+                flash()->success('Selected Subfleets assigned successfully to '.implode(', ', $tour_codes).' flights !');
             } else {
-                flash()->error('Some subfleets were already assigned to '.implode(', ', $tour_codes).' flights !');
+                flash()->error('Some of the selected subfleets were already assigned to '.implode(', ', $tour_codes).' flights !');
             }
         }
 
@@ -352,10 +370,114 @@ class DS_TourController extends Controller
 
             if ($sf_count > 0) {
                 DB::table('flight_subfleet')->whereIn('subfleet_id', $subfleet_ids)->whereIn('flight_id', $flights)->delete();
-                flash()->success('Subfleets removed successfully to '.implode(', ', $tour_codes).' flights !');
+                flash()->success('Selected Subfleets removed successfully from '.implode(', ', $tour_codes).' flights !');
             } else {
-                flash()->error('Subfleets were not assigned to '.implode(', ', $tour_codes).' flights !');
+                flash()->error('Selected Subfleets were not assigned, thus not removed from '.implode(', ', $tour_codes).' flights !');
             }
+        }
+    }
+
+    // Handle Leg Actions
+    public function leg_actions(Request $request)
+    {
+        if ($request->button_delete === 'delete_all') {
+            $action = 'delete';
+        } elseif ($request->button_clean === 'clean_all') {
+            $action = 'clean';
+        } elseif ($request->button_own === 'own_all') {
+            $action = 'own';
+        } elseif ($request->button_own === 'drop_all') {
+            $action = 'drop';
+        } elseif ($request->button_activate === 'activate_all') {
+            $action = 'activate';
+        } elseif ($request->button_activate === 'deactivate_all') {
+            $action = 'deactivate';
+        } else {
+            $action = null;
+            flash()->error('No action selected !');
+        }
+
+        $tour = DS_Tour::where('id', $request->tour_id)->first();
+
+        if ($action === 'delete') {
+            $this->DeleteLegs($action, $tour);
+        }
+
+        if ($action === 'clean') {
+            $this->CleanNotes($action, $tour);
+        }
+
+        if ($action === 'activate' || $action === 'deactivate') {
+            $this->ActivateLegs($action, $tour);
+        }
+
+        if ($action === 'own' || $action === 'drop') {
+            $this->LegOwnership($action, $tour);
+        }
+
+        return redirect(route('DSpecial.tour_admin').'?touredit='.$tour->id);
+    }
+
+    // Own tour legs for keeping them safe from csv import deletions
+    public function LegOwnership($action = null, $tour = null)
+    {
+        if (filled($tour) && $action === 'own') {
+            $ownership = Flight::where('route_code', $tour->tour_code)->update(['owner_type' => 'DS_Tour', 'owner_id' => $tour->id]);
+            Log::debug('Disposable Special | Leg ownership of '.$tour->tour_code.' added for '.$ownership.' legs');
+            flash()->info('Tour leg ownership completed');
+        } elseif (filled($tour) && $action === 'drop') {
+            $ownership = Flight::where('route_code', $tour->tour_code)->update(['owner_type' => null, 'owner_id' => null]);
+            Log::debug('Disposable Special | Leg ownership of '.$tour->tour_code.' removed for '.$ownership.' legs');
+            flash()->info('Tour leg ownership removed');
+        } else {
+            flash()->error('Tour not specified !');
+        }
+    }
+
+    // Delete Legs of a Tour
+    public function DeleteLegs($action = null, $tour = null)
+    {
+        $selected_tour = DS_Tour::where('id', $tour->id)->first();
+
+        if (filled($selected_tour) && $action === 'delete') {
+            $deleted = $selected_tour->legs()->forceDelete();
+            Log::debug('Disposable Special | '.$deleted.' legs of '.$selected_tour->tour_code.' deleted');
+            flash()->info($selected_tour->tour_code.' legs deleted');
+        } else {
+            flash()->error('Tour not found !');
+        }
+    }
+
+    // Clean Notes/Remarks of Tour Legs
+    public function CleanNotes($action = null, $tour = null)
+    {
+        $selected_tour = DS_Tour::where('id', $tour->id)->first();
+
+        if (filled($selected_tour) && $action === 'clean') {
+            $cleaned = $selected_tour->legs()->update(['notes' => null]);
+            Log::debug('Disposable Special | Notes/Remarks of '.$cleaned.' legs for '.$selected_tour->tour_code.' cleaned');
+            flash()->info($selected_tour->tour_code.' leg notes/remarls cleaned');
+        } else {
+            flash()->error('Tour not found !');
+        }
+    }
+
+    // Activate Legs of a Tour
+    public function ActivateLegs($action = null, $tour = null)
+    {
+        $visibility = DS_Setting('dspecial.keep_tf_invisible', false) ? 0 : 1;
+        $selected_tour = DS_Tour::where('id', $tour->id)->first();
+
+        if (filled($selected_tour) && $action === 'activate') {
+            $legs = $selected_tour->legs()->update(['active' => 1, 'visible' => $visibility]);
+            Log::debug('Disposable Special | '.$legs.' legs of '.$selected_tour->tour_code.' activated');
+            flash()->info($selected_tour->tour_code.' legs activated');
+        } elseif (filled($selected_tour) && $action === 'deactivate') {
+            $legs = $selected_tour->legs()->update(['active' => 0, 'visible' => 0]);
+            Log::debug('Disposable Special | '.$legs.' legs of '.$selected_tour->tour_code.' deactivated');
+            flash()->info('Tour legs deactivated');
+        } else {
+            flash()->error('Tour not found !');
         }
     }
 }

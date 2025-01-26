@@ -76,6 +76,7 @@ class Gen_Cron extends Listener
     public function handle_nightly()
     {
         $CronSVC = app(DS_CronServices::class);
+        $CronSVC->OwnTourFlights();
         $CronSVC->ProcessTours();
         $CronSVC->DeleteOldAcars(DS_Setting('dspecial.old_acars_posreps', 0));
         $CronSVC->DeleteOldSimBrief(DS_Setting('dspecial.old_simbrief_ofp', 0));

@@ -210,6 +210,8 @@ If you have a multiple airline setup, then you can setup your tours for your air
 
 Tours can be limited by market powered "Tour Token"s, a token can be defined/used for multiple tours (but a tour can not have multiple tokens). Users without required tokens can not visit the tour details pages at all.  
 
+Tour Management page offers quick solutions for deleting tour legs, making legs active/passive and easy access for editing individual legs, also "ownership" logic is implemented both manually and via nightly cron.  
+
 ### How to use NOTAMs ?
 
 Well, it is totaly up to you. They will be displayed close to real life NOTAM format, you can use them as News like or inform your pilots about procedures for a special airport etc. Just check module admin page for Notam management.
@@ -358,6 +360,10 @@ _Not providing attribution link will result in removal of access and no support 
 * Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+26.JAN.25
+
+* Improved Tour Legs handling via module admin page (added compatibility for latest v7 changes)
 
 25.JAN.25
 

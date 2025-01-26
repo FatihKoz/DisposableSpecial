@@ -118,6 +118,7 @@ class DS_ServiceProvider extends ServiceProvider
             // Tour Admin Routes
             Route::get('dtour_admin', 'DS_TourController@index_admin')->name('tour_admin')->middleware('ability:admin|admin-access,addons|modules');
             Route::post('dtour_store', 'DS_TourController@store')->name('tour_store')->middleware('ability:admin|admin-access,addons|modules');
+            Route::post('dtour_legactions', 'DS_TourController@leg_actions')->name('tour_legactions')->middleware('ability:admin|admin-access,addons|modules');
             Route::get('dtours/remove/{pirep_id}', 'DS_TourController@remove_from_pirep')->name('tour_remove')->middleware('ability:admin|admin-access,addons|modules|pireps');
         });
     }

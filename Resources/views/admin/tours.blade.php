@@ -4,7 +4,7 @@
 @section('content')
   <div class="card border-blue-bottom" style="margin-left:5px; margin-right:5px; margin-bottom:5px;">
     <div class="content">
-      <p>Only Tour Details are defined (or edited) here, legs must be inserted from Admin/Flights or better should be csv imported to ease the process.</p>
+      <p>Only Tour Details are defined and edited here, legs must be inserted from Admin/Flights or better should be csv imported to ease the process.</p>
       <p>Tour Code defined here <b>MUST MATCH</b> the flight/route code and flight/route legs must be defined for tours to work properly.</p>
       <p>Active tours will be displayed at Tours page according to Start and End dates provided here.</p>
       <p>&nbsp;</p>
@@ -88,6 +88,72 @@
         </div>
       </form>
     </div>
+    @if(filled(optional($tour)->legs))
+      <div class="row text-center" style="margin: 5px;">
+        <h4 style="margin: 5px; padding:0px;"><b>Tour Legs</b></h4>
+      </div>
+      <div class="card border-blue-bottom" style="padding:10px">
+        <form class="form text-right" style="margin-bottom: 2px" method="post" action="{{ route('DSpecial.tour_legactions') }}">
+          @csrf
+          <input type="hidden" name="tour_id" value="{{ $tour->id }}">
+          <input type="hidden" name="tour_code" value="{{ $tour->tour_code }}">
+          <button class="btn btn-danger pl-1 mb-1" type="submit" name="button_delete" value="delete_all" onclick="return confirm('Are you really sure ?\nThis action is irreversible !!!')">Delete Legs</button>
+          <button class="btn btn-secondary pl-1 mb-1" type="submit" name="button_clean" value="clean_all" onclick="return confirm('Are you really sure ?\nThis action is irreversible !!!')">Clean Notes/Remarks of Legs</button>
+          <button class="btn btn-primary pl-1 mb-1" type="submit" name="button_activate" value="activate_all">Activate Legs</button>
+          <button class="btn btn-warning pl-1 mb-1" type="submit" name="button_activate" value="deactivate_all">De-Activate Legs</button>
+          <button class="btn btn-success pl-1 mb-1" type="submit" name="button_own" value="own_all">Set Ownership</button>
+          <button class="btn btn-warning pl-1 mb-1" type="submit" name="button_own" value="drop_all">Drop Ownership</button>
+        </form>
+        <table class="table table-sm table-striped text-left mt-2 mb-0">
+          <tr>
+            <th>Flight Number</th>
+            <th>Code</th>
+            <th>Leg</th>
+            <th>Origin</th>
+            <th>Destination</th>
+            <th>Distance</th>
+            <th>Duration</th>
+            <th class="text-center">Leg Dates (UTC)</th>
+            <th class="text-center">Subfleets</th>
+            <th>Notes</th>
+            <th class="text-right">Details</th>
+            <th class="text-right">Actions</th>
+          </tr>
+          @foreach($tour->legs->sortBy('route_leg', SORT_NATURAL) as $leg)
+            <tr>
+              <td>{{ optional($leg->airline)->code.' '.$leg->flight_number}}</td>
+              <td>{{ $leg->route_code }}</td>
+              <td>{{ $leg->route_leg }}</td>
+              <td>{{ $leg->dpt_airport_id }}</td>
+              <td>{{ $leg->arr_airport_id }}</td>
+              <td>{{ $leg->distance->local(0).' '.$units['distance'] }}</td>
+              <td>{{ DS_ConvertMinutes($leg->flight_time) }}</td>
+              <td class="text-center">
+                @if(filled($leg->start_date) && filled($leg->end_date))
+                  {{ $leg->start_date->startOfDay()->format('l d.M.Y H:i') }} > {{ $leg->end_date->endOfDay()->format('l d.M.Y H:i') }}
+                @else
+                  <span title="Same with tour">--</span>
+                @endif
+              </td>
+              <td class="text-center">
+                @if($leg->subfleets->count() > 0)
+                  <span title="@foreach($leg->subfleets as $sf){{ $sf->type.' '.$sf->name }}@if(!$loop->last){{ ', '}}@endif @endforeach">{{ $leg->subfleets->count() }}</span>
+                @else
+                  <span title="No Subfleets Assigned, Open according to VA Settings">--</span>
+                @endif
+              </td>
+              <td>{{ $leg->notes }}</td>
+              <td class="text-right">
+                {{ $leg->active ? 'Active' : 'Inactive' }}, {{ $leg->visible ? 'Visible' : 'Not Visible' }}, {!! $leg->owner_id ? 'Owned' : '<span class="text-danger"><b>Not Owned</b></span>' !!}
+              </td>
+              <td class="text-right">
+                <a class="btn btn-sm btn-primary p-0 m-0" href="{{ route('admin.flights.edit', [$leg->id]) }}" target="_blank">Edit Flight</a>
+              </td>
+            </tr>
+          @endforeach
+        </table>
+      </div>
+    @endif
   </div>
   <div class="row text-center" style="margin: 5px;">
     <h4 style="margin: 5px; padding:0px;"><b>Tour Subfleet Management</b></h4>
@@ -99,7 +165,7 @@
           <label class="pl-1 mb-1" for="tour_id">Select Tour</label>
           <select id="tour_subfleet" class="form-control select2" multiple onchange="checksf()">
             @foreach($alltours->sortBy('tour_name') as $toursf)
-              <option value="{{ $toursf->tour_code }}">{{ $toursf->tour_name }} : {{ $toursf->tour_code }}</option>
+              <option value="{{ $toursf->tour_code }}" @if($toursf->id == request('touredit')) selected @endif>{{ $toursf->tour_name }} : {{ $toursf->tour_code }}</option>
             @endforeach
           </select>
         </div>
@@ -107,13 +173,13 @@
           <label class="pl-1 mb-1" for="tour_id">Select SubFleet</label>
           <select id="subfleet" class="form-control select2" multiple onchange="checksf()">
             @foreach($subfleets as $subfleet)
-              <option value="{{ $subfleet->id }}">{{ $subfleet->airline->icao }} | {{ $subfleet->name }} : {{ $subfleet->type }}</option>
+              <option value="{{ $subfleet->id }}" @if(in_array($subfleet->id, $toursfs)) selected @endif>{{ $subfleet->airline->icao }} | {{ $subfleet->name }} : {{ $subfleet->type }}</option>
             @endforeach
           </select>
         </div>
         <div class="col-sm-4">
           <a id="sfadd" href="" class="btn btn-primary pl-1 mb-1" style="margin-top: 25px; visibility: hidden;">Add</a>
-          <a id="sfremove" href="{{ route('DSpecial.tour_admin') }}" class="btn btn-secondary pl-1 mb-1" style="margin-top: 25px; visibility: hidden;">Remove</a>
+          <a id="sfremove" href="" class="btn btn-secondary pl-1 mb-1" style="margin-top: 25px; visibility: hidden;">Remove</a>
         </div>
       </div>
     </div>
@@ -164,9 +230,13 @@
       }
       const tcode = selectedTours.join(',');
       const sfid = selectedSubFleets.join(',');
-      const addlink = "?act=add&tcode=".concat(tcode,"&sfid=",sfid);
-      const removelink = "?act=remove&tcode=".concat(tcode,"&sfid=",sfid);
-
+      @if(filled(request('touredit')))
+        const addlink = "&act=add&tcode=".concat(tcode,"&sfid=",sfid);
+        const removelink = "&act=remove&tcode=".concat(tcode,"&sfid=",sfid);
+      @else
+        const addlink = "?act=add&tcode=".concat(tcode,"&sfid=",sfid);
+        const removelink = "?act=remove&tcode=".concat(tcode,"&sfid=",sfid);
+      @endif
       document.getElementById("sfadd").href = $sfaddlink.concat(addlink);
       document.getElementById("sfremove").href = $sfremovelink.concat(removelink);
     }
