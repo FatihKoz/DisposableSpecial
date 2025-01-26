@@ -284,6 +284,21 @@ class DS_TourController extends Controller
             return redirect(route('DSpecial.tour_admin'));
         }
 
+        if ($request->delete_tour === 'delete_tour' && filled($request->tour_code)) {
+            $flight_count = Flight::where('route_code', $request->tour_code)->count();
+
+            if ($flight_count > 0) {
+                flash()->error('Tour '.$request->tour_code.' has '.$flight_count.' legs, cannot delete !');
+
+                return redirect(route('DSpecial.tour_admin'));
+            }
+
+            DS_Tour::where('id', $request->id)->delete();
+            flash()->success('Tour Deleted');
+
+            return redirect(route('DSpecial.tour_admin'));
+        }
+
         DS_Tour::updateOrCreate(
             [
                 'id' => $request->id,

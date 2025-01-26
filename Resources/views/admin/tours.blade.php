@@ -83,6 +83,9 @@
             <label class="pl-1 mb-1" for="active">Active <input name="active" type="checkbox" @if($tour && $tour->active == 1) checked="true" @endif class="form-control" value="1"></label>
           </div>
           <div class="col-sm-10 text-right">
+            @if(isset($tour) && blank($tour->legs))
+              <button class="btn btn-danger pl-1 mb-1" type="submit" name="delete_tour" value="delete_tour" onclick="return confirm('Are you really sure ?\nThis action is irreversible !!!')">Delete Tour</button>
+            @endif
             <button class="btn btn-primary pl-1 mb-1" type="submit">@if($tour && $tour->id) Update @else Save @endif</button>
           </div>
         </div>
