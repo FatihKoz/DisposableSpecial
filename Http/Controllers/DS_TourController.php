@@ -264,7 +264,7 @@ class DS_TourController extends Controller
             'subfleets' => $subfleets,
             'tokens'    => $tokens,
             'tour'      => isset($tour) ? $tour : null,
-            'toursfs'   => isset($tour) ? $toursfs->unique()->toArray() : array(),
+            'toursfs'   => isset($tour) ? $toursfs->unique()->toArray() : [],
             'units'     => DS_GetUnits(),
         ]);
     }

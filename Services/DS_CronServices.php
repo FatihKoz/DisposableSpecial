@@ -117,9 +117,8 @@ class DS_CronServices
     public function OwnTourFlights()
     {
         $tours = DS_Tour::select('id', 'tour_code')->get();
-        
-        foreach($tours as $tour) {
-            
+
+        foreach ($tours as $tour) {
             $flights = Flight::where('route_code', $tour->tour_code)->update(['owner_id' => $tour->id, 'owner_type' => 'DS_Tour']);
             if (filled($flights) && $flights > 0) {
                 Log::info('Disposable Special | '.$flights.' Tour legs processed and owned by '.$tour->tour_code);
