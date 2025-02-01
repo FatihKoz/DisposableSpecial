@@ -361,6 +361,10 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+01.FEB.25
+
+* Added ability for exporting tour legs (as csv files), single leg deletion and tour deletion (only available when a tour has no legs)
+
 26.JAN.25
 
 * Improved Tour Legs handling via module admin page (added compatibility for latest v7 changes)

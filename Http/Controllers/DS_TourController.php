@@ -11,6 +11,7 @@ use App\Models\Pirep;
 use App\Models\Subfleet;
 use App\Models\User;
 use App\Models\UserAward;
+use App\Services\ExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -397,6 +398,8 @@ class DS_TourController extends Controller
     {
         if ($request->button_delete === 'delete_all') {
             $action = 'delete';
+        } elseif ($request->button_delete === 'delete_leg') {
+            $action = 'delete_leg';
         } elseif ($request->button_clean === 'clean_all') {
             $action = 'clean';
         } elseif ($request->button_own === 'own_all') {
@@ -407,6 +410,8 @@ class DS_TourController extends Controller
             $action = 'activate';
         } elseif ($request->button_activate === 'deactivate_all') {
             $action = 'deactivate';
+        } elseif ($request->button_export === 'export_legs') {
+            $action = 'export';
         } else {
             $action = null;
             flash()->error('No action selected !');
@@ -428,6 +433,20 @@ class DS_TourController extends Controller
 
         if ($action === 'own' || $action === 'drop') {
             $this->LegOwnership($action, $tour);
+        }
+
+        if ($action === 'export') {
+            $file_name = 'DS_Tour_'.$tour->tour_code.'_Legs_'.Carbon::now()->format('Ymd_His').'.csv';
+            $exportSVC = app(ExportService::class);
+            $path = $exportSVC->exportFlights($tour->legs);
+
+            return response()->download($path, $file_name, ['content-type' => 'text/csv'])->deleteFileAfterSend(true);
+        }
+
+        if ($action === 'delete_leg') {
+            $selected_leg = $tour->legs()->where('id', $request->leg_id)->first();
+            $selected_leg->forceDelete();
+            flash()->info('Leg '.$selected_leg->route_leg.' deleted');
         }
 
         return redirect(route('DSpecial.tour_admin').'?touredit='.$tour->id);

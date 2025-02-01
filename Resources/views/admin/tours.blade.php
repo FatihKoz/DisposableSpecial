@@ -100,6 +100,7 @@
           @csrf
           <input type="hidden" name="tour_id" value="{{ $tour->id }}">
           <input type="hidden" name="tour_code" value="{{ $tour->tour_code }}">
+          <button class="btn btn-success pl-1 mb-1" type="submit" name="button_export" value="export_legs">Export Legs (CSV)</button>
           <button class="btn btn-danger pl-1 mb-1" type="submit" name="button_delete" value="delete_all" onclick="return confirm('Are you really sure ?\nThis action is irreversible !!!')">Delete Legs</button>
           <button class="btn btn-secondary pl-1 mb-1" type="submit" name="button_clean" value="clean_all" onclick="return confirm('Are you really sure ?\nThis action is irreversible !!!')">Clean Notes/Remarks of Legs</button>
           <button class="btn btn-primary pl-1 mb-1" type="submit" name="button_activate" value="activate_all">Activate Legs</button>
@@ -150,7 +151,14 @@
                 {{ $leg->active ? 'Active' : 'Inactive' }}, {{ $leg->visible ? 'Visible' : 'Not Visible' }}, {!! $leg->owner_id ? 'Owned' : '<span class="text-danger"><b>Not Owned</b></span>' !!}
               </td>
               <td class="text-right">
-                <a class="btn btn-sm btn-primary p-0 m-0" href="{{ route('admin.flights.edit', [$leg->id]) }}" target="_blank">Edit Flight</a>
+                <form class="form" method="post" action="{{ route('DSpecial.tour_legactions') }}">
+                  @csrf
+                  <input type="hidden" name="tour_id" value="{{ $tour->id }}">
+                  <input type="hidden" name="tour_code" value="{{ $tour->tour_code }}">
+                  <input type="hidden" name="leg_id" value="{{ $leg->id }}">
+                  <a class="btn btn-sm btn-primary p-0 m-0" href="{{ route('admin.flights.edit', [$leg->id]) }}" target="_blank">Edit</a>
+                  <button class="btn btn-sm btn-danger p-0 m-0 ml-1" type="submit" name="button_delete" value="delete_leg" onclick="return confirm('Are you really sure ?\nThis action is irreversible !!!')">Delete</button>
+                </form>
               </td>
             </tr>
           @endforeach

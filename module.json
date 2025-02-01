@@ -2,7 +2,7 @@
     "name": "DisposableSpecial",
     "alias": "disposablespecial",
     "description": "phpVMS v7 module for Extended VA features like tours, assignments, maintenance etc.",
-    "version": "3.7.2",
+    "version": "3.7.3",
     "readme_url": "https://github.com/FatihKoz/DisposableSpecial?tab=readme-ov-file#readme",
     "license_url": "https://github.com/FatihKoz/DisposableSpecial?tab=License-1-ov-file#readme",
     "attribution": {
