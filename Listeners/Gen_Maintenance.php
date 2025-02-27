@@ -6,11 +6,10 @@ use App\Contracts\Listener;
 use App\Events\PirepAccepted;
 use App\Events\PirepFiled;
 use App\Events\PirepRejected;
-use App\Models\JournalTransaction;
 use App\Models\Enums\AircraftStatus;
 use App\Models\Enums\PirepSource;
+use App\Models\JournalTransaction;
 use Illuminate\Support\Facades\Log;
-use Modules\DisposableSpecial\Listeners\Expense_Maintenance;
 use Modules\DisposableSpecial\Models\DS_Maintenance;
 
 class Gen_Maintenance extends Listener

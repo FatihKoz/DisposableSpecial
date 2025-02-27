@@ -47,11 +47,10 @@ class Gen_RandomFlights
 
         // Mission Flights
         if ($reward_mis) {
-
             $orWhere = [];
             $orWhere['user_id'] = $pirep->user_id;
             $orWhere['dpt_airport_id'] = $pirep->dpt_airport_id;
-            $orWhere['arr_airport_id'] = $pirep->arr_airport_id;           
+            $orWhere['arr_airport_id'] = $pirep->arr_airport_id;
 
             $mission_flight = DS_Mission::where(function ($query) use ($where, $pirep) {
                 $query->whereNull('pirep_id')->where($where)->where('mission_valid', '>', $pirep->submitted_at);
