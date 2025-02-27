@@ -22,15 +22,15 @@
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Rem. Time</td>
-          <td class="text-end m-0 p-0 px-1">@minutestotime(floor($maint->limits->time_a - $maint->time_a))</td>
+          <td class="text-end m-0 p-0 px-1">@minutestotime($maint->rem_ta)</td>
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Rem. Cycle</td>
-          <td class="text-end m-0 p-0 px-1">{{ floor($maint->limits->cycle_a - $maint->cycle_a) }}</td>
+          <td class="text-end m-0 p-0 px-1">{{ $maint->rem_ca }}</td>
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Last Check</td>
-          <td class="text-end m-0 p-0 px-1">{{ $maint->last_a ?? 'Planned' }}</td>
+          <td class="text-end m-0 p-0 px-1">{{ $maint->last_a ?? '-' }}</td>
         </tr>
       </table>
     </div>
@@ -41,15 +41,15 @@
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Rem. Time</td>
-          <td class="text-end m-0 p-0 px-1">@minutestotime(floor($maint->limits->time_b - $maint->time_b))</td>
+          <td class="text-end m-0 p-0 px-1">@minutestotime($maint->rem_tb)</td>
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Rem. Cycle</td>
-          <td class="text-end m-0 p-0 px-1">{{ floor($maint->limits->cycle_b - $maint->cycle_b) }}</td>
+          <td class="text-end m-0 p-0 px-1">{{ floor($maint->rem_cb) }}</td>
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Last Check</td>
-          <td class="text-end m-0 p-0 px-1">{{ $maint->last_b ?? 'Planned' }}</td>
+          <td class="text-end m-0 p-0 px-1">{{ $maint->last_b ?? '-' }}</td>
         </tr>
       </table>
     </div>
@@ -60,15 +60,15 @@
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Rem. Time</td>
-          <td class="text-end m-0 p-0 px-1">@minutestotime(floor($maint->limits->time_c - $maint->time_c))</td>
+          <td class="text-end m-0 p-0 px-1">@minutestotime($maint->rem_tc)</td>
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Rem. Cycle</td>
-          <td class="text-end m-0 p-0 px-1">{{ floor($maint->limits->cycle_c - $maint->cycle_c) }}</td>
+          <td class="text-end m-0 p-0 px-1">{{ $maint->rem_cc }}</td>
         </tr>
         <tr>
           <td class="m-0 p-0 px-1">Last Check</td>
-          <td class="text-end m-0 p-0 px-1">{{ $maint->last_c ?? 'Planned' }}</td>
+          <td class="text-end m-0 p-0 px-1">{{ $maint->last_c ?? '-' }}</td>
         </tr>
       </table>
     </div>

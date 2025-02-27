@@ -61,9 +61,9 @@
         <tr>
           <th>Registration / Name</th>
           <th>Curr. State</th>
-          <th>A Check (Act / Lmt)</th>
-          <th>B Check (Act / Lmt)</th>
-          <th>C Check (Act / Lmt)</th>
+          <th>A Check (Rem.)</th>
+          <th>B Check (Rem.)</th>
+          <th>C Check (Rem.)</th>
           <th>Last Check</th>
           <th class="text-right">Actions&nbsp;&nbsp;</th>
         </tr>
@@ -74,20 +74,29 @@
               @if($maint->aircraft && $maint->aircraft->registration != $maint->aircraft->name) {{ "'".$maint->aircraft->name."'" }} @endif
             </td>
             <td class="m-0 p-0">{{ '%'.$maint->curr_state }}</td>
-            <td class="m-0 p-0">
-              &bull;H: @minutestotime($maint->time_a) / @minutestotime($maint->limits->time_a)
+            {{-- A Check Remaining --}}
+            <td>
+              {{ ($maint->rem_ca).' Cycles' }}
               <br>
-              &bull;C: {{ $maint->cycle_a.' / '.$maint->limits->cycle_a }}
+              @if($maint->rem_ta < 0)<span class="text-danger fw-bold">@endif
+              {{ DS_ConvertMinutes($maint->rem_ta, '%2dh') }}
+              @if($maint->rem_ta < 0)</span>@endif
             </td>
-            <td class="m-0 p-0">
-              &bull;H: @minutestotime($maint->time_b) / @minutestotime($maint->limits->time_b)
+            {{-- B Check Remaining --}}
+            <td>
+              {{ ($maint->rem_cb).' Cycles' }}
               <br>
-              &bull;C: {{ $maint->cycle_b.' / '.$maint->limits->cycle_b }}
+              @if($maint->rem_tb < 0)<span class="text-danger fw-bold">@endif
+              {{ DS_ConvertMinutes($maint->rem_tb, '%2dh') }}
+              @if($maint->rem_tb < 0)</span>@endif
             </td>
-            <td class="m-0 p-0">
-              &bull;H: @minutestotime($maint->time_c) / @minutestotime($maint->limits->time_c)
+            {{-- C Check Remaining --}}
+            <td>
+              {{ ($maint->rem_cc).' Cycles' }}
               <br>
-              &bull;C: {{ $maint->cycle_c.' / '.$maint->limits->cycle_c }}
+              @if($maint->rem_tc < 0)<span class="text-danger fw-bold">@endif
+                {{ DS_ConvertMinutes($maint->rem_tc, '%2dh') }}
+              @if($maint->rem_tc < 0)</span>@endif
             </td>
             <td class="m-0 p-0">
               {{ $maint->last_note }}
@@ -99,16 +108,16 @@
                 @csrf
                 <input type="hidden" name="id" value="{{ $maint->id }}" />
                 <input type="hidden" name="ops" value="manual" />
-                @if ($maint->limits->time_c - $maint->time_c < 100 || $maint->limits->cycle_c - $maint->cycle_c < 15)
+                @if ($maint->rem_tc < 10 || $maint->rem_cc < 3)
                   <input type="hidden" name="act_note" value="C Check" />
-                  <button class="btn btn-sm btn-danger m-0" type="submit">Perform C Check</button>
-                @elseif ($maint->limits->time_b - $maint->time_b < 50 || $maint->limits->cycle_b - $maint->cycle_b < 10)
+                  <button class="btn btn-sm btn-warning m-0" type="submit">Perform C Check</button>
+                @elseif ($maint->rem_tb < 10 || $maint->rem_cb < 3)
                   <input type="hidden" name="act_note" value="B Check" />
                   <button class="btn btn-sm btn-warning m-0" type="submit">Perform B Check</button>
-                @elseif ($maint->limits->time_a - $maint->time_a < 25 || $maint->limits->cycle_a - $maint->cycle_a < 5)
+                @elseif ($maint->rem_ta < 10 || $maint->rem_ca < 3)
                   <input type="hidden" name="act_note" value="A Check" />
                   <button class="btn btn-sm btn-secondary m-0" type="submit">Perform A Check</button>
-                @elseif ($maint->curr_state < 75)
+                @elseif ($maint->curr_state < 77)
                   <input type="hidden" name="act_note" value="Line Check" />
                   <button class="btn btn-sm btn-primary m-0" type="submit">Perform Line Check</button>
                 @endif

@@ -6,9 +6,11 @@ use App\Contracts\Listener;
 use App\Events\PirepAccepted;
 use App\Events\PirepFiled;
 use App\Events\PirepRejected;
+use App\Models\JournalTransaction;
 use App\Models\Enums\AircraftStatus;
 use App\Models\Enums\PirepSource;
 use Illuminate\Support\Facades\Log;
+use Modules\DisposableSpecial\Listeners\Expense_Maintenance;
 use Modules\DisposableSpecial\Models\DS_Maintenance;
 
 class Gen_Maintenance extends Listener
@@ -46,6 +48,9 @@ class Gen_Maintenance extends Listener
         }
         $maint->op_type = $op_type;
 
+        // Record current values as backup
+        $maint->last_state = $maint->curr_state.','.$maint->cycle_a.','.$maint->cycle_b.','.$maint->cycle_c.','.$maint->time_a.','.$maint->time_b.','.$maint->time_c;
+
         // Increase Times
         $maint->time_a = $maint->time_a + $pirep->flight_time;
         $maint->time_b = $maint->time_b + $pirep->flight_time;
@@ -54,6 +59,14 @@ class Gen_Maintenance extends Listener
         $maint->cycle_a = $maint->cycle_a + 1;
         $maint->cycle_b = $maint->cycle_b + 1;
         $maint->cycle_c = $maint->cycle_c + 1;
+        // Decrease Remaining Times
+        $maint->rem_ta = $maint->limits->time_a - $maint->time_a;
+        $maint->rem_tb = $maint->limits->time_b - $maint->time_b;
+        $maint->rem_tc = $maint->limits->time_c - $maint->time_c;
+        // Decrease Remaining Cycles
+        $maint->rem_ca = $maint->limits->cycle_a - $maint->cycle_a;
+        $maint->rem_cb = $maint->limits->cycle_b - $maint->cycle_b;
+        $maint->rem_cc = $maint->limits->cycle_c - $maint->cycle_c;
         // Decrease Current State
         $maint->curr_state = $maint->curr_state - round(($pirep->flight_time / 10000) + 0.01, 2);
         // Acars Specific Checks
@@ -92,6 +105,27 @@ class Gen_Maintenance extends Listener
         // Save and ammend Log
         $maint->save();
         Log::info('Disposable Special | Maintenance Records for '.$aircraft->registration.' (ID:'.$aircraft->id.') increased Pirep ID:'.$pirep->id.' '.$op_type);
+
+        // Check Remaining Cycle and Time to start Periodic Maintenance, also do the Line Check if needed
+        if ($maint->rem_cc < 1 || $maint->rem_tc < 1) {
+            $maintsys = app(Expense_Maintenance::class);
+            $maintsys->MaintenanceChecks('C Check', $aircraft, false, DS_Setting('turksim.maint_acstate_control', false));
+            Log::info('Disposable Special | C Check started for '.$aircraft->registration.' (ID:'.$aircraft->id.')');
+        } elseif ($maint->rem_cb < 1 || $maint->rem_tb < 1) {
+            $maintsys = app(Expense_Maintenance::class);
+            $maintsys->MaintenanceChecks('B Check', $aircraft, false, DS_Setting('turksim.maint_acstate_control', false));
+            Log::info('Disposable Special | B Check started for '.$aircraft->registration.' (ID:'.$aircraft->id.')');
+        } elseif ($maint->rem_ca < 1 || $maint->rem_ta < 1) {
+            $maintsys = app(Expense_Maintenance::class);
+            $maintsys->MaintenanceChecks('A Check', $aircraft, false, DS_Setting('turksim.maint_acstate_control', false));
+            Log::info('Disposable Special | A Check started for '.$aircraft->registration.' (ID:'.$aircraft->id.')');
+        } elseif ($maint->curr_state < 75) {
+            $maintsys = app(Expense_Maintenance::class);
+            $maintsys->MaintenanceChecks('Line Check', $aircraft, false, DS_Setting('turksim.maint_acstate_control', false));
+            Log::info('Disposable Special | Line Check started for '.$aircraft->registration.' (ID:'.$aircraft->id.')');
+        } else {
+            Log::info('Disposable Special | No Maintenance needed for '.$aircraft->registration.' (ID:'.$aircraft->id.')');
+        }
     }
 
     // Pirep Rejected
@@ -116,6 +150,14 @@ class Gen_Maintenance extends Listener
         $maint->cycle_a = $maint->cycle_a - 1;
         $maint->cycle_b = $maint->cycle_b - 1;
         $maint->cycle_c = $maint->cycle_c - 1;
+        // Increase Remaining Times
+        $maint->rem_ta = $maint->rem_ta + $pirep->flight_time;
+        $maint->rem_tb = $maint->rem_tb + $pirep->flight_time;
+        $maint->rem_tc = $maint->rem_tc + $pirep->flight_time;
+        // Increase Remaining Cycles
+        $maint->rem_ca = $maint->rem_ca + 1;
+        $maint->rem_cb = $maint->rem_cb + 1;
+        $maint->rem_cc = $maint->rem_cc + 1;
         // Increase Current State
         $maint->curr_state = $maint->curr_state + round(($pirep->flight_time / 10000) + 0.01, 2);
         // Acars Specific Checks
@@ -151,6 +193,17 @@ class Gen_Maintenance extends Listener
             }
         }
 
+        // Revert back the financials if needed
+        $transaction = JournalTransaction::where('ref_model_id', $aircraft->id)
+            ->where('memo', 'LIKE', '%'.$maint->act_note.'%')
+            ->where('ref_model', 'LIKE', '%Aircraft')
+            ->where('post_date', $maint->updated_at->format('Y-m-d'))->first();
+
+        if ($transaction) {
+            Log::info('Disposable Special | Financial Records for '.$aircraft->registration.' (ID:'.$aircraft->id.') maintenance action deleted');
+            $transaction->delete();
+        }
+
         // Operation Type
         $maint->act_note = null;
         $maint->act_start = null;
@@ -159,6 +212,7 @@ class Gen_Maintenance extends Listener
         // Check and Fix Aircraft Status
         if ($aircraft->status === AircraftStatus::MAINTENANCE) {
             $aircraft->status = AircraftStatus::ACTIVE;
+            Log::info('Disposable Special | '.$aircraft->registration.' (ID:'.$aircraft->id.') Released back to service');
             $aircraft->save();
         }
 

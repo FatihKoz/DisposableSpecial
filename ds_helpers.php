@@ -143,8 +143,8 @@ if (!function_exists('DS_ConvertMinutes')) {
     {
         $minutes = intval($minutes);
 
-        if ($minutes < 1) {
-            return null;
+        if ($minutes < 0) {
+            abs($minutes);
         }
         $hours = floor($minutes / 60);
         $minutes = ($minutes % 60);

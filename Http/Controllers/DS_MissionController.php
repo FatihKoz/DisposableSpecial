@@ -9,6 +9,7 @@ use App\Models\Flight;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\DisposableSpecial\Models\DS_Maintenance;
 use Modules\DisposableSpecial\Models\DS_Mission;
 
 class DS_MissionController extends Controller
@@ -22,18 +23,22 @@ class DS_MissionController extends Controller
         $my_missions = DS_Mission::with('aircraft.airline', 'flight.airline', 'dpt_airport', 'arr_airport')->where('user_id', Auth::id())->whereNull('pirep_id')->orderBy('mission_order')->get();
         $used_aircraft = DS_Mission::whereNull('pirep_id')->orderBy('aircraft_id')->pluck('aircraft_id')->toArray();
 
-        $aircraft = Aircraft::with('subfleet', 'airline')->whereNotIn('id', $used_aircraft)->whereNotNull('landing_time')->where('landing_time', '<', Carbon::now()->subDays($margin))->get();
+        $aircraft = Aircraft::with('subfleet', 'airline')->whereNotIn('id', $used_aircraft)->whereNotNull('landing_time')->where('landing_time', '<', Carbon::now()->subDays($margin))->orderBy('landing_time')->get();
+        $maintenance = DS_Maintenance::with('aircraft')->whereNull(['act_note', 'act_start', 'act_end'])
+            ->where('curr_state', '<', 77)->orWhere('rem_ta', '<', 300)->orWhere('rem_tb', '<', 300)->orWhere('rem_tc', '<', 300)->orWhere('rem_ca', '<', 2)->orWhere('rem_cb', '<', 2)->orWhere('rem_cc', '<', 2)
+            ->orderBy('aircraft_id')->get();
 
         // Holds the list of leftover aircraft, dep, arr airports and suitable flights
         // array key is the registration of the leftover aircraft
-        // ac = Aircraft Model (of the leftover aircraft)
+        // ac = Aircraft Model
         // dep = Airport Model (of the current location)
         // arr = Airport Model (of the Hub)
-        // flt = Flight Model (Random flight between dep-arr airports for the company)
-        // end = Carbon Object (Validity of the mission by DispoSpecial settings)
+        // flt = Flight Model (Random flight between dep-arr airports for the owner company if available)
+        // end = Carbon Object (Validity of the mission)
         $sc_missions = [];
-        $fr_missions = [];
+        $mt_missions = [];
 
+        // Create missions for leftover aircraft
         foreach ($aircraft as $ac) {
             $valid_until = $ac->landing_time->addDays($basereturn);
             $hub_id = filled($ac->hub_id) ? $ac->hub_id : optional($ac->subfleet)->hub_id;
@@ -45,31 +50,50 @@ class DS_MissionController extends Controller
             ];
 
             if ($hub_id && $valid_until > $now && $ac->airport_id != $hub_id) {
-                // Find flights between airports and randomly pick one
-                $flt = Flight::with('airline')->where($where)->inRandomOrder()->first();
-
                 // Prepare mission array contents
                 $contents = [
                     'ac'  => $ac,
                     'dep' => Airport::where('id', $ac->airport_id)->first(),
                     'arr' => Airport::where('id', $hub_id)->first(),
-                    'flt' => $flt,
+                    'flt' => Flight::with('airline')->where($where)->inRandomOrder()->first(),
                     'end' => $valid_until,
                 ];
 
-                if ($flt) {
-                    // Flight found, add contents to scheduled missions
-                    $sc_missions[$ac->registration] = $contents;
-                } else {
-                    // Flight NOT found, add contents to freeflight missions
-                    $fr_missions[$ac->registration] = $contents;
-                }
+                $sc_missions[$ac->registration] = $contents;
+            }
+        }
+
+        // Create missions for maintenace required aircraft
+        foreach ($maintenance as $mt) {
+            if (!$mt->aircraft) {
+                continue;
+            }
+
+            $hub_id = filled(optional($mt->aircraft)->hub_id) ? $mt->aircraft->hub_id : optional(optional($mt->aircraft)->subfleet)->hub_id;
+
+            $where = [
+                'airline_id'     => $mt->aircraft->airline->id,
+                'dpt_airport_id' => $mt->aircraft->airport_id,
+                'arr_airport_id' => $hub_id,
+            ];
+
+            if ($hub_id && $mt->aircraft->airport_id != $hub_id) {
+                // Prepare mission array contents
+                $contents = [
+                    'ac'  => $mt->aircraft,
+                    'dep' => Airport::where('id', $mt->aircraft->airport_id)->first(),
+                    'arr' => Airport::where('id', $hub_id)->first(),
+                    'flt' => Flight::with('airline')->where($where)->inRandomOrder()->first(),
+                    'end' => $now->copy()->addHours(48),
+                ];
+
+                $mt_missions[$mt->aircraft->registration] = $contents;
             }
         }
 
         return view('DSpecial::missions.index', [
             'sc_missions' => $sc_missions,
-            'fr_missions' => $fr_missions,
+            'mt_missions' => $mt_missions,
             'my_missions' => $my_missions,
         ]);
     }
@@ -77,15 +101,23 @@ class DS_MissionController extends Controller
     // Store Mission (add/update to missions table for user)
     public function store(Request $request)
     {
-        if (!$request->aircraft_id || !$request->flight_id) {
-            flash()->error('Aircraft and Flight info are required for Missions!');
+        if ($request->remove_id && $request->action === 'remove') {
+            DS_Mission::where('id', $request->remove_id)->delete();
+            flash()->success('Mission Deleted');
+
+            return back();
+        }
+
+        if (!$request->aircraft_id) {
+            flash()->error('Aircraft required for Missions!');
 
             return back();
         }
 
         DS_Mission::updateOrCreate(
             [
-                'id' => $request->id,
+                'aircraft_id'    => $request->aircraft_id,
+                'flight_id'      => $request->flight_id,
             ],
             [
                 'user_id'        => Auth::id(),
@@ -96,12 +128,12 @@ class DS_MissionController extends Controller
                 'mission_type'   => $request->mission_type,
                 'mission_year'   => Carbon::now()->year,
                 'mission_month'  => Carbon::now()->month,
-                'mission_order'  => DS_Mission::where('user_id', Auth::id())->count() + 1,
+                'mission_order'  => DS_Mission::where('user_id', Auth::id())->max('mission_order') + 1,
                 'mission_valid'  => $request->mission_valid,
             ]
         );
 
-        flash()->success('Mission Saved');
+        flash()->success('Mission Saved/Updated Successfully');
 
         return back();
     }

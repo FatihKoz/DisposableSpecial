@@ -153,23 +153,9 @@ class Expense_Maintenance
         return $expenses;
     }
 
-    // Generic Expense Array Generation Method
-    public function MaintenanceExpense($group, $amount, $memo, $multiplier = false, $charge_user = false)
-    {
-        return new Expense([
-            'type'              => ExpenseType::FLIGHT,
-            'amount'            => $amount,
-            'transaction_group' => $group,
-            'name'              => $memo,
-            'multiplier'        => $multiplier,
-            'charge_to_user'    => $charge_user,
-        ]);
-    }
-
     // Main Method to calculate maintenance costs, change aircraft state and charge company
     public function MaintenanceChecks($check, $aircraft, $flight_only = false, $change_status = null)
     {
-        $units = DS_GetUnits();
         $unit_rate = DS_Setting('turksim.maint_unitrate', 0.3775);
 
         if (is_null($change_status)) {
@@ -205,29 +191,21 @@ class Expense_Maintenance
         $mtow = ($aircraft->mtow->internal(2) > 0) ? $aircraft->mtow->internal(2) : null;
 
         if (!is_numeric($mtow)) {
-            // Try to get at last TOW
+            // Try to get at last TOW from PIREPs
             $last_pirep = Pirep::where(['aircraft_id' => $aircraft->id, 'state' => PirepState::ACCEPTED])->orderby('submitted_at', 'desc')->first();
             $last_tow = optional($last_pirep->fields->where('slug', 'takeoff-weight')->first())->value;
             $mtow = is_numeric($last_tow) ? round($last_tow, 2) : null;
-
-            if (is_numeric($mtow) && $units['weight'] === 'kg') {
-                $mtow = round($mtow / 2.20462262185, 2);
-            }
         }
 
         if (!is_numeric($mtow)) {
-            if ($units['weight'] === 'kg') {
-                $mtow = 79015; // Fixed failsafe B738 MTOW metric
-            } else {
-                $mtow = 174200; // Fixed failsafe B738 MTOW imperial
-            }
+            $mtow = 174200; // Fixed failsafe B738 MTOW imperial
         }
 
         $maintenance_cost = round(($unit_rate * $mtow) * $multiplier, 2);
 
         // Change aircraft status, Write actual maintenance operation details
         if ($change_status) {
-            $ds_maint = DS_Maintenance::with('aircraft.airline')->where('aircraft_id', $aircraft->id)->first();
+            $ds_maint = DS_Maintenance::with('aircraft')->where('aircraft_id', $aircraft->id)->first();
 
             if ($ds_maint) {
                 // Durations
@@ -252,6 +230,14 @@ class Expense_Maintenance
 
                 Log::info('Disposable Special | '.$ds_maint->aircraft->registration.' grounded until '.Carbon::now()->addMinutes($duration));
             }
+        }
+
+        // Apply HUB Discount
+        if ($aircraft->airport && optional($aircraft->airport)->home) {
+            if ($aircraft->airport_id == $aircraft->hub_id || $aircraft->airport_id == optional($aircraft->subfleet)->hub_id) {
+                $maintenance_cost = $maintenance_cost * 0.75;
+            }
+            $maintenance_cost = $maintenance_cost * 0.85;
         }
 
         // Return Cost Only
@@ -318,5 +304,18 @@ class Expense_Maintenance
         );
         // Note Transaction
         Log::debug('Disposable Special | User '.$pirep->user->name_private.' charged for '.$memo.' Pirep='.$pirep->id);
+    }
+
+    // Generic Expense Array Generation Method
+    public function MaintenanceExpense($group, $amount, $memo, $multiplier = false, $charge_user = false)
+    {
+        return new Expense([
+            'type'              => ExpenseType::FLIGHT,
+            'amount'            => $amount,
+            'transaction_group' => $group,
+            'name'              => $memo,
+            'multiplier'        => $multiplier,
+            'charge_to_user'    => $charge_user,
+        ]);
     }
 }

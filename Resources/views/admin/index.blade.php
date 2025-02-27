@@ -160,6 +160,13 @@
         <br>
         <span class="text-info">Pilot's Rank Pay Rate or Flight's Pilot Pay will be multiplied</span>
       </div>
+      <div class="card border-blue-bottom" style="padding:5px;">
+        <b>Mission Flights Rewards</b>
+        <br>
+        @include('DSpecial::admin.settings_table', ['group' => 'Missions'])
+        <br>
+        <span class="text-info">Pilot's Rank Pay Rate or Flight's Pilot Pay will be multiplied</span>
+      </div>
     </div>
     <div class="col-md-6">
       <div class="card border-blue-bottom" style="padding:5px;">

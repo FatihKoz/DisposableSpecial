@@ -9,17 +9,19 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Modules\DisposableBasic\Models\DB_RandomFlight;
 use Modules\DisposableSpecial\Models\DS_Assignment;
+use Modules\DisposableSpecial\Models\DS_Mission;
 
 class Gen_RandomFlights
 {
-    // Reward Pilot if a "Random Flight" or "Monthly Flight Assignment" is flown
+    // Reward Pilot if a "Random Flight", "Mission Flight" or "Monthly Flight Assignment" is flown
     public function handle(PirepAccepted $event)
     {
         $reward_rf = DS_Setting('turksim.randomflights_reward', false);
         $reward_mfa = DS_Setting('turksim.assignments_reward', false);
+        $reward_mis = DS_Setting('turksim.missions_reward', false);
         $DBasic = check_module('DisposableBasic');
 
-        if (!$reward_rf && !$reward_mfa) {
+        if (!$reward_rf && !$reward_mfa && !$reward_mis) {
             return;
         }
 
@@ -30,6 +32,7 @@ class Gen_RandomFlights
         $where['user_id'] = $pirep->user_id;
         $where['flight_id'] = $pirep->flight_id;
 
+        // Random Flights
         if ($DBasic && $reward_rf) {
             $random_flight = DB_RandomFlight::where($where)->whereNull('pirep_id')->whereDate('assign_date', $pirep->submitted_at)->first();
 
@@ -42,6 +45,30 @@ class Gen_RandomFlights
             }
         }
 
+        // Mission Flights
+        if ($reward_mis) {
+
+            $orWhere = [];
+            $orWhere['user_id'] = $pirep->user_id;
+            $orWhere['dpt_airport_id'] = $pirep->dpt_airport_id;
+            $orWhere['arr_airport_id'] = $pirep->arr_airport_id;           
+
+            $mission_flight = DS_Mission::where(function ($query) use ($where, $pirep) {
+                $query->whereNull('pirep_id')->where($where)->where('mission_valid', '>', $pirep->submitted_at);
+            })->orWhere(function ($query) use ($orWhere, $pirep) {
+                $query->whereNull('pirep_id')->where($orWhere)->where('mission_valid', '>', $pirep->submitted_at);
+            })->first();
+
+            if ($mission_flight) {
+                $multiplier = DS_Setting('turksim.missions_multiplier', 10);
+                $this->RewardUser($pirep, $multiplier, 'Mission Flights');
+                // Update Mission Flight record to prevent further rewards
+                $mission_flight->pirep_id = $pirep->id;
+                $mission_flight->save();
+            }
+        }
+
+        // Monthly Flight Assignments
         $pirep_date = Carbon::parse($pirep->submitted_at);
 
         $where['assignment_year'] = $pirep_date->year;

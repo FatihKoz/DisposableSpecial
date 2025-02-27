@@ -29,7 +29,7 @@ Using this module along with *Disposable Basic* and *Disposable Theme* is advise
 
 ## Compatibility with other addons
 
-This addon is fully compatible with phpVMS v7 and it will work with any other addon, specially acars softwares which are %100 compatible with phpVMS v7 too.  
+This addon is fully compatible with phpVMS v7 and it will work with any other addon, specially acars softwares which are 100% compatible with phpVMS v7 too.  
 
 If the acars solution you are using is not compatible with phpVMS v7, then it is highly probable that you will face errors over and there. In this case, please speak with your addon provider not me 'cause I can not fix something I did not broke, or I can not cover somebody else's mistakes, poor compatibility problems etc.
 
@@ -88,6 +88,7 @@ DSpecial.freeflight     /dfreeflight       // (Personal) Free Flight index page
 DSpecial.maintenance    /dmaintenance      // Fleet Maintenance index page
 DSpecial.market         /dmarket           // Market index page
 DSpecial.market.show    /dmarket/1         // Personal items bought from market, needs a user {id} to run
+DSpecial.missions       /dmissions         // Missions index page
 DSpecial.notams         /dnotams           // Notams index page
 
 DSpecial.ops_manual     /dopsmanual        // Operations Manual page (partly db driven, mostly static)
@@ -227,6 +228,7 @@ Simple, just use standard Laravel call for widgets, provided widgets are availab
 ```php
 @widget('DSpecial::Assignments')
 @widget('DSpecial::FeaturedItem')
+@widget('DSpecial::Missions')
 @widget('DSpecial::Notams')
 @widget('DSpecial::TourProgress')
 @widget('DSpecial::UserItems')
@@ -244,6 +246,10 @@ Simple, just use standard Laravel call for widgets, provided widgets are availab
 Widget will show progress with yellow (warning) color until the tour is finished and turns to green (success). However if the legs are not flown in correct order it will turn to red (danger) and will not return to green/yellow again.
 
 This also applies to Tour Award classes. If a pilot brokes the leg order, to get the award then those faulty legs should be rejected and must be re-flown.
+
+**Missions** widget has only one setting called `'user'` and allows to be the user_id defined (for profile placement).
+
+Widget will display active/valid missions of a user if there are any, if none present it will not be visible at all.  
 
 **Notams** widget can be configured to display users current location notams or specific notams for an airport or airline.
 
@@ -294,7 +300,9 @@ That *Aircraft State Control* setting also effects admin executed main checks, t
 
 Also there are some flight hour and cycle definitions for main checks, you can use them for all your fleet or you can go crazy and define realistic figures for each ICAO Type you have. Like an extended period for C172 but a realistic period for B738 etc. It is up to you, if you are using one or two similar types, then using the main settings would be practical but for a larger fleet, using [Disposable Basic](https://github.com/FatihKoz/DisposableBasic) and defining ICAO type specific periods would be much realistic.
 
-When you first install the update (or the module first time), your pireps will be read and a starting point for maintenance will be created. From that moment on, every accepted pirep will increase/decrease some values. Like a hard landing hits kindly on the current state of the aircraft (according to the landing rate of course) but a nice landing will make barely noticable impact. Below %75, you will be offered to perform a *Line Check* manually, also (for the time this readme is updated) A/B/C Checks are being started manually when needed. I need to find a sweet spot for them to be started automatically by the cron, right now I do not want to push something hurting your server performance.
+When you first install the update (or the module first time), your pireps will be read and a starting point for maintenance will be created. From that moment on, every accepted pirep will increase/decrease some values. Like a hard landing hits kindly on the current state of the aircraft (according to the landing rate of course) but a nice landing will make barely noticable impact.  
+
+Upon pirep retrieval; Line Check and A/B/C checks will start automatically according to defined times/limits and main settings if required, VA staff can finish them manually if the aircraft in question is needed urgently. Otherwise cron will handle the automation. Maintenance costs will be slightly discounted on Hubs (more on Aircraft's own hub/base, less on other Hubs), thus "Missions" page will offer some more flights to bring aircraft back to their bases for maintenance purposes.
 
 Since everything is dynamic, maintenance costs are dynamic too. Default base price offered is ok for KG and USD/EURO region. If you are using LBS or using another currency it may not fit your expectations well. Technically the heavier the aircraft (MTOW or last TakeOff Weight if you do not define MTOW at aircraft level), the expensive the maintenance becomes, also the hardness of the landing or the tailstrike effects the price. Imagine same ICAO Type or same aircraft landing with -513 ft/min and then with -627 ft/min, prices will not be the same.
 
@@ -313,6 +321,12 @@ To keep the virtual money inside v7 economics, each item should have a dealer, a
 Market comes with two widgets for displaying user owned items and providing a featured item at dashboard (or any other location with login protection).  
 
 Market also provides a category for "Tour Tokens" to allow tour access to be bought by pilots/users before participating in them. Also Tour feature is updated to support automation of this process.  
+
+### Missions
+
+This system is mainly designed to list aircraft parked at destinations other than their bases (Hubs), it offers pilots some flights to bring them back. Pilots can pick a mission flight and then fly it for getting some reward/bonus payments if they wish to. Also system will list some maintenance required aircraft, which needs to be flown back to base for reduced costs.  Due to the competition logic of this section, selecting a mission will NOT remove it from the list, another pilot can select it too. If aircraft use restrictions are in place, only one pilot can use the aircraft, making it a little bit more competitive.  
+
+_Missions feature is still under development and may have logical changes in the future_  
 
 ### Monthly Flight Assignments
 
@@ -360,6 +374,12 @@ _Not providing attribution link will result in removal of access and no support 
 * Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+27.FEB.25
+
+* Improved Maintenance logic, provided automation for Line Checks and A/B/C Checks (works with Pirep events)  
+* Improved Missions, added a widget and lists for selection, also a frontend page for easy listing and management
+* Added Mission Flight rewards (like Assignments and Random Flights)
 
 01.FEB.25
 

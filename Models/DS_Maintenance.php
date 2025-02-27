@@ -29,7 +29,14 @@ class DS_Maintenance extends Model
         'last_c',
         'last_note',
         'last_time',
+        'last_state',
         'op_type',
+        'rem_ta',
+        'rem_tb',
+        'rem_tc',
+        'rem_ca',
+        'rem_cb',
+        'rem_cc',
     ];
 
     // Validation
@@ -50,7 +57,14 @@ class DS_Maintenance extends Model
         'last_c'      => 'nullable',
         'last_note'   => 'nullable',
         'last_time'   => 'nullable',
+        'last_state'  => 'nullable',
         'op_type'     => 'nullable',
+        'rem_ta'      => 'nullable',
+        'rem_tb'      => 'nullable',
+        'rem_tc'      => 'nullable',
+        'rem_ca'      => 'nullable',
+        'rem_cb'      => 'nullable',
+        'rem_cc'      => 'nullable',
     ];
 
     protected $casts = [
@@ -64,6 +78,37 @@ class DS_Maintenance extends Model
     protected $attributes = [
         'curr_state' => 100,
     ];
+
+    protected $appends = [
+        'remaining_times',
+        'remaining_cycles',
+        'limits',
+    ];
+
+    // Attributes
+    // Remaining Times
+    public function getRemainingTimesAttribute()
+    {
+        $times = collect();
+
+        $times->a = $this->rem_ta;
+        $times->b = $this->rem_tb;
+        $times->c = $this->rem_tc;
+
+        return $times;
+    }
+
+    // Remaining Cycles
+    public function getRemainingCyclesAttribute()
+    {
+        $cycles = collect();
+
+        $cycles->a = $this->rem_ca;
+        $cycles->b = $this->rem_cb;
+        $cycles->c = $this->rem_cc;
+
+        return $cycles;
+    }
 
     // Limits Attribute
     // Via Disposable Basic > Tech Model
