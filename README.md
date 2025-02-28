@@ -375,6 +375,10 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+28.FEB.25
+
+* Fixed Misson Flight rewards (aircraft being used must be the same with the mission as expected)  
+
 27.FEB.25
 
 * Improved Maintenance logic, provided automation for Line Checks and A/B/C Checks (works with Pirep events)  
