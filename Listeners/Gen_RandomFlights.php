@@ -47,8 +47,12 @@ class Gen_RandomFlights
 
         // Mission Flights
         if ($reward_mis) {
+            // Add Aircraft to the search criteria
+            $where['aircraft_id'] = $pirep->aircraft_id;
+            // Create an OR clause for the search criteria
             $orWhere = [];
             $orWhere['user_id'] = $pirep->user_id;
+            $orWhere['aircraft_id'] = $pirep->aircraft_id;
             $orWhere['dpt_airport_id'] = $pirep->dpt_airport_id;
             $orWhere['arr_airport_id'] = $pirep->arr_airport_id;
 
@@ -65,6 +69,9 @@ class Gen_RandomFlights
                 $mission_flight->pirep_id = $pirep->id;
                 $mission_flight->save();
             }
+
+            // Remove Aircraft from the search criteria
+            unset($where['aircraft_id']);
         }
 
         // Monthly Flight Assignments
