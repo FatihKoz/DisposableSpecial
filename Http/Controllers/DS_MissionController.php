@@ -32,13 +32,13 @@ class DS_MissionController extends Controller
 
         $used_aircraft = DS_Mission::whereNull('pirep_id')->orderBy('aircraft_id')->pluck('aircraft_id')->toArray();
 
-        $aircraft = Aircraft::with('subfleet', 'airline')->where('landing_time', '<', Carbon::now()->subDays($margin))
+        $aircraft = Aircraft::with('subfleet.flights', 'airline')->where('landing_time', '<', Carbon::now()->subDays($margin))
             ->whereIn('id', $allowed_aircraft)
             ->whereNotIn('id', $used_aircraft)
             ->whereNotNull('landing_time')
             ->orderBy('landing_time')->get();
 
-        $maintenance = DS_Maintenance::with('aircraft')->whereNull(['act_note', 'act_start', 'act_end'])
+        $maintenance = DS_Maintenance::with('aircraft.subfleet')->whereNull(['act_note', 'act_start', 'act_end'])
             ->whereIn('aircraft_id', $allowed_aircraft)
             ->where(function ($query) {
                 $query->where('curr_state', '<', 77)
@@ -77,7 +77,7 @@ class DS_MissionController extends Controller
                     'ac'  => $ac,
                     'dep' => Airport::where('id', $ac->airport_id)->first(),
                     'arr' => Airport::where('id', $hub_id)->first(),
-                    'flt' => Flight::with('airline')->where($where)->inRandomOrder()->first(),
+                    'flt' => $ac->subfleet->flights()->where($where)->inRandomOrder()->first(),  // Flight::with('airline')->where($where)->inRandomOrder()->first(),
                     'end' => $valid_until,
                 ];
 
@@ -105,7 +105,7 @@ class DS_MissionController extends Controller
                     'ac'  => $mt->aircraft,
                     'dep' => Airport::where('id', $mt->aircraft->airport_id)->first(),
                     'arr' => Airport::where('id', $hub_id)->first(),
-                    'flt' => Flight::with('airline')->where($where)->inRandomOrder()->first(),
+                    'flt' => $mt->aircraft->subfleet->flights()->where($where)->inRandomOrder()->first(),  // Flight::with('airline')->where($where)->inRandomOrder()->first(),
                     'end' => $now->copy()->addHours(48),
                 ];
 
