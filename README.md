@@ -324,9 +324,11 @@ Market also provides a category for "Tour Tokens" to allow tour access to be bou
 
 ### Missions
 
-This system is mainly designed to list aircraft parked at destinations other than their bases (Hubs), it offers pilots some flights to bring them back. Pilots can pick a mission flight and then fly it for getting some reward/bonus payments if they wish to. Also system will list some maintenance required aircraft, which needs to be flown back to base for reduced costs.  Due to the competition logic of this section, selecting a mission will NOT remove it from the list, another pilot can select it too. If aircraft use restrictions are in place, only one pilot can use the aircraft, making it a little bit more competitive.  
+This system is mainly designed to list aircraft parked at destinations other than their bases (Hubs), it offers pilots some flights to bring them back. Pilots can pick a mission flight and then fly it for getting some reward/bonus payments if they wish to. Also system will list some maintenance required aircraft, which needs to be flown back to base for reduced costs.  Due to the competition logic of this section, selecting a maintenance mission will NOT remove it from the list, another pilot can select it too. If aircraft use restrictions are in place, only one pilot can use the aircraft, making it a little bit more competitive.  
 
-_Missions feature is still under development and may have logical changes in the future_  
+Flight selection is based on subfleet <> flight relationship, if they are not defined or there are no flights, then an airline based check is done. If there are no flights found, then a free flight is required.  Pilots will be only see the aircraft which they can operate, according to v7 settings (by rank or by type-rating). If there are no restrictions defined for pilots then all the fleet gets checked.  
+
+_Missions feature is still under development and may have logical changes in the future (like having admin/staff defined personal missions etc.)_  
 
 ### Monthly Flight Assignments
 
@@ -374,6 +376,10 @@ _Not providing attribution link will result in removal of access and no support 
 * Notam Management airport dropdown does not select already assigned/saved airport! Therefore still using old logic and not switched to ajax search.  
 
 ## Release / Update Notes
+
+08.MAR.25
+
+* Updated Missions (automated flight selection criteria)  
 
 28.FEB.25
 

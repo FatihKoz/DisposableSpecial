@@ -69,7 +69,11 @@ class DS_MissionController extends Controller
                 'airline_id'     => $ac->airline->id,
                 'dpt_airport_id' => $ac->airport_id,
                 'arr_airport_id' => $hub_id,
+                'owner_id'       => null,
+                'user_id'        => null,
             ];
+
+            $random_flight = $ac->subfleet->flights()->where($where)->inRandomOrder()->first();
 
             if ($hub_id && $valid_until > $now && $ac->airport_id != $hub_id) {
                 // Prepare mission array contents
@@ -77,7 +81,7 @@ class DS_MissionController extends Controller
                     'ac'  => $ac,
                     'dep' => Airport::where('id', $ac->airport_id)->first(),
                     'arr' => Airport::where('id', $hub_id)->first(),
-                    'flt' => $ac->subfleet->flights()->where($where)->inRandomOrder()->first(),  // Flight::with('airline')->where($where)->inRandomOrder()->first(),
+                    'flt' => filled($random_flight) ? $random_flight : Flight::with('airline')->where($where)->inRandomOrder()->first(),
                     'end' => $valid_until,
                 ];
 
@@ -97,7 +101,11 @@ class DS_MissionController extends Controller
                 'airline_id'     => $mt->aircraft->airline->id,
                 'dpt_airport_id' => $mt->aircraft->airport_id,
                 'arr_airport_id' => $hub_id,
+                'owner_id'       => null,
+                'user_id'        => null,
             ];
+
+            $random_flight = $mt->aircraft->subfleet->flights()->where($where)->inRandomOrder()->first();
 
             if ($hub_id && $mt->aircraft->airport_id != $hub_id) {
                 // Prepare mission array contents
@@ -105,7 +113,7 @@ class DS_MissionController extends Controller
                     'ac'  => $mt->aircraft,
                     'dep' => Airport::where('id', $mt->aircraft->airport_id)->first(),
                     'arr' => Airport::where('id', $hub_id)->first(),
-                    'flt' => $mt->aircraft->subfleet->flights()->where($where)->inRandomOrder()->first(),  // Flight::with('airline')->where($where)->inRandomOrder()->first(),
+                    'flt' => filled($random_flight) ? $random_flight : Flight::with('airline')->where($where)->inRandomOrder()->first(),
                     'end' => $now->copy()->addHours(48),
                 ];
 
