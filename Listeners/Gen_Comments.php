@@ -43,12 +43,12 @@ class Gen_Comments
             // $act_lcent = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'arrival-centerline-deviation'])->value('value');
             // $act_ldist = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'arrival-threshold-distance'])->value('value');
             $act_lfuel = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-fuel'])->value('value');
-        // $act_lpitch = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-pitch'])->value('value');
-        // $act_lroll = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-roll'])->value('value');
-        // $act_lspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-speed'])->value('value');
-        // $act_tspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-speed'])->value('value');
-        // $act_aircraft = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'aircraft'])->value('value');
-        // $act_light_rules = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'ignore-light-rules'])->value('value');
+            // $act_lpitch = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-pitch'])->value('value');
+            // $act_lroll = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-roll'])->value('value');
+            // $act_lspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'landing-speed'])->value('value');
+            // $act_tspeed = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'takeoff-speed'])->value('value');
+            // $act_aircraft = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'aircraft'])->value('value');
+            // $act_light_rules = DB::table('pirep_field_values')->where(['pirep_id' => $pirep->id, 'slug' => 'ignore-light-rules'])->value('value');
         } else {
             // $act_rw = optional($pirep->fields->where('slug', 'ramp-weight')->first())->value;
             $act_tow = optional($pirep->fields->where('slug', 'takeoff-weight')->first())->value;

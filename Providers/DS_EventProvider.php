@@ -22,31 +22,31 @@ class DS_EventProvider extends ServiceProvider
 {
     // Listen individual events
     protected $listen =
-    [
-        Expenses::class => [
-            Expense_Airport::class,
-            Expense_Enroute::class,
-            Expense_Fuel::class,
-            Expense_Maintenance::class,
-        ],
-        Fares::class => [
-            Fare_InFlight::class,
-        ],
-        PirepFiled::class => [
-            Gen_Comments::class,
-        ],
-        PirepAccepted::class => [
-            Gen_Diversion::class,
-            Gen_RandomFlights::class,
-        ],
-    ];
+        [
+            Expenses::class => [
+                Expense_Airport::class,
+                Expense_Enroute::class,
+                Expense_Fuel::class,
+                Expense_Maintenance::class,
+            ],
+            Fares::class => [
+                Fare_InFlight::class,
+            ],
+            PirepFiled::class => [
+                Gen_Comments::class,
+            ],
+            PirepAccepted::class => [
+                Gen_Diversion::class,
+                Gen_RandomFlights::class,
+            ],
+        ];
 
     // Subscribe multiple events
     protected $subscribe =
-    [
-        Gen_Maintenance::class,
-        Gen_Cron::class,
-    ];
+        [
+            Gen_Maintenance::class,
+            Gen_Cron::class,
+        ];
 
     // Register module events
     public function boot()
