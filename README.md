@@ -377,6 +377,10 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+30.MAR.25
+
+* Updated Missions view (fixed Flight Details button/link)  
+
 08.MAR.25
 
 * Updated Missions (automated flight selection criteria)  
