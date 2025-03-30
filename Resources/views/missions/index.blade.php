@@ -55,7 +55,7 @@
                   <td>{{ $miss->mission_valid->format('d.M.y H:i') }}</td>
                   <td class="text-end">
                     @if($miss->flight)
-                      <a href="#" class="btn btn-sm btn-success py-0 px-1">Flight Details</a>
+                      <a href="{{ route('frontend.flights.show', [$miss->flight->id]) }}" class="btn btn-sm btn-success py-0 px-1">Flight Details</a>
                     @else
                       <a href="{{ route('DSpecial.freeflight') }}" class="btn btn-sm btn-success py-0 px-1">Free Flight</a>
                     @endif
