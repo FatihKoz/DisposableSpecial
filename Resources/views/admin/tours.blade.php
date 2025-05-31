@@ -75,6 +75,9 @@
                 <option value="{{ $token->id }}" @if($tour && $tour->tour_token == $token->id) selected @endif>{{ $token->name }}</option>
               @endforeach
             </select>
+            <hr>
+            <label class="pl-1 mb-1" for="tour_fplremark">FPL Remark</label>
+            <input name="tour_fplremark" type="text" class="form-control" maxlength="100" value="{{ $tour->tour_fplremark ?? '' }}">
           </div>
         </div>
         <div class="row" style="margin-bottom: 10px;">

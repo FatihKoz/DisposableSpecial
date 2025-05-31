@@ -20,7 +20,12 @@
           <th class="col-2">@lang('DSpecial::tours.ttype')</th>
           <td class="col-6">@if(!$tour->airline) @lang('DSpecial::tours.topen') @else @lang('DSpecial::tours.tairline') @endif</td>
           <th class="col-2 text-end">@lang('DSpecial::tours.tcode')</th>
-          <td class="col-2">{{ $tour->tour_code }}</td>
+          <td class="col-2">
+            {{ $tour->tour_code }}
+            @if(filled($tour->tour_fplremark))
+              <i class="fas fa-info-circle mx-2 text-danger" title="{{ 'FPL Remark: '.$tour->tour_fplremark }}"></i>
+            @endif
+          </td>
         </tr>
         <tr>
           <th class="col-2">@lang('DSpecial::tours.tdates')</th>

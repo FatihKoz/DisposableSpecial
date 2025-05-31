@@ -20,21 +20,23 @@ class DS_Tour extends Model
         'tour_rules',
         'tour_airline',
         'tour_token',
+        'tour_fplremark',
         'start_date',
         'end_date',
         'active',
     ];
 
     public static $rules = [
-        'tour_name'    => 'required|max:150',
-        'tour_code'    => 'required|max:5',
-        'tour_desc'    => 'nullable',
-        'tour_rules'   => 'nullable',
-        'tour_airline' => 'nullable',
-        'tour_token'   => 'nullable',
-        'start_date'   => 'required',
-        'end_date'     => 'required',
-        'active'       => 'nullable',
+        'tour_name'      => 'required|max:150',
+        'tour_code'      => 'required|max:5',
+        'tour_desc'      => 'nullable',
+        'tour_rules'     => 'nullable',
+        'tour_airline'   => 'nullable',
+        'tour_token'     => 'nullable',
+        'tour_fplremark' => 'nullable|max:100',
+        'start_date'     => 'required',
+        'end_date'       => 'required',
+        'active'         => 'nullable',
     ];
 
     public $casts = [

@@ -305,15 +305,16 @@ class DS_TourController extends Controller
                 'id' => $request->id,
             ],
             [
-                'tour_name'    => $request->tour_name,
-                'tour_code'    => $request->tour_code,
-                'tour_desc'    => $request->tour_desc,
-                'tour_rules'   => $request->tour_rules,
-                'tour_airline' => $request->tour_airline,
-                'tour_token'   => $request->tour_token,
-                'start_date'   => $request->start_date,
-                'end_date'     => $request->end_date,
-                'active'       => $request->active,
+                'tour_name'      => $request->tour_name,
+                'tour_code'      => $request->tour_code,
+                'tour_desc'      => $request->tour_desc,
+                'tour_rules'     => $request->tour_rules,
+                'tour_airline'   => $request->tour_airline,
+                'tour_token'     => $request->tour_token,
+                'tour_fplremark' => $request->tour_fplremark,
+                'start_date'     => $request->start_date,
+                'end_date'       => $request->end_date,
+                'active'         => $request->active,
             ]
         );
 

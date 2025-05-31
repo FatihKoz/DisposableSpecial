@@ -190,6 +190,17 @@ if (!function_exists('DS_GetTourName')) {
     }
 }
 
+// Get Tour FPL Remark by matching flight route_code
+// Return string
+if (!function_exists('DS_GetTourFPLRemark')) {
+    function DS_GetTourFPLRemark($route_code = null)
+    {
+        $tour = DS_Tour::select('tour_fplremark')->where('tour_code', $route_code)->first();
+
+        return filled($tour) ? $tour->tour_fplremark : null;
+    }
+}
+
 // Get active and ongoing Tour codes
 // Return array
 if (!function_exists('DS_GetTourCodes')) {
