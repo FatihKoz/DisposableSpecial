@@ -4,6 +4,7 @@ namespace Modules\DisposableSpecial\Http\Controllers;
 
 use App\Contracts\Controller;
 use App\Models\Aircraft;
+use App\Models\Bid;
 use App\Models\Enums\PirepState;
 use App\Models\Flight;
 use App\Models\Pirep;
@@ -96,11 +97,25 @@ class DS_AssignmentController extends Controller
             }
         }
 
+        $bidded_flights = [];
+        $bids = Bid::where('user_id', Auth::id())->get();
+        foreach ($bids as $bid) {
+            if (!$bid->flight) {
+                $bid->delete();
+
+                continue;
+            }
+
+            $bidded_flights[$bid->flight_id] = $bid->id;
+        }
+
         return view('DSpecial::assignments.index', [
             'assignments' => $groupped_assignments,
             'dbasic'      => check_module('DisposableBasic'),
+            'saved'       => $bidded_flights,
             'stats'       => $stats,
             'sys_check'   => isset($sys_check) ? $sys_check : false,
+            'user'        => $user,
         ]);
     }
 

@@ -24,6 +24,7 @@
               <th>@lang('airports.departure')</th>
               <th>@lang('airports.arrival')</th>
               <th class="text-center">@lang('DSpecial::common.block_time')</th>
+              <th class="text-center">PIREP</th>
               <th class="text-center">&nbsp;</th>
             </tr>
             @foreach($tas->sortBy('assignment_order', SORT_NATURAL) as $as)
@@ -65,7 +66,7 @@
                     @minutestotime($as->flight->flight_time)
                   @endif
                 </td>
-                <td class="text-center" style="width: 3%;">
+                <td class="text-center">
                   @if($as->completed)
                     @if(filled($as->pirep_id))
                       <a href="{{ route('frontend.pireps.show', [$as->pirep_id]) }}"><i class="fas fa-check-circle text-success"></i></a>
@@ -74,6 +75,17 @@
                     @endif
                   @else
                     <i class="fas fa-exclamation-circle text-danger"></i>
+                  @endif
+                </td>
+                <td class="text-end">
+                  @if($as->flight && !$as->completed)
+                    {{-- !!! NOTE !!! Don't remove the "save_flight" class, or the x-id attribute. It will break the AJAX to save/delete --}}
+                    {{-- "x-saved-class" is the class to add/remove if the bid exists or not. If you change it, remember to change it in the in-array line as well --}}
+                    @if((!setting('pilots.only_flights_from_current') || $as->flight->dpt_airport_id == optional($user->current_airport)->icao))
+                      <button class="btn btn-sm m-0 mx-1 p-0 px-1 save_flight {{ isset($saved[$as->flight->id]) ? 'btn-danger':'btn-success' }}" x-id="{{ $as->flight->id }}" x-saved-class="btn-danger" type="button">
+                        {{ isset($saved[$as->flight->id]) ? 'Remove Bid' : 'Add Bid' }}
+                      </button>
+                    @endif
                   @endif
                 </td>
               </tr>
@@ -189,4 +201,9 @@
       @endability
     </div>
   </div>
+  @if(setting('bids.block_aircraft', false))
+    @include('flights.bids_aircraft')
+  @endif
 @endsection
+
+@include('flights.scripts')
