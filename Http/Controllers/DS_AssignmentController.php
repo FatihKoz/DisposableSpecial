@@ -116,6 +116,7 @@ class DS_AssignmentController extends Controller
             'stats'       => $stats,
             'sys_check'   => isset($sys_check) ? $sys_check : false,
             'user'        => $user,
+            'curr_month'  => $current_month,
         ]);
     }
 

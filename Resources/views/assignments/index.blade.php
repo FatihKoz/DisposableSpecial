@@ -78,7 +78,7 @@
                   @endif
                 </td>
                 <td class="text-end">
-                  @if($as->flight && !$as->completed)
+                  @if($as->flight && !$as->completed && $as->assignment_month == $curr_month)
                     {{-- !!! NOTE !!! Don't remove the "save_flight" class, or the x-id attribute. It will break the AJAX to save/delete --}}
                     {{-- "x-saved-class" is the class to add/remove if the bid exists or not. If you change it, remember to change it in the in-array line as well --}}
                     @if((!setting('pilots.only_flights_from_current') || $as->flight->dpt_airport_id == optional($user->current_airport)->icao))
