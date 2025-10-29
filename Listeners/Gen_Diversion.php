@@ -28,6 +28,36 @@ class Gen_Diversion
                 $diverted = $airportSvc->lookupAirportIfNotFound($diversion_apt) ?? null;
             }
 
+            // Handle the diversion changes if enabled (check phpVMS settings too)
+            if (setting('pireps.handle_diversion', false) == false && DS_Setting('turksim.pireps_handle_diversions', true)) {
+                if ($diverted) {
+                    // Airport found, Move Assets to Diversion Destination and edit Pirep values
+                    $aircraft->airport_id = $diverted->id;
+                    $aircraft->save();
+
+                    $user->curr_airport_id = $diverted->id;
+                    $user->save();
+
+                    $pirep->notes = 'DIVERTED ('.$pirep->arr_airport_id.' > '.$diversion_apt.') '.$pirep->notes;
+                    $pirep->alt_airport_id = $pirep->arr_airport_id; // Save intended dest as alternate for fixing it back when needed
+                    $pirep->arr_airport_id = $diverted->id; // Use diversion dest as the new arrival
+                    $pirep->flight_id = null; // Remove the flight id to drop the relationship
+                    $pirep->route_leg = null; // Remove the route_leg to exclude this pirep from tour checks
+                    $pirep->save();
+
+                    Log::notice('Disposable Special | Pirep '.$pirep->id.' Flight '.$pirep->ident.' DIVERTED to '.$diversion_apt.', assets MOVED to Diversion Airport');
+                } else {
+                    // Airport NOT found (only edit Pirep values)
+                    $pirep->notes = 'DIVERTED ('.$pirep->arr_airport_id.' > '.$diversion_apt.') '.$pirep->notes;
+                    $pirep->flight_id = null; // Remove the flight id to drop the relationship
+                    $pirep->route_leg = null; // Remove the route_leg to exclude this pirep from tour checks
+                    $pirep->save();
+
+                    Log::notice('Disposable Special | Pirep '.$pirep->id.' Flight '.$pirep->ident.' DIVERTED to '.$diversion_apt.', NOT ABLE to move assets !');
+                }
+            }
+
+            // Send Discord Notification if enabled
             if (DS_Setting('turksim.discord_divertmsg')) {
                 // Provide basic information to admins
                 // Crash, Operational Diversion or Scenery Problem
@@ -45,37 +75,6 @@ class Gen_Diversion
                 // Send the message with reason BEFORE changing the pirep values
                 $DiscordSvc = app(DS_NotificationServices::class);
                 $DiscordSvc->SendDiversionMessage($pirep, $diversion_apt, $diversion_reason);
-            }
-
-            if (DS_Setting('turksim.pireps_handle_diversions', true)) {
-                // Airport found
-                if ($diverted) {
-                    // Move Assets to Diversion Destination and edit Pirep values
-                    $aircraft->airport_id = $diverted->id;
-                    $aircraft->save();
-
-                    $user->curr_airport_id = $diverted->id;
-                    $user->save();
-
-                    $pirep->notes = 'DIVERTED ('.$pirep->arr_airport_id.' > '.$diversion_apt.') '.$pirep->notes;
-                    $pirep->alt_airport_id = $pirep->arr_airport_id; // Save intended dest as alternate for fixing it back when needed
-                    $pirep->arr_airport_id = $diverted->id; // Use diversion dest as the new arrival
-                    $pirep->flight_id = null; // Remove the flight id to drop the relationship
-                    $pirep->route_leg = null; // Remove the route_leg to exclude this pirep from tour checks
-                    $pirep->save();
-
-                    Log::info('Disposable Special | Pirep '.$pirep->id.' Flight '.$pirep->ident.' DIVERTED to '.$diversion_apt.', assets MOVED to Diversion Airport');
-                }
-
-                // Airport NOT found (only edit Pirep values)
-                else {
-                    $pirep->notes = 'DIVERTED ('.$pirep->arr_airport_id.' > '.$diversion_apt.') '.$pirep->notes;
-                    $pirep->flight_id = null; // Remove the flight id to drop the relationship
-                    $pirep->route_leg = null; // Remove the route_leg to exclude this pirep from tour checks
-                    $pirep->save();
-
-                    Log::info('Disposable Special | Pirep '.$pirep->id.' Flight '.$pirep->ident.' DIVERTED to '.$diversion_apt.', NOT ABLE to move assets !');
-                }
             }
         }
     }

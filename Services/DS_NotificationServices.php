@@ -91,7 +91,7 @@ class DS_NotificationServices
                     'fields'    => [
                         ['name' => '__Flight #__', 'value' => $pirep->ident, 'inline' => true],
                         ['name' => '__Orig__', 'value' => $pirep->dpt_airport_id, 'inline' => true],
-                        ['name' => '__Dest__', 'value' => $pirep->arr_airport_id, 'inline' => true],
+                        ['name' => '__Dest__', 'value' => $pirep->alt_airport_id, 'inline' => true],
                         ['name' => '__Equipment__', 'value' => $pirep_aircraft, 'inline' => true],
                         ['name' => '__Diverted__', 'value' => $diversion_airport, 'inline' => true],
                         ['name' => '__Reason__', 'value' => $diversion_reason, 'inline' => true],
