@@ -377,6 +377,13 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+29.OCT.25
+
+* Some expense code cleanup and fix for seasonal changes _(Airport based expenses)_
+* Added bid button to assignments page
+* Added FPL Remark field for tours _(can be used during simbrief planning etc.)_
+* Fixed diversion notifications and slightly changed diversion handling logic/order
+
 30.MAR.25
 
 * Updated Missions view (fixed Flight Details button/link)  
