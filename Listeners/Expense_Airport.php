@@ -58,7 +58,8 @@ class Expense_Airport
         $orig = $pirep->dpt_airport;
         $dest = $pirep->arr_airport;
         // Max Defs
-        $mtow = null;
+        $mtow = $aircraft->mtow->internal(0) > 0 ? $aircraft->mtow->internal(2) : null;
+        $mlw = $aircraft->mlw->internal(0) > 0 ? $aircraft->mlw->internal(2) : null;
         $maxpax = null;
         $maxcgo = null;
         // Actual Defs
@@ -69,8 +70,8 @@ class Expense_Airport
 
         // High Season Dates
         $pirep_year = $pirep->submitted_at->format('Y');
-        $season_s = $pirep_year.'05-01';
-        $season_e = $pirep_year.'10-31';
+        $season_s = $pirep_year.'-05-01';
+        $season_e = $pirep_year.'-10-31';
 
         // Low Cost Airline Check
         $lowcost = (in_array($pirep->airline->icao, $lc_carriers) || $pirep->route_code === 'AJ') ? true : false;
@@ -82,11 +83,6 @@ class Expense_Airport
         $needact = ($lf_method === 'lw' || $pf_method === 'lw' || $aa_method === 'load' || $tf_method === 'load' || $gh_method === 'load') ? true : false;
         // Domestic Check
         $int = ($orig && $dest && $orig->country === $dest->country) ? false : true;
-
-        // Get Aircraft Details (Certification & Capacity)
-        if ($needmax && $aircraft && $aircraft->mtow->internal(2) > 0) {
-            $mtow = $aircraft->mtow->internal(2);
-        }
 
         if ($needmax && $aircraft && $aircraft->subfleet->fares->count() > 0) {
             $pax_cap = 0;
@@ -100,12 +96,8 @@ class Expense_Airport
                 }
             }
 
-            if ($pax_cap > 0) {
-                $maxpax = $pax_cap;
-            }
-            if ($cgo_cap > 0) {
-                $maxcgo = $cgo_cap;
-            }
+            $maxpax = ($pax_cap > 0) ? $pax_cap : null;
+            $maxcgo = ($cgo_cap > 0) ? $cgo_cap : null;
         }
 
         // Get Pirep Details (Actual Figures)
@@ -113,19 +105,8 @@ class Expense_Airport
             $act_lw = optional($pirep->fields->where('slug', 'landing-weight')->first())->value;
             $act_tow = optional($pirep->fields->where('slug', 'takeoff-weight')->first())->value;
 
-            if (is_numeric($act_lw)) {
-                $lw = round($act_lw);
-                if ($units['weight'] === 'kg') {
-                    $lw = round($lw / 2.20462262185);
-                }
-            }
-
-            if (is_numeric($act_tow)) {
-                $tow = round($act_tow);
-                if ($units['weight'] === 'kg') {
-                    $tow = round($tow / 2.20462262185);
-                }
-            }
+            $lw = (is_numeric($act_lw) && $act_lw > 0) ? round($act_lw) : null;
+            $tow = (is_numeric($act_tow) && $act_tow > 0) ?round($act_tow) : null;
         }
 
         if ($needact && $aircraft && $pirep->fares->count() > 0) {
@@ -140,12 +121,8 @@ class Expense_Airport
                 }
             }
 
-            if ($act_pax >= 0) {
-                $pax = $act_pax;
-            }
-            if ($act_cgo >= 0) {
-                $cgo = $act_cgo;
-            }
+            $pax = ($act_pax >= 0) ? $act_pax : null;
+            $cgo = ($act_cgo >= 0) ? $act_cgo : null;
         }
 
         // Landing Fee
@@ -177,7 +154,7 @@ class Expense_Airport
                     $base_fee = round($lf_base * 0.8151, 2);
                 }
 
-                $base_weight = ($units['weight'] === 'kg') ? round($base_weight / 1000, 2) : round($base_weight / 2240, 2);
+                $base_weight = round($base_weight / 2240, 2);
                 $landing_fee = round($base_weight * $base_fee, 2);
 
                 $expenses[] = new Expense([
@@ -213,7 +190,7 @@ class Expense_Airport
                 $diff_hours = $off_block->diffInHours($on_block);
                 $diff_days = $off_block->diffInDays($on_block);
 
-                $base_weight = ($units['weight'] === 'kg') ? round($base_weight / 1000, 2) : round($base_weight / 2240, 2);
+                $base_weight = round($base_weight / 2240, 2);
 
                 // Check High Season
                 if ($off_block->between($season_s, $season_e)) {
