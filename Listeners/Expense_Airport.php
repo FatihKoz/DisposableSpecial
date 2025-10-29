@@ -106,7 +106,7 @@ class Expense_Airport
             $act_tow = optional($pirep->fields->where('slug', 'takeoff-weight')->first())->value;
 
             $lw = (is_numeric($act_lw) && $act_lw > 0) ? round($act_lw) : null;
-            $tow = (is_numeric($act_tow) && $act_tow > 0) ?round($act_tow) : null;
+            $tow = (is_numeric($act_tow) && $act_tow > 0) ? round($act_tow) : null;
         }
 
         if ($needact && $aircraft && $pirep->fares->count() > 0) {
