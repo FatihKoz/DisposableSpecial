@@ -18,6 +18,7 @@ use App\Models\Role;
 use App\Models\SimBrief;
 use App\Models\Subfleet;
 use App\Models\User;
+use App\Models\UserAward;
 use App\Models\UserFieldValue;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -236,13 +237,15 @@ class DS_CronServices
             if ($picked_users) {
                 Log::info('Disposable Special | Deleting '.$picked_users->count().' non-flown members | users');
                 foreach ($picked_users as $user) {
-                    Log::info('Disposable Special | Deleted user, roles, bids, custom field values for id:'.$user->id.' > '.$user->name_private.' identified as non-flown user');
+                    Log::info('Disposable Special | Deleted user, roles, bids, awards, custom field values for id:'.$user->id.' > '.$user->name_private.' identified as non-flown user');
                     // Detach all roles from the user
                     $user->removeRoles($user->roles->toArray());
                     // Delete any custom profile fields
                     UserFieldValue::where('user_id', $user->id)->delete();
                     // Remove any bids
                     Bid::where('user_id', $user->id)->delete();
+                    // Delete any awards issued
+                    UserAward::where('user_id', $user->id)->delete();
                     // Remove the user
                     $user->forceDelete();
                 }
