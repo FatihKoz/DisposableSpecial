@@ -31,9 +31,10 @@ class DS_FreeFlightController extends Controller
             return redirect('/flights');
         }
 
-        if (DS_Setting('dspecial.freeflights_reqbalance', 0) > 0) {
+        $ds_reqbalance = DS_Setting('dspecial.freeflights_reqbalance', 0);
+        if ($ds_reqbalance > 0) {
             $ff_finance = true;
-            $ff_balance = Money::createFromAmount(DS_Setting('dspecial.freeflights_reqbalance', 0));
+            $ff_balance = Money::createFromAmount($ds_reqbalance);
             $ff_cost = Money::createFromAmount(DS_Setting('dspecial.freeflights_costperedit', 0));
         } else {
             $ff_finance = false;
@@ -91,7 +92,14 @@ class DS_FreeFlightController extends Controller
         $icao_list = [];
         foreach ($airlines as $airline) {
             $icao_list[$airline->id] = $airline->icao;
-            $fleet_list[$airline->id] = Subfleet::where('airline_id', $airline->id)->pluck('id')->toArray();
+        }
+
+        $fleet_list = [];
+        if ($airlines->count() > 0) {
+            $subfleets_by_airline = Subfleet::whereIn('airline_id', $airlines->pluck('id')->toArray())->get(['id', 'airline_id'])->groupBy('airline_id');
+            foreach ($airlines as $airline) {
+                $fleet_list[$airline->id] = isset($subfleets_by_airline[$airline->id]) ? $subfleets_by_airline[$airline->id]->pluck('id')->toArray() : [];
+            }
         }
 
         // Get Available Aircraft
@@ -142,21 +150,23 @@ class DS_FreeFlightController extends Controller
 
         // Prepare Airline > Aircraft arrays (for JavaScript / Select2 Dropdown)
         if ($settings['airline_fleet']) {
+            $aircraft_by_subfleet = $aircraft->groupBy('subfleet_id');
             foreach ($airlines as $airline) {
-                $list_aircraft = $aircraft->whereIn('subfleet_id', $fleet_list[$airline->id]);
                 $airline_fleet[$airline->icao][] = ['id' => 0, 'text' => __('DSpecial::common.selectac')];
-                foreach ($list_aircraft as $ac) {
-                    $text = $ac->airline->icao.' | '.$ac->ident;
+                foreach ($fleet_list[$airline->id] ?? [] as $sfid) {
+                    foreach ($aircraft_by_subfleet[$sfid] ?? [] as $ac) {
+                        $text = $ac->airline->icao.' | '.$ac->ident;
 
-                    if ($ac->registration != $ac->name) {
-                        $text = $text.' '.$ac->name;
+                        if ($ac->registration != $ac->name) {
+                            $text = $text.' '.$ac->name;
+                        }
+
+                        if ($ac->fuel_onboard[$units['fuel']] > 0) {
+                            $text = $text.' | '.__('DSpecial::common.fuelob').': '.DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
+                        }
+
+                        $airline_fleet[$airline->icao][] = ['id' => $ac->id, 'text' => $text];
                     }
-
-                    if ($ac->fuel_onboard[$units['fuel']] > 0) {
-                        $text = $text.' | '.__('DSpecial::common.fuelob').': '.DS_ConvertWeight($ac->fuel_onboard, $units['fuel']);
-                    }
-
-                    $airline_fleet[$airline->icao][] = ['id' => $ac->id, 'text' => $text];
                 }
             }
         }
@@ -216,9 +226,10 @@ class DS_FreeFlightController extends Controller
         }
 
         // Check settings for financial settings (cost, charge)
-        if (DS_Setting('dspecial.freeflights_costperedit', 0) > 0) {
+        $ds_costperedit = DS_Setting('dspecial.freeflights_costperedit', 0);
+        if ($ds_costperedit > 0) {
             $ff_finance = true;
-            $ff_cost = Money::createFromAmount(DS_Setting('dspecial.freeflights_costperedit', 0));
+            $ff_cost = Money::createFromAmount($ds_costperedit);
         } else {
             $ff_finance = false;
         }
