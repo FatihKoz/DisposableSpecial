@@ -388,6 +388,10 @@ _Not providing attribution link will result in removal of access and no support 
 
 ## Release / Update Notes
 
+20.SEP.26
+
+* Added option for cleaning up old Acars log entries (while keeping rule violations only)
+
 30.AUG.26
 
 * Added support for Carto API Key usage in Tour Maps

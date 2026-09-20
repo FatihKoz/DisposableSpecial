@@ -146,7 +146,7 @@
         <b>Cron Features & Database Cleanup</b>
         <br>
         @include('DSpecial::admin.settings_table', ['group' => 'Cron'])
-        <span class="text-info">Setting 0 as day value will disable the feature</span>
+        <span class="text-info">Setting 0 as day/hour value will disable the feature</span>
       </div>
     </div>
   </div>

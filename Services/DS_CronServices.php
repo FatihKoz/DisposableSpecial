@@ -205,8 +205,27 @@ class DS_CronServices
     {
         if ($days > 0) {
             $acars = Acars::where('type', AcarsType::FLIGHT_PATH)->where('created_at', '<', Carbon::now()->subDays($days))->delete();
+
             if ($acars > 0) {
-                Log::info('Disposable Special | Deleted '.$acars.' position report records | acars');
+                Log::info('Disposable Special | Deleted ' . $acars . ' position report records | acars');
+            }
+        }
+    }
+
+    // Delete old Acars Log entries (Keep Rule Violations and Rule Triggers)
+    public function DeleteOldAcarsLogs($days = 0)
+    {
+        if ($days > 0) {
+            $acars = Acars::where('type', AcarsType::LOG)
+                ->where('created_at', '<', Carbon::now()->subDays($days))
+                ->whereNot(function ($query) {
+                    $query->where('log', 'LIKE', '%iolat%')
+                        ->orWhere('log', 'LIKE', '%riggered%');
+                })
+                ->delete();
+
+            if ($acars > 0) {
+                Log::info('Disposable Special | Deleted ' . $acars . ' log entry records | acars');
             }
         }
     }
@@ -216,8 +235,9 @@ class DS_CronServices
     {
         if ($days > 0) {
             $simbrief = SimBrief::where('created_at', '<', Carbon::now()->subDays($days))->delete();
+
             if ($simbrief > 0) {
-                Log::info('Disposable Special | Deleted '.$simbrief.' OFP packs | simbrief');
+                Log::info('Disposable Special | Deleted ' . $simbrief . ' OFP packs | simbrief');
             }
         }
     }
