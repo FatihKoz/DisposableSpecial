@@ -207,7 +207,7 @@ class DS_CronServices
             $acars = Acars::where('type', AcarsType::FLIGHT_PATH)->where('created_at', '<', Carbon::now()->subDays($days))->delete();
 
             if ($acars > 0) {
-                Log::info('Disposable Special | Deleted ' . $acars . ' position report records | acars');
+                Log::info('Disposable Special | Deleted '.$acars.' position report records | acars');
             }
         }
     }
@@ -225,7 +225,7 @@ class DS_CronServices
                 ->delete();
 
             if ($acars > 0) {
-                Log::info('Disposable Special | Deleted ' . $acars . ' log entry records | acars');
+                Log::info('Disposable Special | Deleted '.$acars.' log entry records | acars');
             }
         }
     }
@@ -237,7 +237,7 @@ class DS_CronServices
             $simbrief = SimBrief::where('created_at', '<', Carbon::now()->subDays($days))->delete();
 
             if ($simbrief > 0) {
-                Log::info('Disposable Special | Deleted ' . $simbrief . ' OFP packs | simbrief');
+                Log::info('Disposable Special | Deleted '.$simbrief.' OFP packs | simbrief');
             }
         }
     }

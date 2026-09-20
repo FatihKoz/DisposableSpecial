@@ -10,14 +10,14 @@ return new class() extends Migration {
             // Acars Log cleanup
             DB::table('disposable_settings')->updateOrInsert(
                 [
-                    'key'        => 'dspecial.old_acars_logs'
+                    'key'        => 'dspecial.old_acars_logs',
                 ],
                 [
                     'group'      => 'Cron',
                     'name'       => 'Delete old Acars Log Entries (days)',
                     'field_type' => 'numeric',
                     'default'    => '0',
-                    'order'      => '2004'
+                    'order'      => '2004',
                 ]
             );
         }
