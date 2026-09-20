@@ -145,7 +145,7 @@
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-xxl mx-auto" style="width: 80vw; min-width: 80vw">
         <div class="modal-content">
-          <div class="modal-header p-1 border-0">
+          <div class="modal-header p-1 border-0 flex justify-content-between">
             <h5 class="m-1" id="staticBackdropLabel">
               @lang('DSpecial::tours.tmap')
             </h5>
